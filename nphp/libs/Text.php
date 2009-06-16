@@ -52,12 +52,12 @@ class Text
 	
 	//convert a plain text string to html
 	static function to_html($str){
-		return str_replace("\n", "<br />", $str);
+		return str_replace("\n", "<br />", str_replace("  ", " &nbsp;", str_replace("\t", "    ", $str)));
 	}
 	
 	//remove extras spaces, tabs, etc.
 	static function simple_spaces($str){
-		return str_replace("\n ", "\n", str_replace("  ", " ", str_replace("  ", " ", str_replace("\t", " ", $str))));
+		return str_replace("\n ", "\n", preg_replace("/\s+/mi", " ", str_replace("\t", " ", $str)));
 	}
 	
 	//plain simple - to_plain followed by simple_spaces

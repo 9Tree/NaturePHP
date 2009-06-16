@@ -192,7 +192,7 @@ class Log
 	}
 	
 	//Notices management
-	static function add($type, $desc){
+	static function add($desc, $type='Info'){
 		$me=&self::getInstance();
 		$count=count($me->events);
 		$me->events[$count]['type']=&$type;

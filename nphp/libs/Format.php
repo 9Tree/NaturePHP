@@ -20,7 +20,7 @@ class Format{
 
 		foreach ($quant as $unit => $mag)
 			if ( intval($bytes) >= $mag )
-				return self::number_format_i18n($bytes / $mag, $decimals) . ' ' . $unit;
+				return self::number_i18n($bytes / $mag, $decimals) . ' ' . $unit;
 	}
 	
 	//number format in i18n (eg. 10.000,05)

@@ -145,19 +145,19 @@ class Path{
 				'qs_inclusions'=>array(),
 				'qs_exclusions'=>array()
 				));
-		if(!is_array($args->qs_inclusions)) $args->qs_inclusions=array();
-		if(!is_array($args->qs_exclusions)) $args->qs_exclusions=array();
+		if(!is_array($args['qs_inclusions'])) $args['qs_inclusions']=array();
+		if(!is_array($args['qs_exclusions'])) $args['qs_exclusions']=array();
 		$newGet=array();
 		if(count($_GET)){ //mudar para suportar arrays
 			foreach($_GET as $name=>$item){
-				if(!in_array($name, $args->qs_exclusions)){
+				if(!in_array($name, $args['qs_exclusions'])){
 					$newGet[$name]=&$_GET[$name];
 				}
 			}
 		}
-		if($args->qs_inclusions){
-			foreach($args->qs_inclusions as $name=>$value){
-				$newGet[$name]=&$args->qs_inclusions[$name];
+		if($args['qs_inclusions']){
+			foreach($args['qs_inclusions'] as $name=>$value){
+				$newGet[$name]=&$args['qs_inclusions'][$name];
 			}
 		}
 		$qstr=Utils::build_querystring($newGet);

@@ -45,14 +45,14 @@ class Headers{
 	static function json(){
 		$args=Utils::combine_args(func_get_args(), 0, array("mode" => "application", "cache"=>0));
 		//set content type
-		if($args->mode=='text'){
+		if($args['mode']=='text'){
 			header('Content-Type: text/json; charset=utf-8');
 		} else {
 			header('Content-type: application/x-json; charset=utf-8');
 		}
 		//set cache / nocache
-		if($args->cache){
-			if(is_int($args->cache)) self::cache($args->cache);
+		if($args['cache']){
+			if(is_int($args['cache'])) self::cache($args['cache']);
 			else self::cache();
 		} else self::nocache();
 		// Handle proxies

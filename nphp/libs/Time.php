@@ -27,7 +27,7 @@ class Time{
 	
 	//microtimer functions - useful for performance checks (start, read, stop ideas from Drupal)
 	static function stopwatch_start($name) {
-		$me=self::&getInstance();
+		$me=&self::getInstance();
 		$mtime = microtime();
 		$mtime = explode(' ', $mtime);
 		$me->stopwatch_timers[$name] = $mtime[1] + $mtime[0];
@@ -35,7 +35,7 @@ class Time{
 	}
 	
 	static function stopwatch_read($name) {
-		$me=self::&getInstance();
+		$me=&self::getInstance();
 		$mtime = microtime();
 		$mtime = explode(' ', $mtime);
 		$mtime = $mtime[1] + $mtime[0];
@@ -45,7 +45,7 @@ class Time{
 	static function stopwatch_stop($name) {
 		$ret = self::stopwatch_read($name);
 		
-		$me=self::&getInstance();
+		$me=&self::getInstance();
 		unset($me->stopwatch_timers[$name]);
 		
 		return $ret;

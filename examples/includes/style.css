@@ -1,0 +1,109 @@
+/*=========================================
+		       RESET STARTS 			 
+=========================================*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	background: transparent;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+
+/*=========================================
+ 	  Remember to define focus styles!	 
+=========================================*/
+
+/*=========================================
+    Remember to highlight inserts somehow
+=========================================*/
+ins {
+	text-decoration: none;
+}
+del {
+	text-decoration: line-through;
+}
+
+/*=======================================*/
+/*   Tables still need cellspacing="0"   */
+/*=======================================*/
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+/*=========================================
+			    RESET ENDS 				 
+=========================================*/
+
+
+/*=========================================
+BODY ====================================*/
+body{
+	font-family: 'Lucida Grande','Lucida Sans Unicode',Tahoma,Verdana,sans-serif;
+	min-width:680px;
+	width:auto;
+	font-size:100.01%;
+	background:#ddd;
+}
+
+small{
+	font-size:0.7em;
+}
+
+.clear{
+	clear:both;
+	margin:0;
+	padding:0;
+	width:0;
+	height:0;
+	border:0;
+	background:0;
+}
+
+/*=========================================
+MAIN MENU ===============================*/
+#menu{
+	width:967px;
+	margin:15px auto 0 auto;
+	border:1px #000 dotted;
+	padding:5px;
+}
+#menu>li{
+	float:left;
+	margin-right:15px;
+}
+
+/*=========================================
+CONTENT =================================*/
+#content{
+	width:967px;
+	margin:15px auto 0 auto;
+}
+
+/*=========================================
+FOOTER ==================================*/
+#footer{
+	width:967px;
+	margin:40px auto 0 auto;
+	padding:20px 40px;
+}

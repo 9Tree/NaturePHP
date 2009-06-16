@@ -123,7 +123,7 @@ eg. [ Nphp::load_lib('N'); ]
 
 //Properties
 version; // NaturePhp core version
-eg. [ if(class_exists('Nphp')) print "You're using NaturePhp v".Nphp::version; ]
+eg. [ if(class_exists('Nphp')) print "You're using NaturePhp v".Nphp::$version; ]
 
 
 
@@ -152,7 +152,7 @@ eg. [ Log::debug(true); ]
 Notifies the email when fatal error occurs on non-debug mode. 
 eg. [ Log::notify('example@example.com'); ]
 
-# bool Log::has_warnings(string $email)
+# bool Log::has_warnings()
 Check if a WARNING level error has already occurred on this page. 
 eg. [ if(Log::has_warnings()) print "there are critical errors already on this page"; ]
 
@@ -373,7 +373,7 @@ build_querystring
 transforms mixed variables (querystring, object or array) into "$item=>$value" array;
 eg. [ Utils::mixed_to_array("tag=input&type=text&name=test&value=testing it"); ]
 
-# object Utils::combine_args(array $function_args, int $start_index, array $defaults)
+# array Utils::combine_args(array $function_args, int $start_index, array $defaults)
 combines function mixed arguments set with default variables, returns as object;
 eg. [ Utils::combine_args(func_get_args(), 1, array("type"=>"text", "value"=>"test")); ]
 

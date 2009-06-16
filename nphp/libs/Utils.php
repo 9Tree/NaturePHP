@@ -62,7 +62,7 @@ class Utils{
 			self::ref_mixed_to_array($func_args[$a], $args, $i);
 		}
 		
-		return (object) array_merge($defaults, $args);
+		return array_merge($defaults, $args);
 	}
 	
 	//all famous var_dump in pretty string form

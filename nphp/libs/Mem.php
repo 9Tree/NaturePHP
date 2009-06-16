@@ -57,7 +57,7 @@ class Mem{
 	
 	
 	//PRIVATE FUNCTIONS
-	private function &getVar(&$var, &$bay, &$required){
+	private static function &getVar(&$var, &$bay, &$required){
 		if(self::is_set($var, $bay)){
 			$me=&self::getInstance();
 			$index=array_search($var, $me->keys[$bay]);
@@ -72,7 +72,7 @@ class Mem{
 		$var=false;
 		return $var;
 	}
-	private function setVar(&$var, &$value, &$bay){
+	private static function setVar(&$var, &$value, &$bay){
 		$me=&self::getInstance();
 		if(!isset($me->keys[$bay])) $me->keys[$bay]=array();
 		$index=array_search($var, $me->keys[$bay]);
