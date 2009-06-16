@@ -1,7 +1,7 @@
 <?php
 /*
 Database - enhanced dbfacile
-v0.1
+v0.2
 Based on greaterscope's dbFacile - A Database API that should have existed from the start
 Version 0.4.2
 http://www.greaterscope.net/projects/dbFacile
@@ -12,66 +12,60 @@ but have to be implemented on the extended classes (eg. Database_mysql );
 */
 
 abstract class Database {
-	protected $connection; 	// handle to Database connection
-	protected $name; 		// connection name
+	protected $connection; 				// Database connection resource
+	protected $name; 					// connection name
 	
-	protected $result;
+	private static $types = array('mysql');
 	
-	protected $char_set		= 'utf8';
-	protected $dbcollat		= 'utf8_general_ci';
+	protected $result;					//used to store results
 	
-	public static $instance; // last created instance
-	public static $instances = array(); // for holding more than 1 instance
+	public static $instance; 			// last created instance
+	protected $instance_id;				//used to store $this instance number
+	public static $last_instance_id;	//used to store $this instance number
+	public static $instances = array();	// for holding more than 1 instance
 	
 	//general construct
-	function __construct($name=null, $handle = null) {
-		$this->connection = $handle;
-		$this->query = $this->result = null;
+	function __construct() {
+		
+		//get options
+		$args=Utils::combine_args(func_get_args(), 0, array('name' => null, 'resource' => null));
+		
+		$this->connection = $args['resource'];
+		$this->result = null;
 		$this->parameters = array();
 
-		Database::$instance = $this;
+		Database::$instance = &$this;						//set's this instance as the last added one
+		
+		Database::$instances[] = &$this;					//add's the instance on top of the the instance stack
+		$this->instance_id = ++Database::$last_instance_id;	//set's $this instance_id
+		
+		if($args['name']) Database::$instances[$args['name']] = &$this;		//add's the instance to the instance stack with the provided name
 	}
 	
 	//general open
-	public static function open($type, $database, $user = '', $password = '', $host = 'localhost', $name=null) {
-		$o=null;
-		switch($type) {
-			case 'mssql':
-			case 'mysql':
-			case 'postgresql':
-				$name = 'Database_' . $type;
-				if(is_resource($database)) {
-					$o = new $name($name, $database);
-				}
-				if(is_string($database)) {
-					$o = new $name($name);
-					$o->_open($database, $user, $password, $host);
-				}
-				break;
-			case 'sqlite':
-				if(is_resource($database)) {
-					$o = new Database_sqlite($name, $database);
-				}
-				if(is_string($database)) {
-					$o = new Database_sqlite($name);
-					$o->_open($database);
-				}
-				break;
-			case 'odbc':
-				//to-do...
-				if(is_resource($database)) {
-					$o = new Database_odbc($name, $database);
-				}
-				if(is_string($database)) {
-					$o = new Database_odbc($name);
-					$o->_open(/*...*/);
-				}
-				break;
-			default:
-				trigger_error('Unrecognized database system "'.$type.'"', E_USER_WARNING);
-				break;
+	public static function open() {
+		
+		//get options
+		$args=Utils::combine_args(func_get_args(), 0, array('type' => 'mysql'));
+		
+		if(!in_array($args['type'], Database::$types)){
+			trigger_error('Unrecognized database type "'.$type.'"', E_USER_ERROR);
+			return null;
 		}
+		
+		//creates the instance
+		$class='Database_'.$args['type'];
+		$o = new $class($args);
+		$o->_open($args);
+
 		return $o;
+	}
+	
+	//close connection and remove references to instance
+	function close() {
+		$this->close();
+		unset(Database::$instances[$this->instance_id]);
+		if($this->instance_id==Database::$last_instance_id) unset(Database::$instance);
 	}
 	
 	//secure string
@@ -112,7 +106,7 @@ abstract class Database {
 		return $this->_limit($sql, $args['limit']);
 	}
 	
-	//escape function
+	//escape value function
 	function escapeValue($str){	
 		switch (gettype($str)){
 			case 'string'	:	$str = "'".$this->_escapeString($str)."'";
@@ -128,7 +122,7 @@ abstract class Database {
 	//escape values array
 	function escapeValues($arr){
 		$key = array_keys($arr);
-		$size = sizeOf($key);
+		$size = count($key);
 		for ($i=0; $i<$size; $i++) $arr[$key[$i]] = $this->escapeValue($arr[$key[$i]]);
 		return $arr;
 	}
@@ -136,7 +130,7 @@ abstract class Database {
 	//escape fields array
 	function escapeFields($arr){
 		$key = array_keys($arr);
-		$size = sizeOf($key);
+		$size = count($key);
 		for ($i=0; $i<$size; $i++) $arr[$key[$i]] = $this->_escapeField($arr[$key[$i]]);
 		return $arr;
 	}
@@ -145,21 +139,23 @@ abstract class Database {
 	
 	
 	/*
-	 * Performs a query using the given string.
-	 * Used by the other _query functions.
+	 * Performs a query using the given string and parameters.
+	 * Used by the other query functions.
 	 * */
 	function execute($sql, $parameters = array()) {
 		
-		//put all the parameters into the sql
-		$fullSql = $this->makeQuery($sql, $parameters);
-
+		//benchmarking is important
 		$time_start = microtime(true);
-
+		 
+		//put all the parameters into the sql
+		$fullSql = $this->secure($sql, $parameters);
+		
 		$this->result = $this->_query($fullSql); // sets $this->result
 		
+		//trigger notice
 		trigger_error('<strong>Database</strong> :: ' . $fullSql . " :: <small>" . (number_format(microtime(true) - $time_start, 8))." secs</small>", E_USER_NOTICE);
 		
-
+		//if there's an error, report it
 		if(!$this->result && (error_reporting() & 1))
 			trigger_error('<strong>Database</strong> :: Error in query: ' . $this->_error(), E_USER_WARNING);
 		
@@ -216,6 +212,7 @@ abstract class Database {
 		return $this->_affectedRows();
 	}
 	
+	//delete
 	function delete($table) {
 		
 		//get options
@@ -234,6 +231,7 @@ abstract class Database {
 		return $this->_affectedRows();
 	}
 	
+	//number of available rows in $this->result
 	function numberRows(){
 		return $this->_numberRows();
 	}
@@ -310,7 +308,7 @@ abstract class Database {
 			$data = array();
 			foreach($this->_fetchAll() as $row) {
 				$key = array_shift($row);
-				if(sizeof($row) == 1) { // if there were only 2 fields in the result
+				if(count($row) == 1) { // if there were only 2 fields in the result
 					// use the second for the value
 					$data[ $key ] = array_shift($row);
 				} else { // if more than 2 fields were fetched

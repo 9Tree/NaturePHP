@@ -1,29 +1,51 @@
 <?php
 class Database_mysql extends Database {
-	private $database;
 	protected $type='mysql';
 
-	// user, password, database, host
-	protected function _open($database, $user, $password, $host) {
-		$this->database = $database;
-		$this->connection = mysql_connect($host, $user, $password);
-		if($this->connection)
-			mysql_select_db($database, $this->connection);
-		//$this->buildSchema();
+	// opens MySQL database connection
+	protected function _open() {
+		
+		//get options
+		$args=Utils::combine_args(func_get_args(), 0, array(
+							'database'		=> null, 
+							'user'			=> null, 
+							'password'		=> null, 
+							'host' 			=> 'localhost',
+							'port' 			=> null,
+							'charset'		=> 'utf8',
+							'collation'		=> 'utf8_general_ci'
+							));
+							
+		//tries connection
+		if(!$this->connection = @mysql_connect(($args['host'].($args['port']?':'.$args['port']:'')), $args['user'], $args['password'])){
+			trigger_error('<strong>Database</strong> :: MySQL Database connection failed: ' . $this->_error(), E_USER_WARNING);
+			return null;
+		}
+		
+		//tries database selection
+		if(!@mysql_select_db($args['database'], $this->connection)){
+			trigger_error('<strong>Database</strong> :: MySQL Database selection failed: ' . $this->_error(), E_USER_WARNING);
+		}
+		
+		//sets charset and collation
+		$this->execute("SET NAMES '".$args['charset']."' collate '".$args['collation']."'");
+		$this->execute("SET CHARACTER SET '".$args['charset']."'");
+
 		return $this->connection;
 	}
 	
-	function close() {
+	function _close() {
 		mysql_close($this->connection);
 	}
 	
 	function _limit($sql, $var_limit){
 		//limit
-		if(is_string($var_limit)){
-			$sql.=' limit '.$var_limit;
-		} elseif(is_array($var_limit) && !empty($var_limit)){
-			$limit = array_shift($var_limit);
-			$sql .= ' limit '.$this->secure($limit, $var_limit);
+		if(is_array($var_limit) && !empty($var_limit)){
+			if(count($var_limit)==1){
+				$sql .= ' limit '.intval($var_limit[0]);
+			} else {
+				$sql .= ' limit '.intval($var_limit[0]).', '.intval($var_limit[1]);
+			}
 		}
 		return $sql;
 	}
@@ -50,7 +72,7 @@ class Database_mysql extends Database {
 
 	
 	protected function _fetch() {
-		// use mysql_data_seek to get to row index
+		// use mysql_data_seek to get to row index ?
 		return $this->_fetchAll();
 	}
 
@@ -59,8 +81,6 @@ class Database_mysql extends Database {
 		while($row = mysql_fetch_assoc($this->result)) {
 			$data[] = $row;
 		}
-		//mysql_free_result($this->result);
-		// rewind?
 		return $data;
 	}
 
@@ -76,5 +96,5 @@ class Database_mysql extends Database {
 		return mysql_num_rows($this->result);
 	}
 	
-} // mysql
+}
 ?>

@@ -14,16 +14,15 @@ require(dirname(__FILE__)."/".$relative_path_to_nphp);	//this require will alway
 Log::init($debug=true);
 
 //This variable serves just to toggle this example working with mysql
-Mem::set('use_mysql', false, 'example');	//change to true to use the Database connection
+Mem::set('use_db', true, 'example');	//change to true to use the Database connection
 
 
 //Setup database connection unless use_mysql is false
-if(Mem::get('use_mysql', 'example')){
+if(Mem::get('use_db', 'example')){
 	
 	Log::add('Using MySQL database connection.');
 	//Setup database connection
-	$DB = Database::open('mysql', 'nphp_example', 'username', 'password', 'localhost');
-	$DB -> execute("SET NAMES 'UTF-8'");	//set's mysql utf-8 compatibility mode
+	$DB = Database::open(array('database'=>'nphp_example', 'user'=>'trutas', 'password'=>'trutas'));
 	
 } else {
 	
