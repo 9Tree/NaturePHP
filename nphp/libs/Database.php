@@ -15,7 +15,7 @@ abstract class Database {
 	protected $connection; 				// Database connection resource
 	protected $name; 					// connection name
 	
-	private static $types = array('mysql');
+	private static $types = array('mysql', 'odbc');
 	
 	protected $result;					//used to store results
 	
@@ -168,14 +168,22 @@ abstract class Database {
 		$parameters=array();
 		
 		//insert query
-		$sql = 'insert into ' . $table . ' (';
-		$values = 'values(';
-		foreach($data as $key => $value) {
-			$sql .= $this->_escapeField($key) . ',';
-			$values .= '?,';
-			$parameters[] = $value;
-		}
-		$sql = substr($sql, 0, -1).') '.substr($values, 0, -1).')'; // strip off last commas and concat the sql statement
+		$sql = 'insert into ' . $this->_escapeField($table);
+		
+		if(!empty($data)){	//insert data
+      $sql .= ' (';
+      $values = 'values(';
+			foreach($data as $key => $value) {
+				$sql .= $this->_escapeField($key) . ',';
+				$values .= '?,';
+				$parameters[] = $value;
+			}
+			$sql = substr($sql, 0, -1).') '.substr($values, 0, -1).')'; // strip off last commas and concat the sql statement
+			
+		} else {
+      $sql .= $this->_insert_default_values();
+    }
+		
 		
 		//execute	
 		if($this->execute($sql, $parameters)) {
@@ -195,12 +203,19 @@ abstract class Database {
 		$parameters=array();
 		
 		//create base query
-		$sql = 'update ' . $this->_escapeField($table) . ' set ';
-		foreach($data as $key => $value) {
-			$sql .= $this->_escapeField($key) . '=?,';
-			$parameters[] = $value;
+		$sql = 'update ' . $this->_escapeField($table);
+		if(!empty($data)){	//insert data
+			$sql .= ' set ';
+			foreach($data as $key => $value) {
+				$sql .= $this->_escapeField($key) . '=?,';
+				$parameters[] = $value;
+			}
+			$sql = substr($sql, 0, -1); // strip off last comma
+			
+		} else {	//no data to insert
+			$sql = $sql.') '.$values.')'; // strip off last commas and concat the sql statement
 		}
-		$sql = substr($sql, 0, -1); // strip off last comma
+		
 		
 		//insert query conditions (sql is changed by reference)
 		$sql = $this->build_query_conditions($sql, $args);

@@ -8,6 +8,7 @@ class Utils{
 	
 	//transforms mixed variables (querystring, object or array) into array
 	private static function ref_mixed_to_array(&$mixed, &$args, &$i){
+
 		if(is_array($mixed) || is_object($mixed)){
 			foreach($mixed as $item=>$value){
 				$args['i'][$i] = $value;
@@ -39,9 +40,9 @@ class Utils{
 		//emptyness test
 		if(!isset($func_args[$start_index])){
 			if(!$defaults){
-				return (object) array();
+				return array();
 			} else {
-				return (object) self::mixed_to_array($defaults);
+				return self::mixed_to_array($defaults);
 			}
 		} 
 		
@@ -50,9 +51,9 @@ class Utils{
 		
 		//already filtered test
 		$a_lim=count($func_args);
-		if(is_object($func_args[$start_index]) && $a_lim==$start_index+1){
+		if(is_array($func_args[$start_index]) && $a_lim==$start_index+1){
 			if(!$defaults) return $func_args[$start_index];
-			return (object) array_merge($defaults, (array) $func_args[$start_index]);
+			return array_merge($defaults, (array) $func_args[$start_index]);
 		}
 		
 		//filter vars

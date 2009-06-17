@@ -1,8 +1,9 @@
 <?php
 class Database_odbc extends Database {
-	protected $type='odbc';
+	public $type='odbc';
 	protected $dsn_types=array('mssql');
 	protected $dsn_type;
+	protected $insert_default_values=array('mssql'=>" default values");
 
 	// opens MySQL database connection
 	protected function _open() {
@@ -17,10 +18,16 @@ class Database_odbc extends Database {
 							
 		//tries connection
 		if(!$this->connection = odbc_connect($args['dsn'], $args['user'] , $args['password'])){
-			trigger_error('<strong>Database</strong> :: ODBC Database connection failed: ' . $this->_error(), E_USER_WARNING);
+			trigger_error('<strong>Database</strong> :: ODBC Database connection failed', E_USER_WARNING);
 			return null;
 		}
 		
+		switch($this->dsn_type){
+			case 'mssql':
+				return $this->execute("SET QUOTED_IDENTIFIERS ON");
+			break;
+		}
+
 		$this->dsn_type = $args['dsn_type'];
 
 		return $this->connection;
@@ -29,6 +36,10 @@ class Database_odbc extends Database {
 	function _close() {
 		odbc_close($this->connection);
 	}
+	
+	function _insert_default_values(){
+    return $this->insert_default_values[$this->dsn_type];
+  }
 	
 	function _limit($sql, $var_limit){
 		//limit
@@ -42,14 +53,18 @@ class Database_odbc extends Database {
 	}
 	
 	protected function _escapeString($string) {
-		return addslashes( get_magic_quotes_gpc()?stripslashes($string):$string );
+    switch($this->dsn_type){
+			case 'mssql':
+				return str_replace("'", "''", (get_magic_quotes_gpc()?stripslashes($string):$string) );
+			break;
+		}
 	}
 	
 	function _escapeField($field){
 
 		switch($this->dsn_type){
 			case 'mssql':
-				return '['.str_replace('[', '', str_replace(']', '', (get_magic_quotes_gpc()?stripslashes($field):$field) )).']';
+				return '"'.str_replace('"', '', str_replace("'", "''", (get_magic_quotes_gpc()?stripslashes($field):$field) )).'"';
 			break;
 		}
 		
@@ -59,7 +74,7 @@ class Database_odbc extends Database {
 
 		switch($this->dsn_type){
 			case 'mssql':
-				return odbc_exec($this->connection, "SET NOCOUNT ON\r\n".$sql);	//enables insert_id and num_rows functions
+				return @odbc_exec($this->connection, "SET NOCOUNT ON\r\n".$sql);	//enables insert_id and num_rows functions
 			break;
 		}
 	}

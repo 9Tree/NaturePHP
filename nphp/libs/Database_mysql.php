@@ -1,6 +1,7 @@
 <?php
 class Database_mysql extends Database {
-	protected $type='mysql';
+	public $type='mysql';
+	public $insert_default_values=" () values()";
 
 	// opens MySQL database connection
 	protected function _open() {
@@ -15,10 +16,10 @@ class Database_mysql extends Database {
 							'charset'		=> 'utf8',
 							'collation'		=> 'utf8_general_ci'
 							));
-							
+					
 		//tries connection
-		if(!$this->connection = @mysql_connect(($args['host'].($args['port']?':'.$args['port']:'')), $args['user'], $args['password'])){
-			trigger_error('<strong>Database</strong> :: MySQL Database connection failed: ' . $this->_error(), E_USER_WARNING);
+		if(!$this->connection = mysql_connect(($args['host'].($args['port']?':'.$args['port']:'')), $args['user'], $args['password'])){
+			trigger_error('<strong>Database</strong> :: MySQL Database connection failed: ', E_USER_WARNING);
 			return null;
 		}
 		
@@ -37,6 +38,10 @@ class Database_mysql extends Database {
 	function _close() {
 		mysql_close($this->connection);
 	}
+	
+	function _insert_default_values(){
+    return $this->insert_default_values;
+  }
 	
 	function _limit($sql, $var_limit){
 		//limit
