@@ -18,7 +18,7 @@ class Utils{
 		} elseif(is_string($mixed)){
 			$arr=explode('&', $mixed);
 			foreach($arr as $str){
-				list($item, $value)=split('=', $str);
+				list($item, $value)=explode('=', $str);
 				$args['i'][$i] = $value;
 				if(is_string($item)) $args[$item]=&$args['i'][$i];
 				$i++;

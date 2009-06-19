@@ -144,11 +144,11 @@
 	<?php
 	if(Log::has_warnings()):
 	?>
-	<img class="warning_img" src="<?php Path::put('warning_icon.png', __FILE__) ?>">
+	<img class="warning_img" src="<?php Path::put('warning_icon.png', __FILE__) ?>" />
 	<?php
 	endif;
 	?>
-	<img class="max_arrow" src="<?php Path::put('max_arrow.png', __FILE__) ?>">
+	<img class="max_arrow" src="<?php Path::put('max_arrow.png', __FILE__) ?>" />
 	
 </div>
 <div id="nphp-debug-report"> 

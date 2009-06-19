@@ -481,8 +481,8 @@ eg. [ Path::relative("app_folder/", "app_folder/app_subfolder/file.php"); ]
 
 # string Path::this_url([{options} $options])
 get current url, allowing get inclusions and/or exclusions;
-available {options} - array 'qs_inclusions', array 'qs_exclusions'
-eg. [ Path::this_url(array('qs_inclusions'=>array('id'=>21,'page'=>3), 'qs_exclusions'=>array('return', 'user_login'))); ]
+available {options} - array 'include', array 'remove'
+eg. [ Path::this_url(array('include'=>array('id'=>21,'page'=>3), 'remove'=>array('return', 'user_login'))); ]
 
 # string Path::sanitize_url(string $url)
 clean uri string;

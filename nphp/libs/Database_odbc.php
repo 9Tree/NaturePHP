@@ -17,7 +17,7 @@ class Database_odbc extends Database {
 							));
 							
 		//tries connection
-		if(!$this->connection = odbc_connect($args['dsn'], $args['user'] , $args['password'])){
+		if(!$this->connection = odbc_connect($args['dsn'], $args['user'] , $args['password'], SQL_CUR_USE_DRIVER)){
 			trigger_error('<strong>Database</strong> :: ODBC Database connection failed', E_USER_WARNING);
 			return null;
 		}
@@ -74,13 +74,15 @@ class Database_odbc extends Database {
 
 		switch($this->dsn_type){
 			case 'mssql':
+			    //free last result if exists
+			    if($this->result) odbc_free_result($this->result);
 				return @odbc_exec($this->connection, "SET NOCOUNT ON\r\n".$sql);	//enables insert_id and num_rows functions
 			break;
 		}
 	}
 	
 	protected function _affectedRows() {
-		return odbc_num_rows($this->result);
+		return odbc_num_rows($this->connection);
 	}
 
 	protected function _error() {
@@ -93,11 +95,15 @@ class Database_odbc extends Database {
 	}
 
 	protected function _fetchAll() {
-		return odbc_fetch_array($this->result);
+		$result=array();
+		while($res=$this->_odbc_fetch_array($this->result)){
+			$result[]=$res;
+		}
+		return $result;
 	}
 
 	protected function _fetchRow() {
-		return odbc_fetch_row($this->result);
+		return $this->_odbc_fetch_array($this->result);
 	}
 
 	protected function _lastID() {
@@ -114,6 +120,23 @@ class Database_odbc extends Database {
 
 	protected function _numberRows() {
 		return odbc_num_rows($this->result);
+	}
+	
+	function _odbc_fetch_array(& $odbc_result) {
+		if (function_exists('odbc_fetch_object')){
+			return odbc_fetch_array($odbc_result);
+		}else{
+			$rs = array();
+			$rs_assoc = false;
+			if (odbc_fetch_into($odbc_result, $rs)) {
+				$rs_assoc=array();
+				foreach ($rs as $k=>$v) {
+					$field_name= odbc_field_name($odbc_result, $k+1);
+					$rs_assoc[$field_name] = $v;
+				}
+			}
+			return $rs_assoc;
+		}
 	}
 	
 }

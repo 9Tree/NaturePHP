@@ -132,9 +132,11 @@ class Log
 		if(Nphp::lib_exists('Check')){	//checks request mode
 			$json_mode=Check::is_json_requested();
 			$xml_mode=Check::is_xml_requested();
+			$ajax_mode=Check::request_is_ajax();
 		} else {	//defaults to html mode
 			$json_mode=false;
 			$xml_mode=false;
+			$ajax_mode=false;
 		}
 		
 		//http status 500 headers
@@ -154,6 +156,8 @@ class Log
 			if($json_mode){
 				include(dirname(__FILE__).'/Log-tpls/json-error-debug.php');
 			} elseif($xml_mode){		
+				include(dirname(__FILE__).'/Log-tpls/xml-error-debug.php');
+			} elseif($ajax_mode) {
 				include(dirname(__FILE__).'/Log-tpls/xml-error-debug.php');
 			} else {
 				include(dirname(__FILE__).'/Log-tpls/html-error-debug.php');
@@ -179,9 +183,11 @@ class Log
 			if($json_mode){
 				include(dirname(__FILE__).'/Log-tpls/json-error.php');
 			} elseif($xml_mode){
-				include(dirname(__FILE__).'/Log-tpls/json-error.php');
+				include(dirname(__FILE__).'/Log-tpls/xml-error.php');
+			} elseif($ajax_mode) {
+				include(dirname(__FILE__).'/Log-tpls/xml-error.php');
 			} else {
-				include(dirname(__FILE__).'/Log-tpls/json-error.php');
+				include(dirname(__FILE__).'/Log-tpls/html-error.php');
 			}
 		}
 		
@@ -228,9 +234,11 @@ class Log
 			if(Nphp::lib_exists('Check')){	//checks request mode
 				$json_mode=Check::is_json_requested();
 				$xml_mode=Check::is_xml_requested();
+				$ajax_mode=Check::request_is_ajax();
 			} else {	//defaults to html mode
 				$json_mode=false;
 				$xml_mode=false;
+				$ajax_mode=false;
 			}
 			
 			if($json_mode){
@@ -239,6 +247,8 @@ class Log
 			} elseif($xml_mode){
 				//debug in xml's comments
 				include(dirname(__FILE__).'/Log-tpls/xml-debug.php');
+			} elseif($ajax_mode){
+				//no debug for now - raises many issues
 			} else {
 				//debug in html
 				include(dirname(__FILE__).'/Log-tpls/html-debug.php');
