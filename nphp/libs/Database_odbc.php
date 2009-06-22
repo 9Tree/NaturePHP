@@ -17,7 +17,7 @@ class Database_odbc extends Database {
 							));
 							
 		//tries connection
-		if(!$this->connection = odbc_connect($args['dsn'], $args['user'] , $args['password'], SQL_CUR_USE_DRIVER)){
+		if(!$this->connection = odbc_connect($args['dsn'], $args['user'] , $args['password'], SQL_CUR_USE_ODBC)){
 			trigger_error('<strong>Database</strong> :: ODBC Database connection failed', E_USER_WARNING);
 			return null;
 		}
