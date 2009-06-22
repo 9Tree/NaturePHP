@@ -1,6 +1,6 @@
 <?php
 /**
- * NaturePhp v0.3.4 example application
+ * NaturePhp v0.3.5 example application
  * This is a simple example to show some of the possibilities of NaturePhp
  *
  * please remember NaturePhp is just an autoloaded php library system - you don't really 
@@ -28,7 +28,7 @@ include('includes/header.php');
 Log::add('Index content starting.');
 ?>
 <div id="content">
-	<h2>NaturePhp v0.3.4 example application</h2>
+	<h2>NaturePhp v0.3.5 example application</h2>
 	<br /><br />
 	<h4>Readme File:</h4>
 	<br /><br />

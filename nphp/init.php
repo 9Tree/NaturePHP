@@ -22,7 +22,7 @@ if(version_compare(PHP_VERSION, '5.0.0')!==1){
 
 //Nphp core functionalities
 class Nphp{
-	static $version='0.3.3';
+	static $version='0.3.5';
 	static function lib_is_loaded($lib){
 		if(class_exists($lib)) return true;
 		return false;
@@ -44,8 +44,8 @@ class Nphp{
 		return $nphp_folder;
 	}
 	static function lib_path($lib){
-		//folders system (waiting for php 5.3 for namespaces)
-		//$lib=implode("/", explode("_", $lib));
+		//folders system (for namespaces)
+		$lib=str_replace("\\", "/", $lib);
 		
 		//builds path
 		return self::nphp_folder().'libs/'.$lib.'.php';

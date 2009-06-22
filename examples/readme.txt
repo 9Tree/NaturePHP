@@ -1,5 +1,5 @@
 **
-* NaturePhp v0.3.4 example application (and tests playground)
+* NaturePhp v0.3.5 example application (and tests playground)
 *
 * 	This is a simple application example to show some of the possibilities of NaturePhp
 *

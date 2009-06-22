@@ -16,7 +16,7 @@ include('includes/header.php');
 Log::add('Index content starting.');
 ?>
 <div id="content">
-	<h2>NaturePhp v0.3.4 Database example</h2>
+	<h2>NaturePhp v0.3.5 Database example</h2>
 	<br /><br />
 	<h4>Listing countries:</h4>
 	<br /><br />
