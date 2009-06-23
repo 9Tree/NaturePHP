@@ -1,6 +1,6 @@
 <?php
 #/*
-#* NaturePHP initialization file - v0.2.2
+#* NaturePHP initialization file - v0.3.5
 #* The only required include file - starts lib autoloader system
 #* Use require('nphp/init.php'); to start using NaturePHP
 # 
@@ -10,8 +10,8 @@
 
 //check required PHP_VERSION
 if(!version_compare(PHP_VERSION, '5.0.0', '>=')){
-	trigger_error('NaturePhp requires at least PHP v5.x', E_USER_ERROR);
-	die('NaturePhp requires at least php v5.x');
+	trigger_error('NaturePhp requires at least PHP 5', E_USER_ERROR);
+	die('NaturePhp requires at least php 5');
 }
 
 
@@ -44,7 +44,7 @@ class Nphp{
 		return $nphp_folder;
 	}
 	static function lib_path($lib){
-		//folders system (for namespaces)
+		//folders system (for namespaces) - only available when running on PHP 5.3+
 		$lib=str_replace("\\", "/", $lib);
 		
 		//builds path

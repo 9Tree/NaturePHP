@@ -23,7 +23,7 @@ Log::add('Index content starting.');
 	<p style="font-size:0.8em;padding:20px;border:1px #999 dashed;">
 		<?php
 		//by default it automatically uses the default connection 
-		Database::test();
+		//to-do...
 		?>
 	</p>
 </div>

@@ -252,7 +252,7 @@ abstract class Database {
 	}
 	
 	/*
-	 * Fetches all of the rows (associatively) from the last performed query.
+	 * Fetches all of the rows (associatively) from the query.
 	 * Most other retrieval functions build off this
 	 * */
 	function fetchAll($sql, $parameters = array()) {
@@ -265,12 +265,14 @@ abstract class Database {
 		// which should evaluate to false, and will prevent foreach notices/warnings 
 		return array();
 	}
+	
 	/*
 	 * This is intended to be the method used for large result sets.
 	 * It is intended to return an iterator, and act upon buffered data.
 	 * */
-	function fetch($sql, $parameters = array()) {
-		$this->execute($sql, $parameters);
+	function fetch($sql = null, $parameters = array()) {
+		if($sql != null)
+			$this->execute($sql, $parameters);
 		return $this->_fetch();
 	}
 
