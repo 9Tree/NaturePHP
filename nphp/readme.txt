@@ -28,6 +28,7 @@ NaturePHP : http://naturephp.org
 	3.11: Time			#Time and Date functionalities
 	3.12: Template		#Templates manager class
 	3.13: Database		#Awesome sql interface (based on dbFacile by greaterscope)
+	3.14: Event			#Event/action and filtering functionalities (based on Wordpress add_action and add_filter)
 	
 	
 Notes: 
@@ -368,6 +369,7 @@ mixed_to_array
 combine_args
 s_var_dump
 build_querystring
+array_insert
 
 # array Utils::mixed_to_array(mixed $mixed)
 transforms mixed variables (querystring, object or array) into "$item=>$value" array;
@@ -384,6 +386,10 @@ eg. [ Utils::s_var_dump(array("type"=>"text", "value"=>"test")); ]
 # string Utils::build_querystring(array $get_as_array)
 builds querystring from array (supports multi-dimensional arrays);
 eg. [ Utils::build_querystring(array("type"=>"text", "value"=>"test")); ]
+
+# string Utils::array_insert(array &$original_array, mixed $insert_piece, mixed $position)
+inserts value into specific array position, shifts higher items as necessary - overwrites position if $position is string;
+eg. [ Utils::array_insert($array, 'test', 3); ]
 
 
 
@@ -481,8 +487,8 @@ eg. [ Path::relative("app_folder/", "app_folder/app_subfolder/file.php"); ]
 
 # string Path::this_url([{options} $options])
 get current url, allowing get inclusions and/or exclusions;
-available {options} - array 'include', array 'remove'
-eg. [ Path::this_url(array('include'=>array('id'=>21,'page'=>3), 'remove'=>array('return', 'user_login'))); ]
+available {options} - array 'get_in', array 'get_out', string '#'
+eg. [ Path::this_url(array('get_in'=>array('id'=>21,'page'=>3), 'get_out'=>array('return', 'user_login'), '#'=>'top')); ]
 
 # string Path::sanitize_url(string $url)
 clean uri string;
@@ -693,7 +699,7 @@ eg. [ $Template_instance->render(); ]
 
 --#########################-- Database
 --
-3.13: Database		#Awesome sql interface (based on dbFacile by greaterscope)
+3.13: Database		#sql interface (originally based on dbFacile by greaterscope)
 
 //Methods
 open
@@ -704,15 +710,18 @@ fetchCell
 fetchColumn
 fetchKeyValue
 insert
-find
 update
 delete
 
-//classic dbFacile functions (by greaterscope)
-# instance Database::open(string $type, string $database [, string $user = '' [, string $password = '' [, string $host = 'localhost']]])
+//instance function
+# instance Database::open({options})
 creates a new database connection;
-eg. [ $Database_inst = Database::open('mysql', 'database_name', 'myUser', 'myPwd'); ]
+available {options} - string 'type', string 'database', string 'user', string 'password', string 'port',string 'host',
+ 					string 'charset', string 'collation', string 'name', resource 'resource', 
+					string 'dsn', string 'dsn_type', string 'cursor_type'
+eg. [ $Database_inst = Database::open(array('type'=>'mysql', 'database'=>'database_name', 'user'=>'myUser', 'password'=>'myPwd'); ]
 
+//classic dbFacile functions
 # bool Database::execute(string $sql_query [, array $parameters = array() [, bool $cache = true]])
 executes a query in the database;
 eg. [ $Database_inst->execute("update users set password=md5(?) where user_id=?", array($newUserPwd, $user_id)); ]
@@ -746,14 +755,8 @@ eg. [ $emailPasswords = $Database_inst->fetchKeyValue("select email, password fr
 returns rendered current instance;
 eg. [ $Database_inst->insert(array("email"=>$email, $password=>md5($password), is_active=>true), "users"); ]
 
-//enhanced Database custom functions
-# array[][] Database::find(string $table [, {options} $options])
-returns rendered current instance;
-available {options} - array what, array where, array group, array order, string limit
-eg. [ $protuguese_users = $Database_inst->find("users", array('what'=>array('user_id, email, password, is_active'), 'where'=>array('location=? and is_active=?', 'Portugal', true), 'order'=>'user_id desc', limit=>2)); ]
-	This query is the same as "select * from users where location='Portugal' and is_active=1 order by user_id desc limit 2";
-	[ $protuguese_users ] results array[][] just like Database::fetch does.
 
+//enhanced functions by 9Tree
 # int Database::update(array(data), string $table [, {options} $options])
 returns number of updated rows;
 available {options} - array where, array group, array order, string limit
@@ -775,3 +778,36 @@ eg. [ $Database_inst=&Database::instance; ]
 instances; // for holding more than 1 instance
 eg. [ $Database_inst=&Database::instances[0]; ]
 	gets the first Database::open instanced
+eg. [ $Database_inst=&Database::instances['myName']; ]
+	gets the first Database::open with the option 'name'=>'myName'
+	
+	
+--#########################-- Event
+--
+3.14: Event		#Event/action and filtering functionalities (based on Wordpress add_action and add_filter)
+Note: This class is static
+
+//Methods
+add
+fire
+add_filter
+filter
+
+# array Event::add(string $event, function $callback[, $position=false])
+adds callback to execute on event call, optional $position in queue. 
+eg. [ Event::add("header_finished", "myFunction"); ]
+	Note: Callback is called internally on Event::fire("header_finished") like myFunction("header_finished");
+
+# array Event::fire(string $event)
+fires all queued event functions in queue order
+eg. [ Event::fire("header_finished"); ]
+
+# string Event::add_filter(string $filter, function $callback[, $position=false])
+adds filtering callback to execute on filter call, optional $position in queue.
+eg. [ Event::add_filter("post_content", "myFunction"); ]
+	Note: Callback is called internally on Event::filter("header_finished") like myFunction($str, "header_finished");
+
+# string Event::filter(string $filter, string $str)
+filters string $str through all queued event functions in queue order
+eg. [ Event::filter("post_content", $post_content); ]
+

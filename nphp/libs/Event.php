@@ -1,7 +1,7 @@
 <?php
 #/*
-#* 9Tree Control Class - v0.3.5
-#* Basic error control and path control funcionalities
+#* 9Tree Event Class - v0.3.5
+#* Event/action and filtering functionalities (based on Wordpress add_action and add_filter)
 #*/
 
 class Event
