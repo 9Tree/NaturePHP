@@ -1,6 +1,6 @@
 <?php
 #/*
-#* 9Tree Control Class - v0.3.2
+#* 9Tree Control Class - v0.3.5
 #* Basic error control and path control funcionalities
 #*/
 
@@ -69,9 +69,9 @@ class Log
 		if($code==4096) return 'E_RECOVERABLE_ERROR';
 		if($code==8192) return 'E_DEPRECATED';
 		if($code==16384) return 'E_USER_DEPRECATED';
-		if( (version_compare(PHP_VERSION, '6.0.0')===1 && $code==32767) ||
-			(version_compare(PHP_VERSION, '5.3.0')===1 && $code==30719) ||
-			(version_compare(PHP_VERSION, '5.2.0')===1 && $code==6143) ||
+		if( (version_compare(PHP_VERSION, '6.0.0', '>=') && $code==32767) ||
+			(version_compare(PHP_VERSION, '5.3.0', '>=') && $code==30719) ||
+			(version_compare(PHP_VERSION, '5.2.0', '>=') && $code==6143) ||
 			($code==2047)
 				){
 			return 'E_ALL';
@@ -99,18 +99,19 @@ class Log
 			)
 				){
 					switch($errno){
+						case E_NOTICE:
 						case E_WARNING:
 						case E_CORE_WARNING:
 						case E_USER_WARNING:
 							self::$warning=true;
-							self::add("", '<span class="NPHP_warning">'.$errmsg."</span><br /><small><em>".self::get_error_type($errno)." in <strong>".$filename."</strong> line <strong>".$linenum."</strong></em></small>");
+							self::add('<span class="NPHP_warning">'.$errmsg."</span><br /><small><em>".self::get_error_type($errno)." in <strong>".$filename."</strong> line <strong>".$linenum."</strong></em></small>", "");
 						break;
 						case E_STRICT:
 						case E_PARSE:
-							self::add("", '<span class="NPHP_info">'.$errmsg."</span><br /><small><em>".self::get_error_type($errno)." in <strong>".$filename."</strong> line <strong>".$linenum."</strong></em></small>");
+							self::add('<span class="NPHP_info">'.$errmsg."</span><br /><small><em>".self::get_error_type($errno)." in <strong>".$filename."</strong> line <strong>".$linenum."</strong></em></small>", "");
 						break;
 						default:
-						    self::add("", '<span class="NPHP_default">'.$errmsg."</span><br /><small><em>".self::get_error_type($errno)." in <strong>".$filename."</strong> line <strong>".$linenum."</strong></em></small>");
+						    self::add('<span class="NPHP_default">'.$errmsg."</span><br /><small><em>".self::get_error_type($errno)." in <strong>".$filename."</strong> line <strong>".$linenum."</strong></em></small>", "");
 						break;
 					}
 		} else self::kill('<span class="NPHP_warning">'.$errmsg."</span><br /><small><em>".self::get_error_type($errno)." in <strong>".$filename."</strong> line <strong>".$linenum."</strong></em></small>");

@@ -1,6 +1,6 @@
 <?php
 #/*
-#* 9Tree Uris Class - v0.2
+#* 9Tree Uris Class - v0.3.5
 #* Uris and Urls funcionalities
 #*/
 
@@ -142,28 +142,30 @@ class Path{
 	//get current url, allowing get inclusions and/or exclusions
 	static function this_url(){
 		$args=Utils::combine_args(func_get_args(), 0, array(
-				'include'=>array(),
-				'remove'=>array()
+				'get_in'=>array(),
+				'get_out'=>array(),
+				'#'=>''
 				));
-		if(!is_array($args['include'])) $args['include']=array();
-		if(!is_array($args['remove'])) $args['remove']=array();
+		if(!is_array($args['get_in'])) $args['get_in']=array();
+		if(!is_array($args['get_out'])) $args['get_out']=array();
 		$newGet=array();
 		if(count($_GET)){ //mudar para suportar arrays
 			foreach($_GET as $name=>$item){
-				if(!in_array($name, $args['remove'])){
+				if(!in_array($name, $args['get_out'])){
 					$newGet[$name]=&$_GET[$name];
 				}
 			}
 		}
-		if($args['include']){
-			foreach($args['include'] as $name=>$value){
-				$newGet[$name]=&$args['include'][$name];
+		if($args['get_in']){
+			foreach($args['get_in'] as $name=>$value){
+				$newGet[$name]=&$args['get_in'][$name];
 			}
 		}
 		$qstr=Utils::build_querystring($newGet);
-		$var=(!empty($qstr))?"?".substr($qstr, 1):'';
+		$var=(!empty($qstr))?"?".$qstr:'';
+		$hash=(!empty($args['#']))?"#".$args['#']:'';
 		
-		return $_SERVER['SCRIPT_NAME'].$var;	
+		return $_SERVER['SCRIPT_NAME'].$var.$hash;	
 	}
 	
 	//request uri for all systems (from Drupal)

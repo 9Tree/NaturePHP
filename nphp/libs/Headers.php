@@ -1,6 +1,6 @@
 <?php
 #/*
-#* 9Tree Headers Class - v0.2.2
+#* 9Tree Headers Class - v0.3.5
 #* File/application headers funcionalities
 #*/
 

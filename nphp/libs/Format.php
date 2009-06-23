@@ -1,6 +1,6 @@
 <?php
 #/*
-#* 9Tree Measures Class - v0.1
+#* 9Tree Measures Class - v0.3.5
 #* Measures, conversions, number formats, etc.
 #*/
 

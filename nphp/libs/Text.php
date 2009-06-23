@@ -1,6 +1,6 @@
 <?php
 #/*
-#* 9Tree Text Class - v0.3.2
+#* 9Tree Text Class - v0.3.5
 #* String control functionalities
 #*/
 

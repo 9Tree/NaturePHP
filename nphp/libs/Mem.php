@@ -1,6 +1,6 @@
 <?php
 #/*
-#* 9Tree Varbay Class - v0.2
+#* 9Tree Varbay Class - v0.3.5
 #* Useful variables holding class
 #*/
 

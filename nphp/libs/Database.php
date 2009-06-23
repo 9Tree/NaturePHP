@@ -49,7 +49,7 @@ abstract class Database {
 		$args=Utils::combine_args(func_get_args(), 0, array('type' => 'mysql'));
 		
 		if(!in_array($args['type'], Database::$types)){
-			trigger_error('Unrecognized database type "'.$type.'"', E_USER_ERROR);
+			trigger_error('<strong>Database</strong> :: Unrecognized database type "'.$type.'"', E_USER_ERROR);
 			return null;
 		}
 		

@@ -1,6 +1,6 @@
 <?php
 #/*
-#* 9Tree Enviornment Check Class - v0.2.2
+#* 9Tree Enviornment Check Class - v0.3.5
 #* Request headers funcionalities
 #*/
 

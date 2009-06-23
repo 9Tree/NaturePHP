@@ -1,6 +1,6 @@
 <?php
 #/*
-#* 9Tree Templates Class - v0.1
+#* 9Tree Templates Class - v0.3.5
 #* Templates class
 #*/
 

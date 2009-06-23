@@ -9,14 +9,14 @@
 #*/
 
 //check required PHP_VERSION
-if(version_compare(PHP_VERSION, '5.0.0')!==1){
+if(!version_compare(PHP_VERSION, '5.0.0', '>=')){
 	trigger_error('NaturePhp requires at least PHP v5.x', E_USER_ERROR);
 	die('NaturePhp requires at least php v5.x');
 }
 
 
 #/*
-#* NaturePhp Nphp Class - v0.2.1
+#* NaturePhp Nphp Class - v0.3.5
 #* Default NaturePhp environment class
 #*/
 

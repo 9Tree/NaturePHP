@@ -1,6 +1,6 @@
 <?php
 #/*
-#* 9Tree Utilities Class - v0.2
+#* 9Tree Utilities Class - v0.3.5
 #* Useful stuff
 #*/
 
@@ -126,7 +126,38 @@ class Utils{
 				} else $qstr.=$var."=".$value;
 			}
 		}
-		return $qstr;
+		return substr($qstr, 1);
+	}
+	
+	//insert a value into a specific position in an array (following int values get shifted forward +1)
+	static function array_insert(&$array, $insert, $position) {
+		if(!isset($array[$position])){
+			$array[$position] = $insert;
+		} elseif(!is_numeric($position)){
+			trigger_error('<strong>Utils::array_insert()</strong> :: string position "'.$position.'" will be overwritten.', E_USER_NOTICE);
+			$array[$position]=$insert;
+		} else {
+			//inserts value into position and shifts other values forward
+			print 'rebuilding array at '.$position.'...';
+			$count=count($array);
+			$tmp=null;
+			$tmp2=null;
+			for($i=$position; true; $i++){
+				if(isset($array[$i])){
+					if($i==$position){
+						$tmp=$array[$i];
+						$array[$i]=$insert;
+					} else {
+						$tmp2=$tmp;
+						$tmp=$array[$i];
+						$array[$i]=$tmp2;
+					}
+				} else {
+					$array[$i]=$tmp;
+					break;
+				}
+			}
+		}	
 	}
 }
 ?>

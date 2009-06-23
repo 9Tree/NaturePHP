@@ -13,11 +13,12 @@ class Database_odbc extends Database {
 							'dsn_type'		=> 'mssql',
 							'dsn'			=> null, 
 							'user'			=> null, 
-							'password'		=> null
+							'password'		=> null,
+							'cursor_type'	=> SQL_CUR_USE_ODBC
 							));
 							
 		//tries connection
-		if(!$this->connection = odbc_connect($args['dsn'], $args['user'] , $args['password'], SQL_CUR_USE_ODBC)){
+		if(!$this->connection = odbc_connect($args['dsn'], $args['user'] , $args['password'], $args['cursor_type'])){
 			trigger_error('<strong>Database</strong> :: ODBC Database connection failed', E_USER_WARNING);
 			return null;
 		}
