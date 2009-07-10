@@ -96,25 +96,29 @@ _Methods_
 Checks if Class is loaded in the NaturePhp environment<br />
 eg. [ @Nphp::lib_is_loaded('N');@ ]
 
+
 *lib_exists*<br />
 // @bool Nphp::lib_exists(string $lib [, $complete_path=false])@<br />
 Checks if Class is available in the NaturePhp environment<br />
-eg. [ @Nphp::lib_exists('N');@ ]<br />
+eg. [ @Nphp::lib_exists('N');@ ]
+
 
 *nphp_folder*<br />
 // @string Nphp::nphp_folder()@<br />
 Returns "nphp/" folder full physical path<br />
-eg. [ @print Nphp::nphp_folder();@ ]<br />
+eg. [ @print Nphp::nphp_folder();@ ]
+
 
 *lib_path*<br />
 // @string Nphp::lib_path(string $lib)@<br />
 Return full physical path to file for class $lib<br />
-eg. [ @Nphp::lib_path('N');@ ]<br />
+eg. [ @Nphp::lib_path('N');@ ]
+
 
 *load_lib*<br />
 // @void Nphp::load_lib(string $lib [, $complete_path=false])@<br />
 Loads a class from NaturePhp's Library (you don't really need to use this, all libs are autoloaded when necessary by default)<br />
-eg. [ @Nphp::load_lib('N');@ ]<br />
+eg. [ @Nphp::load_lib('N');@ ]
 
 
 _Properties_
