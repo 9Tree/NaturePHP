@@ -9,7 +9,7 @@
 <h2>
 --#########################- README INDEX
 </h2>
---<br />
+
 
 <ul>
 	<li><p>1: Installation</p></li>
@@ -48,7 +48,7 @@ All paths, unless otherwise noted, are defined as if you are running an instance
 <h2>	
 --#########################- 1: INSTALLATION
 </h2>
---<br />
+
 
 <p>
 Requirements:<br />
@@ -65,7 +65,7 @@ NaturePHP requires PHP 5+, preferably 5.2+, ideally 5.3+.
 <h2>
 --#########################- 2: USAGE
 </h2>
---<br />
+
 
 <ol>
 	<li><p><b>Using Lib Classes //</b><br />
@@ -85,7 +85,7 @@ NaturePHP requires PHP 5+, preferably 5.2+, ideally 5.3+.
 <h2>
 --#########################- 3: INCLUDED CLASSES (QUICK DOCUMENTATION)
 </h2>
---<br />
+
 <p><b>Documentation notes:</b></p>
 <p>
 the arguments {options} are interpreted via Utils::combine_args() and should be an options array, object, querystring or multiple arguments of the previous types.<br />
@@ -104,7 +104,7 @@ The rest of the documentation follows most of the rules used at php.net for php 
 <h3>
 --#########################- Nphp
 </h3>
---<br />
+
 <pre>
 3.01: Nphp				#Default NaturePhp environment class //
 Notes: 	You don't really should need to use this class, this is mainly for internal use of the autoloader and management UI.
@@ -147,7 +147,7 @@ eg. [ <code>if(class_exists('Nphp')) print "You're using NaturePhp v".Nphp::$ver
 <h3>
 --#########################-- Log
 </h3>
---<br />
+
 <pre>
 3.02: Log				#Error/debug background system
 Note: This class is self-instanced
@@ -192,7 +192,7 @@ Note: after you've initiated N [ <code>Log::init(bool $debug);</code> ] when can
 <h3>
 --#########################-- Check
 </h3>
---<br />
+
 <pre>
 3.03: Check			#Check stuff (client and server environments, variables correctness, etc)
 Note: This class is static
@@ -384,7 +384,7 @@ eg. [ <code>if(Check::request_inHeader("Accept", "binary")) print "You are accep
 <h3>
 --#########################-- Utils
 </h3>
---<br />
+
 <pre>
 3.04: Utils		#Utilities (variable transformations, arrays, options, etc)
 Note: This class is static
@@ -421,7 +421,7 @@ eg. [ <code>Utils::array_insert($array, 'test', 3);</code> ]
 <h3>
 --#########################-- Text
 </h3>
---<br />
+
 <pre>
 3.05: Text		#Text functionalities (strings, html, words, characters, etc)
 Note: This class is static
@@ -473,7 +473,7 @@ eg. [ <code>Text::to_html("Hi!\nI'm Joe.");</code> ]
 <h3>
 --#########################-- Path
 </h3>
---<br />
+
 <pre>
 3.06: Path			#Path/url string transformations
 Note: This class is self-instanced
@@ -531,7 +531,7 @@ eg. [ <code>Path::sanitize_url("http;//wWw.example.com/exam|ple.%0dphp");</code>
 <h3>
 --########################-- Mem
 </h3>
---<br />
+
 <pre>
 3.07: Mem			#Global cache system (big variables, file cache, etc)
 Note: This class is self-instanced
@@ -586,7 +586,7 @@ eg. [ <code>if(Mem::is_set("my_location/example.txt", "some_file_pool")) print "
 <h3>
 --#########################-- Headers
 </h3>
---<br />
+
 <pre>
 3.08: Headers		#HTTP Headers functionalities
 Note: This class is static
@@ -644,7 +644,7 @@ eg. [ <code>var_dump(Headers::get_all());</code> ]
 <h3>
 --#########################-- Disk
 </h3>
---<br />
+
 <pre>
 3.09: Disk			#Filesystem functionalities
 Note: This class is static
@@ -665,7 +665,7 @@ eg. [ <code>Disk::sanitize_file_name("nphp/manage/includes/test.php");</code> ]
 <h3>
 --#########################-- Format
 </h3>
---<br />
+
 <pre>
 3.10: Format		#Measures/conversion/standards
 Note: This class is static
@@ -687,7 +687,7 @@ eg. [ <code>Format::number_i18n(10000.05, 2);</code> ]
 <h3>
 --#########################-- Time
 </h3>
---<br />
+
 <pre>
 3.11: Time			#Time and Date functionalities
 Note: This class is static
@@ -719,7 +719,7 @@ eg. [ <code>Time::stopwatch_stop('MyTimer');</code> ]
 <h3>
 --#########################-- Template
 </h3>
---<br />
+
 <pre>
 3.12: Template			#Templates manager class
 
@@ -749,7 +749,7 @@ eg. [ <code>$Template_instance->render();</code> ]
 <h3>
 --#########################-- Database
 </h3>
---<br />
+
 <pre>
 3.13: Database		#sql interface (originally based on dbFacile by greaterscope)
 
@@ -839,7 +839,7 @@ eg. [ <code>$Database_inst=&Database::instances['myName'];</code> ]
 <h3>	
 --#########################-- Event
 </h3>
---<br />
+
 <pre>
 3.14: Event		#Event/action and filtering functionalities (based on Wordpress add_action and add_filter)
 Note: This class is static
