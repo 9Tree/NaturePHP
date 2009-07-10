@@ -3,44 +3,35 @@ h2. NaturePHP Pack v0.3.6
 <small>10/07/2009</small>
 
 
-*NaturePHP* : <a href="http://naturephp.org" title="Open source auto-loaded library system for php">http://naturephp.org</a>
+*NaturePHP* : "http://naturephp.org":http://naturephp.org
 
 
 
 h2. --######################### README INDEX
 
 
-<ul>
-<li>1: Installation</li>
-
-<li>2: Usage</li>
-
-<li>3: Included classes (Quick Documentation)
-	<ul>
-		<li>3.01: Nphp ...... #Default NaturePhp environment class (loaded directly in init.php)</li>
-		<li>3.02: Log ....... #Error/debug background system</li>
-		<li>3.03: Check ..... #Check stuff (client and server environments, variables correctness, etc)</li>
-		<li>3.04: Utils ..... #Utilities (variable transformations, arrays, options, etc)</li>
-		<li>3.05: Text ...... #Text functionalities (strings, html, words, characters, etc)</li>
-		<li>3.06: Path ...... #Path/url string transformations</li>
-		<li>3.07: Mem ....... #Global cache system (big variables, file cache, etc)</li>
-		<li>3.08: Headers ... #HTTP Headers functionalities</li>
-		<li>3.09: Disk ...... #Filesystem functionalities</li>
-		<li>3.10: Format .... #Measures/conversion/standards</li>
-		<li>3.11: Time ...... #Time and Date functionalities</li>
-		<li>3.12: Template .. #Templates manager class</li>
-		<li>3.13: Database .. #Awesome sql interface (based on dbFacile by greaterscope)</li>
-		<li>3.14: Event ..... #Event/action and filtering functionalities (based on Wordpress add_action and add_filter)</li>
-	</ul>
-	
-</li>
-</ul>
+* 1: Installation
+* 2: Usage
+* 3: Included classes (Quick Documentation)
+** 3.01: Nphp ...... #Default NaturePhp environment class (loaded directly in init.php)</li>
+** 3.02: Log ....... #Error/debug background system</li>
+** 3.03: Check ..... #Check stuff (client and server environments, variables correctness, etc)</li>
+** 3.04: Utils ..... #Utilities (variable transformations, arrays, options, etc)</li>
+** 3.05: Text ...... #Text functionalities (strings, html, words, characters, etc)</li>
+** 3.06: Path ...... #Path/url string transformations</li>
+** 3.07: Mem ....... #Global cache system (big variables, file cache, etc)</li>
+** 3.08: Headers ... #HTTP Headers functionalities</li>
+** 3.09: Disk ...... #Filesystem functionalities</li>
+** 3.10: Format .... #Measures/conversion/standards</li>
+** 3.11: Time ...... #Time and Date functionalities</li>
+** 3.12: Template .. #Templates manager class</li>
+** 3.13: Database .. #Awesome sql interface (based on dbFacile by greaterscope)</li>
+** 3.14: Event ..... #Event/action and filtering functionalities (based on Wordpress add_action and add_filter)</li>
 
 
-
-Notes: 
+<small>Notes: 
 All [ ] brackets in this readme file indicate code examples (eg. [ @phpinfo();@ ] ).	
-All paths, unless otherwise noted, are defined as if you are running an instance (file.php) at a folder in which the "nphp/" subfolder is located.	
+All paths, unless otherwise noted, are defined as if you are running an instance (file.php) at a folder in which the "nphp/" subfolder is located.	</small>
 
 
 
@@ -52,12 +43,9 @@ h2.	--######################### 1: INSTALLATION
 Requirements:
 NaturePHP requires PHP 5+, preferably 5.2+, ideally 5.3+.
 
-<ol>
-<li>Copy "nphp/" folder to your site's folder (or whatever subfolder you wish).</li>
-<li>Use [ @include('nphp/init.php');@ ] to include NaturePHP's autoloader into you site/app instance.
-   		<small>(or can include it in your header/conf/init file?)</small>
-</li>
-</ol>
+# Copy "nphp/" folder to your site's folder (or whatever subfolder you wish).
+# Use [ @include('nphp/init.php');@ ] to include NaturePHP's autoloader into you site/app instance.
+<small>(or can include it in your header/conf/init file?)</small>
 
 
 
@@ -66,18 +54,14 @@ h2. --######################### 2: USAGE
 
 <ol>
 <li>*Using Lib Classes //*
-	Instance any [ @new Example();@ ] or call [ @Example::Method();@ ] and NaturePHP automatically loads the class for you if not yet loaded.
-</li>
+Instance any [ @new Example();@ ] or call [ @Example::Method();@ ] and NaturePHP automatically loads the class for you if not yet loaded.</li>
 <li>*Using your own classes //*
-	All available classes are stored at "nphp/libs/", if you want to use some of your own classes just add them to this folder.
-	All classes should be standard php classes [ @class Example{ }@ ] at file "Example.php".
-	Therefore, using a non-loaded class [ @new Example();@ ] in your instance will result in NaturePHP autoloading the file "nphp/libs/Example.php".
-</li>
+All available classes are stored at "nphp/libs/", if you want to use some of your own classes just add them to this folder.
+All classes should be standard php classes [ @class Example{ }@ ] at file "Example.php".
+Therefore, using a non-loaded class [ @new Example();@ ] in your instance will result in NaturePHP autoloading the file "nphp/libs/Example.php".</li>
 <li>*Checking if you are on a NaturePhp enviornment //*
-	use [ @if(class_exists('Nphp')) print "You're using NaturePhp v".Nphp::version;@ ]
-</li>
+use [ @if(class_exists('Nphp')) print "You're using NaturePhp v".Nphp::version;@ ]</li>
 </ol>
-
 
 
 h2. --######################### 3: INCLUDED CLASSES (QUICK DOCUMENTATION)
@@ -99,11 +83,12 @@ The rest of the documentation follows most of the rules used at php.net for php 
 h3. --######################### Nphp
 
 
-3.01: Nphp				#Default NaturePhp environment class //
-Notes: 	You don't really should need to use this class, this is mainly for internal use of the autoloader and management UI.
-		This class is static
+3.01: Nphp .......... #Default NaturePhp environment class //
+<small>Notes: 	
+You don't really should need to use this class, this is mainly for internal use of the autoloader and management UI.
+This class is static</small>
 
-//Methods
+_Methods_
 lib_is_loaded
 lib_exists
 nphp_folder
@@ -111,11 +96,11 @@ lib_path
 load_lib
 
 -# @bool Nphp::lib_is_loaded(string $lib)@
-Cehcks if Class is loaded in the NaturePhp environment
+Checks if Class is loaded in the NaturePhp environment
 eg. [ @Nphp::lib_is_loaded('N');@ ]
 
 -# @bool Nphp::lib_exists(string $lib [, $complete_path=false])@
-Cehcks if Class is available in the NaturePhp environment
+Checks if Class is available in the NaturePhp environment
 eg. [ @Nphp::lib_exists('N');@ ]
 
 -# @string Nphp::nphp_folder()@
@@ -131,7 +116,7 @@ Loads a class from NaturePhp's Library (you don't really need to use this, all l
 eg. [ @Nphp::load_lib('N');@ ]
 
 
-//Properties
+_Properties_
 version; // NaturePhp core version
 eg. [ @if(class_exists('Nphp')) print "You're using NaturePhp v".Nphp::$version;@ ]
 
@@ -142,9 +127,9 @@ h3. --######################### Log
 
 
 3.02: Log				#Error/debug background system
-Note: This class is self-instanced
+<small>Note: This class is self-instanced</small>
 
-//Methods
+_Methods_
 init
 debug
 notify
@@ -186,9 +171,9 @@ h3. --######################### Check
 
 
 3.03: Check			#Check stuff (client and server environments, variables correctness, etc)
-Note: This class is static
+<small>Note: This class is static</small>
 
-//Methods
+_Methods_
 http_host
 email
 username
@@ -223,7 +208,7 @@ is_xml_requested
 request_accepts
 request_inHeader
 
-//common usage
+_common usage_
 -# @bool Check::http_host(string $http_host)@
 Checks if string is a valid email;
 eg. [ @if(Check::http_host("example.domain.com")) print "HTTP Host correct!";@ ]
@@ -253,7 +238,7 @@ Checks if string is a valid url;
 eg. [ @if(Check::url("http://my.domain.com/app.php?id=1", true)) print "Url format correct!";@ ]
 
 
-//Server Type Detection
+_Server Type Detection_
 -# @bool Check::server_is_apache()@
 Checks if server is Apache based;
 eg. [ @if(Check::server_is_apache()) print "This is an apache based server!";@ ]
@@ -263,7 +248,7 @@ Checks if server is Apache based;
 eg. [ @if(Check::server_is_iis()) print "This is a Microsoft IIS server!";@ ]
 
 
-//Server OS Detection
+_Server OS Detection_
 -# @bool Check::server_is_unix()@
 Checks if server is Unix based;
 eg. [ @if(Check::server_is_unix()) print "This is an Unix based server!";@ ]
@@ -273,7 +258,7 @@ Checks if server is Windows based;
 eg. [ @if(Check::server_is_windows()) print "This is a Windows based server!";@ ]
 
 
-//Client OS Detection
+_Client OS Detection_
 -# @bool Check::client_is_mac()@
 Checks if client is Mac based;
 eg. [ @if(Check::client_is_mac()) print "You are on a Mac!";@ ]
@@ -291,7 +276,7 @@ Checks if client is Linux based;
 eg. [ @if(Check::client_is_linux()) print "You are on Linux!";@ ]
 
 
-//Client Browser Detection
+_Client Browser Detection_
 -# @bool Check::browser_is_lynx()@
 Checks if browser is Lynx;
 eg. [ @if(Check::browser_is_lynx()) print "You are using Lynx!";@ ]
@@ -329,7 +314,7 @@ Checks if browser is Google Chrome;
 eg. [ @if(Check::browser_is_chrome()) print "You are using Chrome!";@ ]
 
 
-//Request type detection
+_Request type detection_
 -# @bool Check::request_is_ajax()@
 Checks if request was made in ajax;
 eg. [ @if(Check::request_is_ajax()) print "You are requesting via Ajax!";@ ]
@@ -339,7 +324,7 @@ Checks if request was made in SSL (https);
 eg. [ @if(Check::request_is_ssl()) print "You are requesting via SSL (https)!";@ ]
 
 
-//Requested format detection
+_Requested format detection_
 -# @bool Check::is_json_requested()@
 Checks if JSON output is requested;
 eg. [ @if(Check::is_json_requested()) print "You are requesting JSON content!";@ ]
@@ -361,7 +346,7 @@ Checks if XML output is requested;
 eg. [ @if(Check::is_xml_requested()) print "You are requesting XML content!";@ ]
 
 
-//generic functions
+_generic functions_
 -# @bool Check::request_accepts(string $output)@
 Checks if request accepts type of $output;
 eg. [ @if(Check::request_accepts("binary")) print "You are accepting binary content!";@ ]
@@ -377,9 +362,9 @@ h3. --######################### Utils
 
 
 3.04: Utils		#Utilities (variable transformations, arrays, options, etc)
-Note: This class is static
+<small>Note: This class is static</small>
 
-//Methods
+_Methods_
 mixed_to_array
 combine_args
 s_var_dump
@@ -413,9 +398,9 @@ h3. --######################### Text
 
 
 3.05: Text		#Text functionalities (strings, html, words, characters, etc)
-Note: This class is static
+<small>Note: This class is static</small>
 
-//Methods
+_Methods_
 str_replace_count
 filter_nr_words
 correct_html_urls
@@ -438,23 +423,23 @@ filters all src, bgimage, href and css's url() in html string through Path::url_
 eg. [ @Text::correct_html_urls($html_content, "path/to/source_file.html");@ ]
 
 -# @string Text::simple_spaces(string $str)@
-//remove extras spaces, tabs, etc.
+_remove extras spaces, tabs, etc._
 eg. [ @Text::simple_spaces(" Hello,   World	!");@ ]
 
 -# @string Text::to_javascript(string $str)@
-//convert a string to a safe javascript string
+_convert a string to a safe javascript string_
 eg. [ @Text::to_javascript("Hi!\n I'm Joe.");@ ]
 
 -# @string Text::to_plain(string $str)@
-//convert an html string to plain text
+_convert an html string to plain text_
 eg. [ @Text::to_plain("Hi!<br /> I'm <em>Joe</em>.");@ ]
 
 -# @string Text::to_plain_simple(string $str)@
-//plain simple - to_plain followed by simple_spaces
+_plain simple - to_plain followed by simple_spaces_
 eg. [ @Text::to_plain_simple("Hi!   <br />	I'm  <em>Joe</em>.");@ ]
 
 -# @string Text::to_html(string $str)@
-//convert a plain text string to html
+_convert a plain text string to html_
 eg. [ @Text::to_html("Hi!\nI'm Joe.");@ ]
 
 
@@ -464,9 +449,9 @@ h3. --######################### Path
 
 
 3.06: Path			#Path/url string transformations
-Note: This class is self-instanced
+<small>Note: This class is self-instanced</small>
 
-//Methods
+_Methods_
 to
 url_to
 put
@@ -520,9 +505,9 @@ h3. --######################## Mem
 
 
 3.07: Mem			#Global cache system (big variables, file cache, etc)
-Note: This class is self-instanced
+<small>Note: This class is self-instanced</small>
 
-//Methods
+_Methods_
 set
 get
 setRef
@@ -532,7 +517,7 @@ unlock
 is_locked
 is_set
 
-//actions
+_actions_
 -# @bool Mem::set(var $key, var $value, string $pool)@
 set's value associated with this key, in this pool;
 eg. [ @Mem::set("my_location/example.txt", file_get_contents("my_location/example.txt"), "file_pool");@ ]
@@ -549,7 +534,7 @@ eg. [ @Mem::lock("my_location/example.txt", "some_file_pool");@ ]
 unlock's this key, in this pool;
 eg. [ @Mem::unlock("my_location/example.txt", "some_file_pool");@ ]
 
-//by reference
+_by reference_
 -# @bool Mem::setRef(var $key, var &$value, string $pool)@
 set's value associated with this key by reference, in this pool;
 eg. [ @Mem::setRef("some_object", $my_object, "some_objects_pool");@ ]
@@ -558,7 +543,7 @@ eg. [ @Mem::setRef("some_object", $my_object, "some_objects_pool");@ ]
 get's referenced value associated with this key, in this pool;
 eg. [ @Mem::getRef("my_location/example.txt", "some_file_pool");@ ]
 
-//checks
+_checks_
 -# @bool Mem::is_locked(var $key, string $pool)@
 check's if this key is locked, in this pool;
 eg. [ @if(Mem::is_locked("my_location/example.txt", "some_file_pool")) print "content 'my_location/example.txt' is locked!";@ ]
@@ -574,9 +559,9 @@ h3. --######################### Headers
 
 
 3.08: Headers		#HTTP Headers functionalities
-Note: This class is static
+<small>Note: This class is static</small>
 
-//Methods
+_Methods_
 redirect
 http_status
 json
@@ -631,9 +616,9 @@ h3. --######################### Disk
 
 
 3.09: Disk			#Filesystem functionalities
-Note: This class is static
+<small>Note: This class is static</small>
 
-//Methods
+_Methods_
 make_dir
 sanitize_file_name
 
@@ -652,9 +637,9 @@ h3. --######################### Format
 
 
 3.10: Format		#Measures/conversion/standards
-Note: This class is static
+<small>Note: This class is static</small>
 
-//Methods
+_Methods_
 byte_size
 number_i18n
 
@@ -673,9 +658,9 @@ h3. --######################### Time
 
 
 3.11: Time			#Time and Date functionalities
-Note: This class is static
+<small>Note: This class is static</small>
 
-//Methods
+_Methods_
 mysql_time
 stopwatch_start
 stopwatch_read
@@ -705,7 +690,7 @@ h3. --######################### Template
 
 3.12: Template			#Templates manager class
 
-//Methods
+_Methods_
 Template
 addContent
 render
@@ -724,10 +709,10 @@ returns rendered current instance;
 eg. [ @$Template_instance->render();@ ]
 
 
-Notes: 
+<small>Notes:</small>
 
 fn1. Within the template, keys can be defined as "{#key/}" or "{#key}some content example{#/key}" (similar to xhtml's "@<tag/>@" and "@<tag>content</tag>@"). 
-Instead of "{}" you can use 'mode' specific comments (e.g. html "@<!--#key/-->@", javascript "/*#key*/some content/*#/key*/", etc)
+<small>Instead of "{}" you can use 'mode' specific comments (e.g. html "@<!--#key/-->@", javascript "/*#key*/some content/*#/key*/", etc)</small>
 
 
 
@@ -736,7 +721,7 @@ h3. --######################### Database
 
 3.13: Database		#sql interface (originally based on dbFacile by greaterscope)
 
-//Methods
+_Methods_
 open
 execute
 fetch
@@ -748,7 +733,7 @@ insert
 update
 delete
 
-//instance function
+_instance function_
 -# @instance Database::open({options})@
 creates a new database connection;
 available {options} - string 'type', string 'database', string 'user', string 'password', string 'port',string 'host',
@@ -756,7 +741,7 @@ available {options} - string 'type', string 'database', string 'user', string 'p
 					string 'dsn', string 'dsn_type', string 'cursor_type'
 eg. [ @$Database_inst = Database::open(array('type'=>'mysql', 'database'=>'database_name', 'user'=>'myUser', 'password'=>'myPwd');@ ]
 
-//classic dbFacile functions
+_classic dbFacile functions_
 -# @bool Database::execute(string $sql_query [, array $parameters = array() [, bool $cache = true]])@
 executes a query in the database;
 eg. [ @$Database_inst->execute("update users set password=md5(?) where user_id=?", array($newUserPwd, $user_id));@ ]
@@ -793,7 +778,7 @@ returns rendered current instance;
 eg. [ @$Database_inst->insert(array("email"=>$email, $password=>md5($password), is_active=>true), "users");@ ]
 
 
-//enhanced functions by 9Tree
+_enhanced functions by 9Tree_
 -# @int Database::update(array(data), string $table [, {options} $options])@
 returns number of updated rows;
 available {options} - array where, array group, array order, string limit
@@ -807,7 +792,7 @@ eg. [ @$Database_inst->delete("users", array('where'=>array('location=? and is_a
 	This query is the same as "delete from users where location='Portugal' and is_active=1";
 
 
-//properties
+_properties_
 instance; // last created instance
 eg. [ @$Database_inst=&Database::instance;@ ]
 	gets the latest Database::open instanced
@@ -825,9 +810,9 @@ h3. --######################### Event
 
 
 3.14: Event		#Event/action and filtering functionalities (based on Wordpress add_action and add_filter)
-Note: This class is static
+<small>Note: This class is static</small>
 
-//Methods
+_Methods_
 add
 fire
 add_filter
