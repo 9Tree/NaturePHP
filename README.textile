@@ -92,9 +92,9 @@ This class is static</small>
 _Methods_
 
 * *lib_is_loaded*<br />
-// @bool Nphp::lib_is_loaded(string $lib)@<br />
-Checks if Class is loaded in the NaturePhp environment<br />
-eg. [ @Nphp::lib_is_loaded('N');@ ]<br />
+// @bool Nphp::lib_is_loaded(string $lib)@
+Checks if Class is loaded in the NaturePhp environment
+eg. [ @Nphp::lib_is_loaded('N');@ ]
 
 * *lib_exists*<br />
 // @bool Nphp::lib_exists(string $lib [, $complete_path=false])@<br />
