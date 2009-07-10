@@ -53,13 +53,13 @@ h2. --######################### 2: USAGE
 
 
 <ol>
-<li>*Using Lib Classes //*
+<li>*Using Lib Classes //*<br />
 Instance any [ @new Example();@ ] or call [ @Example::Method();@ ] and NaturePHP automatically loads the class for you if not yet loaded.</li>
-<li>*Using your own classes //*
+<li>*Using your own classes //*<br />
 All available classes are stored at "nphp/libs/", if you want to use some of your own classes just add them to this folder.
-All classes should be standard php classes [ @class Example{ }@ ] at file "Example.php".
+All classes should be standard php classes [ @class Example{ }@ ] at file "Example.php".<br />
 Therefore, using a non-loaded class [ @new Example();@ ] in your instance will result in NaturePHP autoloading the file "nphp/libs/Example.php".</li>
-<li>*Checking if you are on a NaturePhp enviornment //*
+<li>*Checking if you are on a NaturePhp enviornment //*<br />
 use [ @if(class_exists('Nphp')) print "You're using NaturePhp v".Nphp::version;@ ]</li>
 </ol>
 
@@ -84,8 +84,9 @@ h3. --######################### Nphp
 
 
 3.01: Nphp .......... #Default NaturePhp environment class //
-<small>Notes: 	
-You don't really should need to use this class, this is mainly for internal use of the autoloader and management UI.
+
+<small>Notes:<br /> 	
+You don't really should need to use this class, this is mainly for internal use of the autoloader and management UI.<br />
 This class is static</small>
 
 _Methods_
@@ -126,7 +127,8 @@ eg. [ @if(class_exists('Nphp')) print "You're using NaturePhp v".Nphp::$version;
 h3. --######################### Log
 
 
-3.02: Log				#Error/debug background system
+3.02: Log .......... #Error/debug background system
+
 <small>Note: This class is self-instanced</small>
 
 _Methods_
@@ -170,7 +172,8 @@ Note: after you've initiated N [ @Log::init(bool $debug);@ ] when can use trigge
 h3. --######################### Check
 
 
-3.03: Check			#Check stuff (client and server environments, variables correctness, etc)
+3.03: Check .......... #Check stuff (client and server environments, variables correctness, etc)
+
 <small>Note: This class is static</small>
 
 _Methods_
@@ -361,7 +364,8 @@ eg. [ @if(Check::request_inHeader("Accept", "binary")) print "You are accepting 
 h3. --######################### Utils
 
 
-3.04: Utils		#Utilities (variable transformations, arrays, options, etc)
+3.04: Utils	.......... #Utilities (variable transformations, arrays, options, etc)
+
 <small>Note: This class is static</small>
 
 _Methods_
@@ -397,7 +401,8 @@ eg. [ @Utils::array_insert($array, 'test', 3);@ ]
 h3. --######################### Text
 
 
-3.05: Text		#Text functionalities (strings, html, words, characters, etc)
+3.05: Text .......... #Text functionalities (strings, html, words, characters, etc)
+
 <small>Note: This class is static</small>
 
 _Methods_
@@ -448,7 +453,8 @@ eg. [ @Text::to_html("Hi!\nI'm Joe.");@ ]
 h3. --######################### Path
 
 
-3.06: Path			#Path/url string transformations
+3.06: Path .......... #Path/url string transformations
+
 <small>Note: This class is self-instanced</small>
 
 _Methods_
@@ -504,7 +510,8 @@ eg. [ @Path::sanitize_url("http;//wWw.example.com/exam|ple.%0dphp");@ ]
 h3. --######################## Mem
 
 
-3.07: Mem			#Global cache system (big variables, file cache, etc)
+3.07: Mem .......... #Global cache system (big variables, file cache, etc)
+
 <small>Note: This class is self-instanced</small>
 
 _Methods_
@@ -558,7 +565,8 @@ eg. [ @if(Mem::is_set("my_location/example.txt", "some_file_pool")) print "conte
 h3. --######################### Headers
 
 
-3.08: Headers		#HTTP Headers functionalities
+3.08: Headers .......... #HTTP Headers functionalities
+
 <small>Note: This class is static</small>
 
 _Methods_
@@ -615,7 +623,8 @@ eg. [ @var_dump(Headers::get_all());@ ]
 h3. --######################### Disk
 
 
-3.09: Disk			#Filesystem functionalities
+3.09: Disk .......... #Filesystem functionalities
+
 <small>Note: This class is static</small>
 
 _Methods_
@@ -636,7 +645,8 @@ eg. [ @Disk::sanitize_file_name("nphp/manage/includes/test.php");@ ]
 h3. --######################### Format
 
 
-3.10: Format		#Measures/conversion/standards
+3.10: Format .......... #Measures/conversion/standards
+
 <small>Note: This class is static</small>
 
 _Methods_
@@ -657,7 +667,8 @@ eg. [ @Format::number_i18n(10000.05, 2);@ ]
 h3. --######################### Time
 
 
-3.11: Time			#Time and Date functionalities
+3.11: Time .......... #Time and Date functionalities
+
 <small>Note: This class is static</small>
 
 _Methods_
@@ -688,7 +699,7 @@ eg. [ @Time::stopwatch_stop('MyTimer');@ ]
 h3. --######################### Template
 
 
-3.12: Template			#Templates manager class
+3.12: Template .......... #Templates manager class
 
 _Methods_
 Template
@@ -719,7 +730,7 @@ fn1. Within the template, keys can be defined as "{#key/}" or "{#key}some conten
 h3. --######################### Database
 
 
-3.13: Database		#sql interface (originally based on dbFacile by greaterscope)
+3.13: Database .......... #sql interface (originally based on dbFacile by greaterscope)
 
 _Methods_
 open
@@ -809,7 +820,8 @@ eg. [ @$Database_inst=&Database::instances['myName'];@ ]
 h3. --######################### Event
 
 
-3.14: Event		#Event/action and filtering functionalities (based on Wordpress add_action and add_filter)
+3.14: Event	.......... #Event/action and filtering functionalities (based on Wordpress add_action and add_filter)
+
 <small>Note: This class is static</small>
 
 _Methods_
