@@ -2,84 +2,73 @@ h2. NaturePhp Changelog
 
 h3. # v0.3.6
 
-<ul>
-<li>Path::url_to with better windows support (case insensitive);</li>
-<li>Corrected ODBC @_affectedRows();@</li>
-<li>Removed bug "$parameters" in @Database::delete();@</li>
-<li>Removed bug - incorrect "isLocked()", should be "is_locked()" in @Mem::setVar();@</li>
-</ul>
+* Path::url_to with better windows support (case insensitive);
+* Corrected ODBC @_affectedRows();@
+* Removed bug "$parameters" in @Database::delete();@
+* Removed bug - incorrect "isLocked()", should be "is_locked()" in @Mem::setVar();@
+
 
 
 h3. # v0.3.5
 
-<ul>
-<li>Many small </li>
-<li>Completely redesigned the Database class from scratch - MySQL and MSSQL (via ODBC) support;</li>
-<li>Now permanently tested within 3 different environments:</li>
-  
-<ul> 
-  <li>Linux (CentOS 5.3 x86_64 + Apache 2 + PHP 5.3 + MySQL 5.x);</li>
-  <li>Mac OSX (Leopard 10.5.7 + Apache 2 + PHP 5.2.x + MySQL 5.x);</li>
-  <li>Windows 2003 Server x64 (clustered) + IIS 6.0 + FastCGI + PHP 5.3 x64 + MS SQL 2005;</li>
-  </ul>
-<li>Passed E_NOTICE to warning-like level within Log debugger;</li>
-<li>Changed Path::this_url - options 'get_in' instead of 'qs_inclusions' and 'get_out' instead of 'qs_exclusions'.</li>
-<li>Path::this_url now also supports adding # hashes (anchors) to url. Option '#' added;</li>
-<li>Removed E_STRICT warnings in Mem class;</li>
-<li>Removed REQUEST_URI dependencies for better IIS support;</li>
-<li>Bug corrections: Time class reference assignements, removed debug template for Ajax, corrected debug layouts bugs</li>
-</ul>
+* Many small 
+* Completely redesigned the Database class from scratch - MySQL and MSSQL (via ODBC) support;
+* Now permanently tested within 3 different environments:
+** Linux (CentOS 5.3 x86_64 + Apache 2 + PHP 5.3 + MySQL 5.x);
+** Mac OSX (Leopard 10.5.7 + Apache 2 + PHP 5.2.x + MySQL 5.x);
+** Windows 2003 Server x64 (clustered) + IIS 6.0 + FastCGI + PHP 5.3 x64 + MS SQL 2005;
+* Passed E_NOTICE to warning-like level within Log debugger;
+* Changed Path::this_url - options 'get_in' instead of 'qs_inclusions' and 'get_out' instead of 'qs_exclusions'.
+* Path::this_url now also supports adding # hashes (anchors) to url. Option '#' added;
+* Removed E_STRICT warnings in Mem class;
+* Removed REQUEST_URI dependencies for better IIS support;
+* Bug corrections: Time class reference assignements, removed debug template for Ajax, corrected debug layouts bugs
+
 
 
 h3. # v0.3.3
 
-<ul>
-<li>Added has_warnings() to Log.</li>
-<li>Changed debug layout to pull-up container with debug report.</li>
-</ul>
+* Added has_warnings() to Log.
+* Changed debug layout to pull-up container with debug report.
+
 
 
 h3. # v0.3.2
 
-<ul>
-<li>Added simple_spaces, to_javascript, to_plain, to_plain_simple, to_html on Text class.</li>
-<li>Added full JSON and XML support for debug and error outputs to Log class.</li>
-</ul>
+* Added simple_spaces, to_javascript, to_plain, to_plain_simple, to_html on Text class.
+* Added full JSON and XML support for debug and error outputs to Log class.
+
 
 
 h3. # v0.3.1
 
-<ul>
-<li>Added Log::debug() for changing mode within instance.</li>
-<li>Added default debug report output on Log (in debug mode).</li>
-<li>Much prettier debug reports - thanks to Telmo.</li>
-</ul>
+* Added Log::debug() for changing mode within instance.
+* Added default debug report output on Log (in debug mode).
+* Much prettier debug reports - thanks to Telmo.
+
 
 
 h3. # v0.3
 
-<ul>
-<li>Changed N classes to more readable names ('N'=>'Log', 'Nchk'=>'Check', 'NdbFacile'=>'Database', 'Nfs'=>'Disk', 'Nmeasures'=>'Format', 'Nheaders'=>'Headers', 'Nmem'=>'Mem', 'Npath'=>'Path', 'Ntpl'=>'Template', 'Ntime'=>'Time', 'Ntext'=>'Text', 'Nutils'=>'Utils') - suggested by Telmo.</li>
-<li>Changed Nchk::request_getHeaders to Headers::get_all .</li>
-<li>Added exception logging to "Log" class.</li>
-<li>Changed N::log calls to trigger_error within "Database" class.</li>
-<li>Added correct_paths option to "Template" class.</li>
-<li>Changed Check::is_email to Check::email .</li>
-<li>Added email notification option to "Log" .</li>
-<li>Added functionalities to "Check" (http_host, username, ip_address, hex_color, phone_number, url, client_is_winxp, browser_is_firefox, browser_is_webkit, browser_is_safari, browser_is_chrome, request_is_ssl).</li>
-<li>Added gzip functionality to "Headers".</li>
-<li>Added correct_html_urls to "Text".</li>
-<li>Changed stopwatch in "Time" to stopwatch_start, stopwatch_read and stopwatch_stop for better and simpler usability.</li>
-<li>Many other minor bug corrections and improvements and some methods name change to lowercase.</li>
-<li>Removed double quotes when @get_magic_quotes_gpc();@ is on, at "Database" queries.</li>
-</ul>
+* Changed N classes to more readable names ('N'=>'Log', 'Nchk'=>'Check', 'NdbFacile'=>'Database', 'Nfs'=>'Disk', 'Nmeasures'=>'Format', 'Nheaders'=>'Headers', 'Nmem'=>'Mem', 'Npath'=>'Path', 'Ntpl'=>'Template', 'Ntime'=>'Time', 'Ntext'=>'Text', 'Nutils'=>'Utils') - suggested by Telmo.
+* Changed Nchk::request_getHeaders to Headers::get_all .
+* Added exception logging to "Log" class.
+* Changed N::log calls to trigger_error within "Database" class.
+* Added correct_paths option to "Template" class.
+* Changed Check::is_email to Check::email .
+* Added email notification option to "Log" .
+* Added functionalities to "Check" (http_host, username, ip_address, hex_color, phone_number, url, client_is_winxp, browser_is_firefox, browser_is_webkit, browser_is_safari, browser_is_chrome, request_is_ssl).
+* Added gzip functionality to "Headers".
+* Added correct_html_urls to "Text".
+* Changed stopwatch in "Time" to stopwatch_start, stopwatch_read and stopwatch_stop for better and simpler usability.
+* Many other minor bug corrections and improvements and some methods name change to lowercase.
+* Removed double quotes when @get_magic_quotes_gpc();@ is on, at "Database" queries.
+
 
 
 h3. # v0.2.1
 
-<ul>
-<li>Nphp class added to init.php, allows NaturePhp environment checking.</li>
-<li>PHP version check added to init.php - force PHP_version > 5.0.0</li>
-<li>N now recognizes different types and levels of errors (full @trigger_error() support).</li>
-<li>Made @Log::kill();@ prettier with ordered notices list and some cuter xhtml/css.</li>
-</ul>
+* Nphp class added to init.php, allows NaturePhp environment checking.
+* PHP version check added to init.php - force PHP_version > 5.0.0
+* N now recognizes different types and levels of errors (full @trigger_error() support).
+* Made @Log::kill();@ prettier with ordered notices list and some cuter xhtml/css.
