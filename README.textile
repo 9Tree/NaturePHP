@@ -6,8 +6,9 @@
 <b>NaturePHP</b> : <a href="http://naturephp.org" title="Open source auto-loaded library system for php">http://naturephp.org</a>
 
 <p>&nbsp;</p>
-
+<b>
 --#########################- README INDEX
+</b>
 --<br />
 
 <ul>
@@ -88,14 +89,15 @@ the arguments {options} are interpreted via Utils::combine_args() and should be 
 (eg. an options example {options} can be defined like [ <code>array('option1'=>'value1', 'option2'=>$value2)</code> ] ).
 </p>
 <p>
-"self-instanced" and "static" classes do not require to and should NOT be instanced ( [ <code>!! NO $var=new Example(); !!</code> ] ).<br />
+"self-instanced" and "static" classes do not require to and should NOT be instanced ( [ <code>$var=new Example();</code> ] ).<br />
 All methods in these classes should used statically [ <code>Example::method();</code> ] and NOT the instanced way [ <code>$var->method();</code> ]
 </p>
 <p>
 The rest of the documentation follows most of the rules used at php.net for php itself
 </p>
 
-<!-- to pass to html sometime... -->
+<p>&nbsp;</p>
+<small>Info below will be passed to textile sometime...</small>
 <pre>
 --#########################- Nphp
 --
