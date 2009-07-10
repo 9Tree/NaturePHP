@@ -64,6 +64,7 @@ use [ @if(class_exists('Nphp')) print "You're using NaturePhp v".Nphp::version;@
 </ol>
 
 
+
 h2. -//######################## 3: INCLUDED CLASSES (QUICK DOCUMENTATION)
 
 *Documentation notes:*
@@ -77,6 +78,7 @@ All methods in these classes should used statically [ @Example::method();@ ] and
 
 
 The rest of the documentation follows most of the rules used at php.net for php itself
+
 
 
 
@@ -129,6 +131,7 @@ eg. [ @if(class_exists('Nphp')) print "You're using NaturePhp v".Nphp::$version;
 
 
 
+
 h3. -//######################## Log
 
 
@@ -175,6 +178,7 @@ _Methods_
 
 
 <small>Note: after you've initiated N [ @Log::init(bool $debug);@ ] when can use trigger_error() throughout your application/libraries and N will collect your notices and errors and take according action.</small>
+
 
 
 
@@ -404,6 +408,7 @@ eg. [ @if(Check::request_inHeader("Accept", "binary")) print "You are accepting 
 
 
 
+
 h3. -//######################## Utils
 
 
@@ -441,6 +446,7 @@ eg. [ @Utils::build_querystring(array("type"=>"text", "value"=>"test"));@ ]
 // @string Utils::array_insert(array &$original_array, mixed $insert_piece, mixed $position)@<br />
 inserts value into specific array position, shifts higher items as necessary - overwrites position if $position is string;<br />
 eg. [ @Utils::array_insert($array, 'test', 3);@ ]
+
 
 
 
@@ -500,6 +506,7 @@ eg. [ @Text::to_plain_simple("Hi!   <br />	I'm  <em>Joe</em>.");@ ]
 // @string Text::to_html(string $str)@<br />
 convert a plain text string to html<br />
 eg. [ @Text::to_html("Hi!\nI'm Joe.");@ ]
+
 
 
 
@@ -569,6 +576,7 @@ eg. [ @Path::sanitize_url("http;//wWw.example.com/exam|ple.%0dphp");@ ]
 
 
 
+
 h3. -//####################### Mem
 
 
@@ -628,6 +636,7 @@ eg. [ @if(Mem::is_locked("my_location/example.txt", "some_file_pool")) print "co
 // @bool Mem::is_set(var $key, string $pool)@<br />
 check's if this key is set, in this pool;<br />
 eg. [ @if(Mem::is_set("my_location/example.txt", "some_file_pool")) print "content 'my_location/example.txt' is already set!";@ ]
+
 
 
 
@@ -698,6 +707,7 @@ eg. [ @var_dump(Headers::get_all());@ ]
 
 
 
+
 h3. -//######################## Disk
 
 
@@ -717,6 +727,7 @@ eg. [ @Disk::make_dir("nphp/manage/includes");@ ]
 // @string Disk::sanitize_file_name(string $filename)@<br />
 make sure new filename is simple and has standard characters;<br />
 eg. [ @Disk::sanitize_file_name("nphp/manage/includes/test.php");@ ]
+
 
 
 
@@ -779,6 +790,7 @@ eg. [ @Time::stopwatch_stop('MyTimer');@ ]
 
 
 
+
 h3. -//######################## Template
 
 
@@ -809,6 +821,7 @@ eg. [ @$Template_instance->render();@ ]
 
 fn1. Within the template, keys can be defined as "{#key/}" or "{#key}some content example{#/key}" (similar to xhtml's "@<tag/>@" and "@<tag>content</tag>@"). <br />
 <small>Instead of "{}" you can use 'mode' specific comments (e.g. html "@<!-//key/-->@", javascript "/*#key*/some content/*#/key*/", etc)</small>
+
 
 
 
