@@ -1,0 +1,840 @@
+<p>
+	<h2>NaturePHP Pack v0.3.6</h2>
+	<small>10/07/2009</small>
+</p>
+
+<b>NaturePHP<b/> : <a href="http://naturephp.org" title="Open source auto-loaded library system for php">http://naturephp.org</a>
+
+<p></p>
+
+<p>
+	<b>
+##########################<br />
+#*    README INDEX      *#<br />
+##########################<br />
+   </b>
+</p>
+
+<ul>
+	<li><p>1: Installation</p></li>
+
+	<li><p>2: Usage</p></li>
+
+	<li><p>3: Included classes (Quick Documentation)</p></li>
+		<ul>
+			<li>3.01: Nphp     #Default NaturePhp environment class (loaded directly in init.php)</li>
+			<li>3.02: Log      #Error/debug background system</li>
+			<li>3.03: Check    #Check stuff (client and server environments, variables correctness, etc)</li>
+			<li>3.04: Utils    #Utilities (variable transformations, arrays, options, etc)</li>
+			<li>3.05: Text     #Text functionalities (strings, html, words, characters, etc)</li>
+			<li>3.06: Path     #Path/url string transformations</li>
+			<li>3.07: Mem      #Global cache system (big variables, file cache, etc)</li>
+			<li>3.08: Headers  #HTTP Headers functionalities</li>
+			<li>3.09: Disk     #Filesystem functionalities</li>
+			<li>3.10: Format   #Measures/conversion/standards</li>
+			<li>3.11: Time     #Time and Date functionalities</li>
+			<li>3.12: Template #Templates manager class</li>
+			<li>3.13: Database #Awesome sql interface (based on dbFacile by greaterscope)</li>
+			<li>3.14: Event    #Event/action and filtering functionalities (based on Wordpress add_action and add_filter)</li>
+		</ul>
+		</p>
+	</li>
+</ul>
+	
+	
+<p>
+Notes: <br />
+All [ ] brackets in this readme file indicate code examples (eg. [ phpinfo(); ] ).	<br />
+All paths, unless otherwise noted, are defined as if you are running an instance (file.php) at a folder in which the "nphp/" subfolder is located.	<br />
+</p>
+
+<p></p>
+	
+<p>
+	<b>
+##########################<br />
+#*   1: INSTALLATION    *#<br />
+##########################<br />
+   </b>
+</p>
+<p>
+Requirements:<br />
+NaturePHP requires PHP 5+, preferably 5.2+, ideally 5.3+.
+</p>
+<ol>
+	<li>Copy "nphp/" folder to your site's folder (or whatever subfolder you wish).</li>
+	<li>Use [ include('nphp/init.php'); ] to include NaturePHP's autoloader into you site/app instance.<br />
+   		<small>(or can include it in your header/conf/init file?)</small>
+	</li>
+</ol>
+
+<p></p>
+
+<p>
+	<b>
+##########################<br />
+#*       2: USAGE       *#<br />
+##########################<br />
+   </b>
+</p>
+
+<ol>
+	<li><b>Using Lib Classes //</b><br />
+		Instance any [ new Example(); ] or call [ Example::Method(); ] and NaturePHP automatically loads the class for you if not yet loaded.
+	</li>
+	<li><b>Using your own classes //</b><br />
+		<p>All available classes are stored at "nphp/libs/", if you want to use some of your own classes just add them to this folder.<br />
+		All classes should be standard php classes [ class Example{ } ] at file "Example.php".</p>
+		Therefore, using a non-loaded class [ new Example(); ] in your instance will result in NaturePHP autoloading the file "nphp/libs/Example.php".
+	</li>
+	<li><b>Checking if you are on a NaturePhp enviornment //</b><br />
+		use [ if(class_exists('Nphp')) print "You're using NaturePhp v".Nphp::version; ]
+	</li>
+</ol>
+
+<p></p>
+
+<p>
+	<b>
+##################################################<br />
+#*  3: INCLUDED CLASSES (QUICK DOCUMENTATION)   *#<br />
+##################################################<br />
+   </b>
+</p>
+<p><b>Documentation notes:</b></p>
+<p>
+the arguments {options} are interpreted via Utils::combine_args() and should be an options array, object, querystring or multiple arguments of the previous types.<br />
+(eg. an options example {options} can be defined like [ array('option1'=>'value1', 'option2'=>$value2) ] ).
+</p>
+<p>
+"self-instanced" and "static" classes do not require to and should NOT be instanced ( [ !! NO $var=new Example(); !! ] ).<br />
+All methods in these classes should used statically [ Example::method(); ] and NOT the instanced way [ $var->method(); ]
+</p>
+<p>
+The rest of the documentation follows most of the rules used at php.net for php itself
+</p>
+
+
+--#########################-- Nphp
+--
+3.01: Nphp				#Default NaturePhp environment class //
+Notes: 	You don't really should need to use this class, this is mainly for internal use of the autoloader and management UI.
+		This class is static
+
+//Methods
+lib_is_loaded
+lib_exists
+nphp_folder
+lib_path
+load_lib
+
+# bool Nphp::lib_is_loaded(string $lib)
+Cehcks if Class is loaded in the NaturePhp environment
+eg. [ Nphp::lib_is_loaded('N'); ]
+
+# bool Nphp::lib_exists(string $lib [, $complete_path=false])
+Cehcks if Class is available in the NaturePhp environment
+eg. [ Nphp::lib_exists('N'); ]
+
+# string Nphp::nphp_folder()
+Returns "nphp/" folder full physical path
+eg. [ print Nphp::nphp_folder(); ]
+
+# string Nphp::lib_path(string $lib)
+Return full physical path to file for class $lib
+eg. [ Nphp::lib_path('N'); ]
+
+# void Nphp::load_lib(string $lib [, $complete_path=false])
+Loads a class from NaturePhp's Library (you don't really need to use this, all libs are autoloaded when necessary by default)
+eg. [ Nphp::load_lib('N'); ]
+
+
+//Properties
+version; // NaturePhp core version
+eg. [ if(class_exists('Nphp')) print "You're using NaturePhp v".Nphp::$version; ]
+
+
+
+--#########################-- N
+--
+3.02: Log				#Error/debug background system
+Note: This class is self-instanced
+
+//Methods
+init
+debug
+notify
+has_warnings
+log
+kill
+
+# void Log::init([bool $debug=false])
+Initiates the N error control system. 
+eg. [ Log::init(true); ]
+
+# void Log::debug(bool $debug)
+Use $debug=true for all log content and php errors to be shown on Log::kill(), $debug=true returns a user friendly message.
+eg. [ Log::debug(true); ]
+
+# void Log::notify(string $email)
+Notifies the email when fatal error occurs on non-debug mode. 
+eg. [ Log::notify('example@example.com'); ]
+
+# bool Log::has_warnings()
+Check if a WARNING level error has already occurred on this page. 
+eg. [ if(Log::has_warnings()) print "there are critical errors already on this page"; ]
+
+# void Log::add(string $where, string $text)
+Logs an application event to the Log instance (trace stack)
+eg. [ Log::add("footer", "The footer has been printed"); ]
+
+# void Log::kill(string $text)
+Like die(); but prints a pretty error/debug log to the user/developer.
+eg. [ Log::kill("Required file not found"); ]
+
+
+Note: after you've initiated N [ Log::init(bool $debug); ] when can use trigger_error() throughout your application/libraries and N will collect your notices and errors and take according action.
+
+
+
+--#########################-- Check
+--
+3.03: Check			#Check stuff (client and server environments, variables correctness, etc)
+Note: This class is static
+
+//Methods
+http_host
+email
+username
+ip_address
+hex_color
+phone_number
+url
+server_is_apache
+server_is_iis
+server_is_unix
+server_is_windows
+client_is_mac
+client_is_windows
+client_is_winxp
+client_is_linux
+browser_is_lynx
+browser_is_gecko
+browser_is_ie
+browser_is_opera
+browser_is_ns4
+browser_is_firefox
+browser_is_webkit
+browser_is_safari
+browser_is_chrome
+request_is_ajax
+request_is_ssl
+is_json_requested
+is_javascript_requested
+is_xhtml_requested
+is_html_requested
+is_xml_requested
+request_accepts
+request_inHeader
+
+//common usage
+# bool Check::http_host(string $http_host)
+Checks if string is a valid email;
+eg. [ if(Check::http_host("example.domain.com")) print "HTTP Host correct!"; ]
+
+# bool Check::is_email(string $email)
+Checks if string is a valid http host;
+eg. [ if(Check::is_email("example@example.com")) print "Email correct!"; ]
+
+# bool Check::username(string $email)
+Checks if string is a valid username (common usage);
+eg. [ if(Check::username("My_Username27")) print "Username correct!"; ]
+
+# bool Check::ip_address(string $ipaddress)
+Checks if string is a valid ipv4 address;
+eg. [ if(Check::ip_address("255.255.255.0")) print "Ip address correct!"; ]
+
+# bool Check::hex_color(string $hex_color)
+Checks if string is a valid hex color;
+eg. [ if(Check::hex_color("#ffcc00")) print "Hex color correct!"; ]
+
+# bool Check::phone_number(string $phone_number)
+Checks if string is a valid phone number;
+eg. [ if(Check::phone_number("(+351) 123 45 67 89")) print "Phone number correct!"; ]
+
+# bool Check::url($url [, $absolute = false])
+Checks if string is a valid url;
+eg. [ if(Check::url("http://my.domain.com/app.php?id=1", true)) print "Url format correct!"; ]
+
+
+//Server Type Detection
+# bool Check::server_is_apache()
+Checks if server is Apache based;
+eg. [ if(Check::server_is_apache()) print "This is an apache based server!"; ]
+
+# bool Check::server_is_iis()
+Checks if server is Apache based;
+eg. [ if(Check::server_is_iis()) print "This is a Microsoft IIS server!"; ]
+
+
+//Server OS Detection
+# bool Check::server_is_unix()
+Checks if server is Unix based;
+eg. [ if(Check::server_is_unix()) print "This is an Unix based server!"; ]
+
+# bool Check::server_is_windows()
+Checks if server is Windows based;
+eg. [ if(Check::server_is_windows()) print "This is a Windows based server!"; ]
+
+
+//Client OS Detection
+# bool Check::client_is_mac()
+Checks if client is Mac based;
+eg. [ if(Check::client_is_mac()) print "You are on a Mac!"; ]
+
+# bool Check::client_is_windows()
+Checks if client is Windows based;
+eg. [ if(Check::client_is_windows()) print "You are on Windows!"; ]
+
+# bool Check::client_is_winxp()
+Checks if client is Windows XP based;
+eg. [ if(Check::client_is_winxp()) print "You are on Windows XP!"; ]
+
+# bool Check::client_is_linux()
+Checks if client is Linux based;
+eg. [ if(Check::client_is_linux()) print "You are on Linux!"; ]
+
+
+//Client Browser Detection
+# bool Check::browser_is_lynx()
+Checks if browser is Lynx;
+eg. [ if(Check::browser_is_lynx()) print "You are using Lynx!"; ]
+
+# bool Check::browser_is_gecko()
+Checks if browser is Gecko based;
+eg. [ if(Check::browser_is_gecko()) print "You are using Gecko (Firefox)!"; ]
+
+# bool Check::browser_is_ie()
+Checks if browser is IE;
+eg. [ if(Check::browser_is_ie()) print "You are using IE!"; ]
+
+# bool Check::browser_is_opera()
+Checks if browser is Opera;
+eg. [ if(Check::browser_is_opera()) print "You are using Opera!"; ]
+
+# bool Check::browser_is_ns4()
+Checks if browser is NS4 based;
+eg. [ if(Check::browser_is_ns4()) print "You are using Netscape!"; ]
+
+# bool Check::browser_is_firefox()
+Checks if browser is Firefox;
+eg. [ if(Check::browser_is_firefox()) print "You are using Firefox!"; ]
+
+# bool Check::browser_is_webkit()
+Checks if browser is Webkit based;
+eg. [ if(Check::browser_is_webkit()) print "You are using Webkit!"; ]
+
+# bool Check::browser_is_safari()
+Checks if browser is Safari;
+eg. [ if(Check::browser_is_safari()) print "You are using Safari!"; ]
+
+# bool Check::browser_is_chrome()
+Checks if browser is Google Chrome;
+eg. [ if(Check::browser_is_chrome()) print "You are using Chrome!"; ]
+
+
+//Request type detection
+# bool Check::request_is_ajax()
+Checks if request was made in ajax;
+eg. [ if(Check::request_is_ajax()) print "You are requesting via Ajax!"; ]
+
+# bool Check::request_is_ssl()
+Checks if request was made in SSL (https);
+eg. [ if(Check::request_is_ssl()) print "You are requesting via SSL (https)!"; ]
+
+
+//Requested format detection
+# bool Check::is_json_requested()
+Checks if JSON output is requested;
+eg. [ if(Check::is_json_requested()) print "You are requesting JSON content!"; ]
+
+# bool Check::is_javascript_requested()
+Checks if JSON output is requested;
+eg. [ if(Check::is_javascript_requested()) print "You are requesting JS content!"; ]
+
+# bool Check::is_xhtml_requested()
+Checks if XHTML output is requested;
+eg. [ if(Check::is_xhtml_requested()) print "You are requesting XHTML content!"; ]
+
+# bool Check::is_html_requested()
+Checks if HTML output is requested;
+eg. [ if(Check::is_html_requested()) print "You are requesting HTML content!"; ]
+
+# bool Check::is_xml_requested()
+Checks if XML output is requested;
+eg. [ if(Check::is_xml_requested()) print "You are requesting XML content!"; ]
+
+
+//generic functions
+# bool Check::request_accepts(string $output)
+Checks if request accepts type of $output;
+eg. [ if(Check::request_accepts("binary")) print "You are accepting binary content!"; ]
+
+# bool Check::request_inHeader(string $header, string $needle)
+Checks if $needle exists in request headers $header;
+eg. [ if(Check::request_inHeader("Accept", "binary")) print "You are accepting binary content!"; ]
+
+
+
+--#########################-- Utils
+--
+3.04: Utils		#Utilities (variable transformations, arrays, options, etc)
+Note: This class is static
+
+//Methods
+mixed_to_array
+combine_args
+s_var_dump
+build_querystring
+array_insert
+
+# array Utils::mixed_to_array(mixed $mixed)
+transforms mixed variables (querystring, object or array) into "$item=>$value" array;
+eg. [ Utils::mixed_to_array("tag=input&type=text&name=test&value=testing it"); ]
+
+# array Utils::combine_args(array $function_args, int $start_index, array $defaults)
+combines function mixed arguments set with default variables, returns as object;
+eg. [ Utils::combine_args(func_get_args(), 1, array("type"=>"text", "value"=>"test")); ]
+
+# string Utils::s_var_dump(mixed $var)
+all famous var_dump in pretty string form;
+eg. [ Utils::s_var_dump(array("type"=>"text", "value"=>"test", "intval"=>27)); ]
+
+# string Utils::build_querystring(array $get_as_array)
+builds querystring from array (supports multi-dimensional arrays);
+eg. [ Utils::build_querystring(array("type"=>"text", "value"=>"test")); ]
+
+# string Utils::array_insert(array &$original_array, mixed $insert_piece, mixed $position)
+inserts value into specific array position, shifts higher items as necessary - overwrites position if $position is string;
+eg. [ Utils::array_insert($array, 'test', 3); ]
+
+
+
+--#########################-- Text
+--
+3.05: Text		#Text functionalities (strings, html, words, characters, etc)
+Note: This class is static
+
+//Methods
+str_replace_count
+filter_nr_words
+correct_html_urls
+simple_spaces
+to_javascript
+to_plain
+to_plain_simple
+to_html
+
+# string Text::str_replace_count(string $needle, string $replacement, string $haystack, int $replacements_number)
+Better str_replace() with items nr to replace support;
+eg. [ Text::str_replace_count(".", ",", "my email. email.name@domain.com", 1); ]
+
+# string Text::filter_nr_words(string $text, int $number_of_words, bool &$has_more)
+returns specific number of words from a text (strips html), $has_more will indicate if more words remain on the original string;
+eg. [ Text::filter_nr_words("this is some random text to examplify this function", 5, $has_more); ]
+
+# string Text::correct_html_urls(string $html_content, string $html_file_path)
+filters all src, bgimage, href and css's url() in html string through Path::url_to;
+eg. [ Text::correct_html_urls($html_content, "path/to/source_file.html"); ]
+
+# string Text::simple_spaces(string $str)
+//remove extras spaces, tabs, etc.
+eg. [ Text::simple_spaces(" Hello,   World	!"); ]
+
+# string Text::to_javascript(string $str)
+//convert a string to a safe javascript string
+eg. [ Text::to_javascript("Hi!\n I'm Joe."); ]
+
+# string Text::to_plain(string $str)
+//convert an html string to plain text
+eg. [ Text::to_plain("Hi!<br /> I'm <em>Joe</em>."); ]
+
+# string Text::to_plain_simple(string $str)
+//plain simple - to_plain followed by simple_spaces
+eg. [ Text::to_plain_simple("Hi!   <br />	I'm  <em>Joe</em>."); ]
+
+# string Text::to_html(string $str)
+//convert a plain text string to html
+eg. [ Text::to_html("Hi!\nI'm Joe."); ]
+
+
+
+--#########################-- Path
+--
+3.06: Path			#Path/url string transformations
+Note: This class is self-instanced
+
+//Methods
+to
+url_to
+put
+myBase
+setBase
+combine
+relative
+this_url
+sanitize_url
+
+# string Path::to(string $relative_path, string $current_location)
+returns physical path to relative location;
+eg. [ Path::to("../folder/my_file.html", __FILE__); ]
+
+# string Path::url_to(string $relative_path, string $current_location)
+returns url path to relative location;
+eg. [ Path::url_to("../folder/my_file.php", __FILE__); ]
+
+# void Path::put(string $relative_path, string $current_location)
+short for [ print Path::url_to("file.html") ];
+
+# string Path::myBase()
+get's current application instance location;
+eg. [ Path::myBase(); ]
+
+# void Path::setBase(string $path)
+set's current application instance location;
+eg. [ Path::setBase(string $path); ]
+
+# string Path::combine(string $base_relative_path, string $relative_path [, bool $case_sensitive ])
+combine $base_relative_path as base with $relative_path to get new fullpath;
+eg. [ Path::combine("../app_folder/", "app_subfolder/somefile.inc"); ]
+
+# string Path::relative(string $pathFrom, string $pathTo [, bool $case_sensitive ])
+get relative path from $pathFrom to $pathTo;
+eg. [ Path::relative("app_folder/", "app_folder/app_subfolder/file.php"); ]
+
+# string Path::this_url([{options} $options])
+get current url, allowing get inclusions and/or exclusions;
+available {options} - array 'get_in', array 'get_out', string '#'
+eg. [ Path::this_url(array('get_in'=>array('id'=>21,'page'=>3), 'get_out'=>array('return', 'user_login'), '#'=>'top')); ]
+
+# string Path::sanitize_url(string $url)
+clean uri string;
+eg. [ Path::sanitize_url("http;//wWw.example.com/exam|ple.%0dphp"); ]
+
+
+
+
+--#########################-- Mem
+--
+3.07: Mem			#Global cache system (big variables, file cache, etc)
+Note: This class is self-instanced
+
+//Methods
+set
+get
+setRef
+getRef
+lock
+unlock
+is_locked
+is_set
+
+//actions
+# bool Mem::set(var $key, var $value, string $pool)
+set's value associated with this key, in this pool;
+eg. [ Mem::set("my_location/example.txt", file_get_contents("my_location/example.txt"), "file_pool"); ]
+
+# var Mem::get(var $key, string $pool [, bool $required=false])
+get's value associated with this key, in this pool;
+eg. [ Mem::get("my_location/example.txt", "some_file_pool"); ]
+
+# bool Mem::lock(var $key, string $pool)
+locks's this key, in this pool;
+eg. [ Mem::lock("my_location/example.txt", "some_file_pool"); ]
+
+# bool Mem::unlock(var $key, string $pool)
+unlock's this key, in this pool;
+eg. [ Mem::unlock("my_location/example.txt", "some_file_pool"); ]
+
+//by reference
+# bool Mem::setRef(var $key, var &$value, string $pool)
+set's value associated with this key by reference, in this pool;
+eg. [ Mem::setRef("some_object", $my_object, "some_objects_pool"); ]
+
+# reference &Mem::getRef(var $key, string $pool [, bool $required=false])
+get's referenced value associated with this key, in this pool;
+eg. [ Mem::getRef("my_location/example.txt", "some_file_pool"); ]
+
+//checks
+# bool Mem::is_locked(var $key, string $pool)
+check's if this key is locked, in this pool;
+eg. [ if(Mem::is_locked("my_location/example.txt", "some_file_pool")) print "content 'my_location/example.txt' is locked!"; ]
+
+# bool Mem::is_set(var $key, string $pool)
+check's if this key is set, in this pool;
+eg. [ if(Mem::is_set("my_location/example.txt", "some_file_pool")) print "content 'my_location/example.txt' is already set!"; ]
+
+
+
+--#########################-- Headers
+--
+3.08: Headers		#HTTP Headers functionalities
+Note: This class is static
+
+//Methods
+redirect
+http_status
+json
+cache
+nocache
+javascript
+gzip
+get_http_status_desc
+get_all
+
+# void Headers::redirect(string $relative_path_or_url [, string $current_location])
+redirect function;
+eg. [ Headers::redirect("../", __FILE__); ]
+
+# bool Headers::http_status(int $status_number)
+set headers for http status (403, 500, 404, etc);
+eg. [ Headers::http_status(500); ]
+
+# void Headers::json([{options} $options])
+set's appropriate json headers;
+available {options} - string $mode, int $cache
+eg. [ Headers::json(array("mode" => "text", "cache"=>864000)); ]
+
+# void Headers::cache([int $offset=864000])
+set's caching headers;
+eg. [ Headers::cache(432000); ]
+
+# void Headers::nocache()
+set's appropriate no caching headers;
+eg. [ Headers::nocache(); ]
+
+# void Headers::javascript([int $cache=0])
+set's javascript headers;
+eg. [ Headers::javascript(); ]
+
+# void Headers::gzip()
+set's gzip content headers;
+eg. [ Headers::gzip(); ]
+
+# string Headers::get_http_status_desc(int $status_number)
+get http status code description;
+eg. [ Headers::get_http_status_desc(500); ]
+
+# array Headers::get_all()
+Better getallheaders() for unsupported servers;
+eg. [ var_dump(Headers::get_all()); ]
+
+
+
+--#########################-- Disk
+--
+3.09: Disk			#Filesystem functionalities
+Note: This class is static
+
+//Methods
+make_dir
+sanitize_file_name
+
+# bool Disk::make_dir(string $folder)
+Make new directory (recursively, if possible);
+eg. [ Disk::make_dir("nphp/manage/includes"); ]
+
+# string Disk::sanitize_file_name(string $filename)
+make sure new filename is simple and has standard characters;
+eg. [ Disk::sanitize_file_name("nphp/manage/includes/test.php"); ]
+
+
+--#########################-- Format
+--
+3.10: Format		#Measures/conversion/standards
+Note: This class is static
+
+//Methods
+byte_size
+number_i18n
+
+# string Format::byte_size(number $bytes, int $decimals = 0)
+auto-format byte size - returns rounded KB, MB, TB, etc;
+eg. [ Format::byte_size(1024); ]
+
+# string Format::number_i18n(number $number, int $decimals = 0)
+number format in i18n (eg. 10.000,05);
+eg. [ Format::number_i18n(10000.05, 2); ]
+
+
+
+--#########################-- Time
+--
+3.11: Time			#Time and Date functionalities
+Note: This class is static
+
+//Methods
+mysql_time
+stopwatch_start
+stopwatch_read
+stopwatch_stop
+
+# string Time::mysql_time(hours $gmt_offset = 0)
+mysql formated time - same as NOW() within mysql;
+eg. [ Time::mysql_time(); ]
+
+# void Time::stopwatch_start(string $name)
+starts microtimer;
+eg. [ Time::stopwatch_start('MyTimer'); ]
+
+# int Time::stopwatch_read(string $name)
+reads microtimer, returns microtime passed since Time::stopwatch_start;
+eg. [ Time::stopwatch_read('MyTimer'); ]
+
+# int Time::stopwatch_stop(string $name)
+stops microtimer, returns microtime passed since Time::stopwatch_start;
+eg. [ Time::stopwatch_stop('MyTimer'); ]
+
+
+
+--#########################-- Template
+--
+3.12: Template			#Templates manager class
+
+//Methods
+Template
+addContent
+render
+
+# instance Template::__contruct([{options} $options])
+Create a template instance;
+available {options} - string $file, string $string, string $part, string $mode, bool $cache, string $content, bool $correct_paths
+eg. [ $Template_instance = new Template(array('file' => "site_source/index.html", 'mode'=>'html')); ]
+
+# string Template::addContent(string $key, string $content)
+Replaces template part (identifiable by tpl keys*);
+eg. [ $Template_instance->addContent("key", "this is the key's content replacement"); ]
+
+Notes: * Within the template, keys can be defined as "{#key/}" or "{#key}some content example{#/key}" (similar to xhtml's "<tag/>" and "<tag>content</tag>"). 
+Instead of "{}" you can use 'mode' specific comments (e.g. html "<!--#key/-->", javascript "/*#key*/some content/*#/key*/", etc)
+
+# string Template::render()
+returns rendered current instance;
+eg. [ $Template_instance->render(); ]
+
+
+
+--#########################-- Database
+--
+3.13: Database		#sql interface (originally based on dbFacile by greaterscope)
+
+//Methods
+open
+execute
+fetch
+fechRow
+fetchCell
+fetchColumn
+fetchKeyValue
+insert
+update
+delete
+
+//instance function
+# instance Database::open({options})
+creates a new database connection;
+available {options} - string 'type', string 'database', string 'user', string 'password', string 'port',string 'host',
+ 					string 'charset', string 'collation', string 'name', resource 'resource', 
+					string 'dsn', string 'dsn_type', string 'cursor_type'
+eg. [ $Database_inst = Database::open(array('type'=>'mysql', 'database'=>'database_name', 'user'=>'myUser', 'password'=>'myPwd'); ]
+
+//classic dbFacile functions
+# bool Database::execute(string $sql_query [, array $parameters = array() [, bool $cache = true]])
+executes a query in the database;
+eg. [ $Database_inst->execute("update users set password=md5(?) where user_id=?", array($newUserPwd, $user_id)); ]
+
+# array[][] Database::fetch(string $sql_query [, array $parameters = array()])
+returns database's select resultset in vector table;
+eg. [ $protuguese_users = $Database_inst->fetch("select * from users where location=? and  is_active=? order by user_id desc limit 2", array('Portugal', true)); ]
+	[ $protuguese_users ] results like 	[ array('user_id'=>2, 'email'=>'someone@9tree.net', 'password'=>'SOme00MD5ed00ChArS', 'is_active'=>1) ];
+										[ array('user_id'=>1, 'email'=>'someother@9tree.net', 'password'=>'SOme00MD5ed00ChArS', 'is_active'=>1) ];
+
+# array[] Database::fechRow(string $sql_query [, array $parameters = array()])
+return array with first line in database's select resultset;
+eg. [ $user_data = $Database_inst->fechRow("select * from users where email=? and password=? limit 1", array($email, $password)); ]
+	[ $user_data ] results like [ 'user_id'=>2, array('email'=>'someone@9tree.net', 'password'=>'SOme00MD5ed00ChArS', 'is_active'=>1) ];
+
+# var Database::fetchCell(string $sql_query [, array $parameters = array()])
+returns first value of first line in database's select resultset;
+eg. [ $user_id = $Database_inst->fetchCell("select user_id from users where email=? and password=md5(?) limit 1", array($email, $password)); ]
+
+# array[] Database::fetchColumn(string $sql_query [, array $parameters = array()])
+returns array of first values of each line in database's select resultset;
+eg. [ $emails = $Database_inst->fetchColumn("select email from users where is_active=?", array(true)); ]
+	[ $emails ] results like [ array($email_1, $email_2, ...., $email_N) ];
+
+# array[] Database::fetchKeyValue(string $sql_query [, array $parameters = array()])
+returns array of first values as array keys, and second values as array values
+eg. [ $emailPasswords = $Database_inst->fetchKeyValue("select email, password from users where is_active=?", array(true)); ]
+	[ $emailPasswords ] results like [ array($email_1=>$password_1, $email_2=>$password_2, ...., $email_N=>$password_N) ];
+
+# var Database::insert(array $data, string $table)
+returns rendered current instance;
+eg. [ $Database_inst->insert(array("email"=>$email, $password=>md5($password), is_active=>true), "users"); ]
+
+
+//enhanced functions by 9Tree
+# int Database::update(array(data), string $table [, {options} $options])
+returns number of updated rows;
+available {options} - array where, array group, array order, string limit
+eg. [ $Database_inst->update(array("location"=>"Moon"), "users", array('where'=>array('location=? and is_active=?', 'Portugal', true))); ]
+	This query is the same as "update users set location='Moon' where location='Portugal' and is_active=1";
+
+# int Template::delete(string $table [, {options} $options])
+returns number of deleted rows;
+available {options} - array where, array group, array order, string limit
+eg. [ $Database_inst->delete("users", array('where'=>array('location=? and is_active=?', 'Portugal', true))); ]
+	This query is the same as "delete from users where location='Portugal' and is_active=1";
+
+
+//properties
+instance; // last created instance
+eg. [ $Database_inst=&Database::instance; ]
+	gets the latest Database::open instanced
+
+instances; // for holding more than 1 instance
+eg. [ $Database_inst=&Database::instances[0]; ]
+	gets the first Database::open instanced
+eg. [ $Database_inst=&Database::instances['myName']; ]
+	gets the first Database::open with the option 'name'=>'myName'
+	
+	
+--#########################-- Event
+--
+3.14: Event		#Event/action and filtering functionalities (based on Wordpress add_action and add_filter)
+Note: This class is static
+
+//Methods
+add
+fire
+add_filter
+filter
+
+# array Event::add(string $event, function $callback[, $position=false])
+adds callback to execute on event call, optional $position in queue. 
+eg. [ Event::add("header_finished", "myFunction"); ]
+	Note: Callback is called internally on Event::fire("header_finished") like myFunction("header_finished");
+
+# array Event::fire(string $event)
+fires all queued event functions in queue order
+eg. [ Event::fire("header_finished"); ]
+
+# string Event::add_filter(string $filter, function $callback[, $position=false])
+adds filtering callback to execute on filter call, optional $position in queue.
+eg. [ Event::add_filter("post_content", "myFunction"); ]
+	Note: Callback is called internally on Event::filter("header_finished") like myFunction($str, "header_finished");
+
+# string Event::filter(string $filter, string $str)
+filters string $str through all queued event functions in queue order
+eg. [ Event::filter("post_content", $post_content); ]
+
