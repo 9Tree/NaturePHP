@@ -147,10 +147,12 @@ _Methods_
 * eg. [ @Log::init(true);@ ]
 
 
+
 *debug*<br />
 // @void Log::debug(bool $debug)@<br />
 * Use $debug=true for all log content and php errors to be shown on Log::kill(), $debug=true returns a user friendly message.<br />
 * eg. [ @Log::debug(true);@ ]
+
 
 
 *notify*<br />
@@ -159,16 +161,19 @@ _Methods_
 * eg. [ @Log::notify('example@example.com');@ ]
 
 
+
 *has_warnings*<br />
 // @bool Log::has_warnings()@<br />
 * Check if a WARNING level error has already occurred on this page. <br />
 * eg. [ @if(Log::has_warnings()) print "there are critical errors already on this page";@ ]
 
 
+
 *log*<br />
 // @void Log::add(string $where, string $text)@<br />
 * Logs an application event to the Log instance (trace stack)<br />
 * eg. [ @Log::add("footer", "The footer has been printed");@ ]
+
 
 
 *kill*<br />
