@@ -83,7 +83,7 @@ The rest of the documentation follows most of the rules used at php.net for php 
 h3. --######################### Nphp
 
 
-3.01: Nphp .......... #Default NaturePhp environment class //
+*3.01: Nphp .......... #Default NaturePhp environment class //*
 
 <small>Notes:<br /> 	
 You don't really should need to use this class, this is mainly for internal use of the autoloader and management UI.<br />
@@ -127,7 +127,7 @@ _Properties_
 h3. --######################### Log
 
 
-3.02: Log .......... #Error/debug background system
+*3.02: Log .......... #Error/debug background system*
 
 <small>Note: This class is self-instanced</small>
 
@@ -172,7 +172,7 @@ _Methods_
 h3. --######################### Check
 
 
-3.03: Check .......... #Check stuff (client and server environments, variables correctness, etc)
+*3.03: Check .......... #Check stuff (client and server environments, variables correctness, etc)*
 
 <small>Note: This class is static</small>
 
@@ -364,7 +364,7 @@ _generic functions_
 h3. --######################### Utils
 
 
-3.04: Utils	.......... #Utilities (variable transformations, arrays, options, etc)
+*3.04: Utils	.......... #Utilities (variable transformations, arrays, options, etc)*
 
 <small>Note: This class is static</small>
 
@@ -401,7 +401,7 @@ _Methods_
 h3. --######################### Text
 
 
-3.05: Text .......... #Text functionalities (strings, html, words, characters, etc)
+*3.05: Text .......... #Text functionalities (strings, html, words, characters, etc)*
 
 <small>Note: This class is static</small>
 
@@ -453,7 +453,7 @@ _Methods_
 h3. --######################### Path
 
 
-3.06: Path .......... #Path/url string transformations
+*3.06: Path .......... #Path/url string transformations*
 
 <small>Note: This class is self-instanced</small>
 
@@ -510,7 +510,7 @@ _Methods_
 h3. --######################## Mem
 
 
-3.07: Mem .......... #Global cache system (big variables, file cache, etc)
+*3.07: Mem .......... #Global cache system (big variables, file cache, etc)*
 
 <small>Note: This class is self-instanced</small>
 
@@ -565,7 +565,7 @@ _checks_
 h3. --######################### Headers
 
 
-3.08: Headers .......... #HTTP Headers functionalities
+*3.08: Headers .......... #HTTP Headers functionalities*
 
 <small>Note: This class is static</small>
 
@@ -623,7 +623,7 @@ eg. [ @Headers::json(array("mode" => "text", "cache"=>864000));@ ]
 h3. --######################### Disk
 
 
-3.09: Disk .......... #Filesystem functionalities
+*3.09: Disk .......... #Filesystem functionalities*
 
 <small>Note: This class is static</small>
 
@@ -645,7 +645,7 @@ _Methods_
 h3. --######################### Format
 
 
-3.10: Format .......... #Measures/conversion/standards
+*3.10: Format .......... #Measures/conversion/standards*
 
 <small>Note: This class is static</small>
 
@@ -667,7 +667,7 @@ _Methods_
 h3. --######################### Time
 
 
-3.11: Time .......... #Time and Date functionalities
+*3.11: Time .......... #Time and Date functionalities*
 
 <small>Note: This class is static</small>
 
@@ -699,7 +699,7 @@ _Methods_
 h3. --######################### Template
 
 
-3.12: Template .......... #Templates manager class
+*3.12: Template .......... #Templates manager class*
 
 _Methods_
 * Template
@@ -730,7 +730,7 @@ fn1. Within the template, keys can be defined as "{#key/}" or "{#key}some conten
 h3. --######################### Database
 
 
-3.13: Database .......... #sql interface (originally based on dbFacile by greaterscope)
+*3.13: Database .......... #sql interface (originally based on dbFacile by greaterscope)*
 
 _Methods_
 * open
@@ -820,7 +820,7 @@ instances; // for holding more than 1 instance
 h3. --######################### Event
 
 
-3.14: Event	.......... #Event/action and filtering functionalities (based on Wordpress add_action and add_filter)
+*3.14: Event	.......... #Event/action and filtering functionalities (based on Wordpress add_action and add_filter)*
 
 <small>Note: This class is static</small>
 
