@@ -3,7 +3,7 @@
 	<small>10/07/2009</small>
 </p>
 
-<b>NaturePHP<b/> : <a href="http://naturephp.org" title="Open source auto-loaded library system for php">http://naturephp.org</a>
+<b>NaturePHP</b> : <a href="http://naturephp.org" title="Open source auto-loaded library system for php">http://naturephp.org</a>
 
 <p>&nbsp;</p>
 
