@@ -21,7 +21,6 @@ class Path{
 	//combine physical paths (files and includes)
 	static function to($new_path, $cur_file){
 		return dirname($cur_file).'/'.$new_path;
-		//return Path::combine($new_path, $cur_file);
 	}
 	
 	//combine url paths (urls and templates) and print out
@@ -31,7 +30,10 @@ class Path{
 	
 	//combine url paths (urls and templates)
 	static function url_to($new_path, $cur_file){
-		$cur_path=self::relative($cur_file, self::myBase());
+		static $unix;
+	    if(!isset($unix)) $unix=!Check::server_is_windows();
+	
+		$cur_path=self::relative($cur_file, self::myBase(), $unix);
 		return self::combine($new_path, $cur_path);
 	}
 	
