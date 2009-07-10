@@ -18,20 +18,20 @@
 
 	<li><p>3: Included classes (Quick Documentation)<br />
 		<ul>
-			<li>3.01: Nphp &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #Default NaturePhp environment class (loaded directly in init.php)</li>
-			<li>3.02: Log &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #Error/debug background system</li>
-			<li>3.03: Check &nbsp;&nbsp;&nbsp;&nbsp; #Check stuff (client and server environments, variables correctness, etc)</li>
-			<li>3.04: Utils &nbsp;&nbsp;&nbsp;&nbsp; #Utilities (variable transformations, arrays, options, etc)</li>
-			<li>3.05: Text &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #Text functionalities (strings, html, words, characters, etc)</li>
-			<li>3.06: Path &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #Path/url string transformations</li>
-			<li>3.07: Mem &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #Global cache system (big variables, file cache, etc)</li>
-			<li>3.08: Headers &nbsp;&nbsp; #HTTP Headers functionalities</li>
-			<li>3.09: Disk &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #Filesystem functionalities</li>
-			<li>3.10: Format &nbsp;&nbsp;&nbsp; #Measures/conversion/standards</li>
-			<li>3.11: Time &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #Time and Date functionalities</li>
-			<li>3.12: Template &nbsp; #Templates manager class</li>
-			<li>3.13: Database &nbsp; #Awesome sql interface (based on dbFacile by greaterscope)</li>
-			<li>3.14: Event &nbsp;&nbsp;&nbsp;&nbsp; #Event/action and filtering functionalities (based on Wordpress add_action and add_filter)</li>
+			<li>3.01: Nphp ------ #Default NaturePhp environment class (loaded directly in init.php)</li>
+			<li>3.02: Log ------- #Error/debug background system</li>
+			<li>3.03: Check ----- #Check stuff (client and server environments, variables correctness, etc)</li>
+			<li>3.04: Utils ----- #Utilities (variable transformations, arrays, options, etc)</li>
+			<li>3.05: Text ------ #Text functionalities (strings, html, words, characters, etc)</li>
+			<li>3.06: Path ------ #Path/url string transformations</li>
+			<li>3.07: Mem ------- #Global cache system (big variables, file cache, etc)</li>
+			<li>3.08: Headers --- #HTTP Headers functionalities</li>
+			<li>3.09: Disk ------ #Filesystem functionalities</li>
+			<li>3.10: Format ---- #Measures/conversion/standards</li>
+			<li>3.11: Time ------ #Time and Date functionalities</li>
+			<li>3.12: Template -- #Templates manager class</li>
+			<li>3.13: Database -- #Awesome sql interface (based on dbFacile by greaterscope)</li>
+			<li>3.14: Event ----- #Event/action and filtering functionalities (based on Wordpress add_action and add_filter)</li>
 		</ul>
 		</p>
 	</li>
