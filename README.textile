@@ -91,34 +91,34 @@ This class is static</small>
 
 _Methods_
 
-* *lib_is_loaded*
-// @bool Nphp::lib_is_loaded(string $lib)@
-Checks if Class is loaded in the NaturePhp environment
-eg. [ @Nphp::lib_is_loaded('N');@ ]
+* *lib_is_loaded*<br />
+// @bool Nphp::lib_is_loaded(string $lib)@<br />
+Checks if Class is loaded in the NaturePhp environment<br />
+eg. [ @Nphp::lib_is_loaded('N');@ ]<br />
 
-* *lib_exists*
-// @bool Nphp::lib_exists(string $lib [, $complete_path=false])@
-Checks if Class is available in the NaturePhp environment
-eg. [ @Nphp::lib_exists('N');@ ]
+* *lib_exists*<br />
+// @bool Nphp::lib_exists(string $lib [, $complete_path=false])@<br />
+Checks if Class is available in the NaturePhp environment<br />
+eg. [ @Nphp::lib_exists('N');@ ]<br />
 
-* *nphp_folder*
-// @string Nphp::nphp_folder()@
-Returns "nphp/" folder full physical path
-eg. [ @print Nphp::nphp_folder();@ ]
+* *nphp_folder*<br />
+// @string Nphp::nphp_folder()@<br />
+Returns "nphp/" folder full physical path<br />
+eg. [ @print Nphp::nphp_folder();@ ]<br />
 
-* *lib_path*
-// @string Nphp::lib_path(string $lib)@
-Return full physical path to file for class $lib
-eg. [ @Nphp::lib_path('N');@ ]
+* *lib_path*<br />
+// @string Nphp::lib_path(string $lib)@<br />
+Return full physical path to file for class $lib<br />
+eg. [ @Nphp::lib_path('N');@ ]<br />
 
-* *load_lib*
-// @void Nphp::load_lib(string $lib [, $complete_path=false])@
-Loads a class from NaturePhp's Library (you don't really need to use this, all libs are autoloaded when necessary by default)
-eg. [ @Nphp::load_lib('N');@ ]
+* *load_lib*<br />
+// @void Nphp::load_lib(string $lib [, $complete_path=false])@<br />
+Loads a class from NaturePhp's Library (you don't really need to use this, all libs are autoloaded when necessary by default)<br />
+eg. [ @Nphp::load_lib('N');@ ]<br />
 
 
 _Properties_
-* version; // NaturePhp core version
+* version; // NaturePhp core version<br />
 eg. [ @if(class_exists('Nphp')) print "You're using NaturePhp v".Nphp::$version;@ ]
 
 
