@@ -77,7 +77,7 @@ class Mem{
 		if(!isset($me->keys[$bay])) $me->keys[$bay]=array();
 		$index=array_search($var, $me->keys[$bay]);
 		if($index!==false){
-			if($me->isLocked($var, $bay)){
+			if($me->is_locked($var, $bay)){
 				Log::add("Mem", "variable \"".$var."\" could not be set in bay \"".$bay."\". Variable is locked.");
 				return false;
 			}

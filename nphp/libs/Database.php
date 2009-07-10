@@ -240,7 +240,7 @@ abstract class Database {
 		$sql = $this->build_query_conditions($sql, $args);
 		
 		//execute
-		$this->execute($sql, $parameters);
+		$this->execute($sql);
 		
 		//return affected rows
 		return $this->_affectedRows();

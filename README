@@ -1,5 +1,5 @@
-NaturePHP Pack v0.3.2 Readme File
-11/04/2009
+NaturePHP Pack v0.3.6 Readme File
+10/07/2009
 
 
 NaturePHP : http://naturephp.org
@@ -43,7 +43,7 @@ All paths, unless otherwise noted, are defined as if you are running an instance
 ##########################
 
 Requirements:
-NaturePHP requires PHP 5.2+
+NaturePHP requires PHP 5+, preferably 5.2+, ideally 5.3+.
 	
 .1 	Copy "nphp/" folder to your site's folder (or whatever subfolder you wish).
 
@@ -61,7 +61,6 @@ NaturePHP requires PHP 5.2+
 .1 Using Lib Classes //
 Instance any [ new Example(); ] or call [ Example::Method(); ] and NaturePHP automatically loads the class for you if not yet loaded.
 
-
 .2 Using your own classes //
 All available classes are stored at "nphp/libs/", if you want to use some of your own classes just add them to this folder.
 All classes should be standard php classes [ class Example{ } ] at file "Example.php".
@@ -70,6 +69,8 @@ Therefore, using a non-loaded class [ new Example(); ] in your instance will res
 
 .3 Checking if you are on a NaturePhp enviornment //
 use [ if(class_exists('Nphp')) print "You're using NaturePhp v".Nphp::version; ]
+
+
 
 
 ##################################################
@@ -81,8 +82,8 @@ Documentation notes:
 the arguments {options} are interpreted via Utils::combine_args() and should be an options array, object, querystring or multiple arguments of the previous types.
 (eg. an options example {options} can be defined like [ array('option1'=>'value1', 'option2'=>$value2) ] ).
 
-"self-instanced" and "static" classes do not require to and should not be instanced ( [ $var=new Example(); ] ).
-All methods in these classes should used statically [ Example::method(); ] and not the instanced way [ $var->method(); ]
+"self-instanced" and "static" classes do not require to and should NOT be instanced ( [ !! NO $var=new Example(); !! ] ).
+All methods in these classes should used statically [ Example::method(); ] and NOT the instanced way [ $var->method(); ]
 
 The rest of the documentation follows most of the rules used at php.net for php itself
 
@@ -381,7 +382,7 @@ eg. [ Utils::combine_args(func_get_args(), 1, array("type"=>"text", "value"=>"te
 
 # string Utils::s_var_dump(mixed $var)
 all famous var_dump in pretty string form;
-eg. [ Utils::s_var_dump(array("type"=>"text", "value"=>"test")); ]
+eg. [ Utils::s_var_dump(array("type"=>"text", "value"=>"test", "intval"=>27)); ]
 
 # string Utils::build_querystring(array $get_as_array)
 builds querystring from array (supports multi-dimensional arrays);

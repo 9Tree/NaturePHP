@@ -159,5 +159,18 @@ class Utils{
 			}
 		}	
 	}
+	
+	//same as array_key_exists() but case sensitive
+	function array_ikey_exists($key,$arr){
+	    $key=strtolower($key);
+	    if($arr && is_array($arr))
+	    {
+	        foreach($arr as $k => $v)
+	        {
+	            if(strtolower($k) == $key) return $k;
+	        }
+	    }
+	    return false;
+	}
 }
 ?>

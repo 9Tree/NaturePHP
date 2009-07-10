@@ -83,7 +83,7 @@ class Database_odbc extends Database {
 	}
 	
 	protected function _affectedRows() {
-		return odbc_num_rows($this->connection);
+		return odbc_num_rows($this->result);
 	}
 
 	protected function _error() {
