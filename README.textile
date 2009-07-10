@@ -90,36 +90,36 @@ You don't really should need to use this class, this is mainly for internal use 
 This class is static</small>
 
 _Methods_
-* lib_is_loaded
-* lib_exists
-* nphp_folder
-* lib_path
-* load_lib
 
+* *lib_is_loaded*
 -# @bool Nphp::lib_is_loaded(string $lib)@
-* Checks if Class is loaded in the NaturePhp environment
-* eg. [ @Nphp::lib_is_loaded('N');@ ]
+Checks if Class is loaded in the NaturePhp environment
+eg. [ @Nphp::lib_is_loaded('N');@ ]
 
+* *lib_exists*
 -# @bool Nphp::lib_exists(string $lib [, $complete_path=false])@
-* Checks if Class is available in the NaturePhp environment
-* eg. [ @Nphp::lib_exists('N');@ ]
+Checks if Class is available in the NaturePhp environment
+eg. [ @Nphp::lib_exists('N');@ ]
 
+* *nphp_folder*
 -# @string Nphp::nphp_folder()@
-* Returns "nphp/" folder full physical path
-* eg. [ @print Nphp::nphp_folder();@ ]
+Returns "nphp/" folder full physical path
+eg. [ @print Nphp::nphp_folder();@ ]
 
+* *lib_path*
 -# @string Nphp::lib_path(string $lib)@
-* Return full physical path to file for class $lib
-* eg. [ @Nphp::lib_path('N');@ ]
+Return full physical path to file for class $lib
+eg. [ @Nphp::lib_path('N');@ ]
 
+* *load_lib*
 -# @void Nphp::load_lib(string $lib [, $complete_path=false])@
-* Loads a class from NaturePhp's Library (you don't really need to use this, all libs are autoloaded when necessary by default)
-* eg. [ @Nphp::load_lib('N');@ ]
+Loads a class from NaturePhp's Library (you don't really need to use this, all libs are autoloaded when necessary by default)
+eg. [ @Nphp::load_lib('N');@ ]
 
 
 _Properties_
 * version; // NaturePhp core version
-* eg. [ @if(class_exists('Nphp')) print "You're using NaturePhp v".Nphp::$version;@ ]
+eg. [ @if(class_exists('Nphp')) print "You're using NaturePhp v".Nphp::$version;@ ]
 
 
 
