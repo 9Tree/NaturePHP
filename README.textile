@@ -735,7 +735,7 @@ The rest of the documentation follows most of the rules used at php.net for php 
 	Replaces template part (identifiable by tpl keys*);<br />
 	eg. [ <code>$Template_instance->addContent("key", "this is the key's content replacement");</code> ]<br />
 	<br />
-	Notes: * Within the template, keys can be defined as "{#key/}" or "{#key}some content example{#/key}" (similar to xhtml's "<tag/>" and "<tag>content</tag>"). <br />
+	Notes: * Within the template, keys can be defined as "{#key/}" or "{#key}some content example{#/key}" (similar to xhtml's "&lt;tag/&gt;" and "&lt;tag&gt;content&lt;/tag&gt;"). <br />
 	Instead of "{}" you can use 'mode' specific comments (e.g. html "<!--#key/-->", javascript "/*#key*/some content/*#/key*/", etc)<br />
 	<br />
 	-# <code>string Template::render()</code><br />
