@@ -143,43 +143,38 @@ _Methods_
 
 *init*<br />
 // @void Log::init([bool $debug=false])@<br />
-* Initiates the N error control system. <br />
-* eg. [ @Log::init(true);@ ]
-
+Initiates the N error control system. <br />
+eg. [ @Log::init(true);@ ]
 
 
 *debug*<br />
 // @void Log::debug(bool $debug)@<br />
-* Use $debug=true for all log content and php errors to be shown on Log::kill(), $debug=true returns a user friendly message.<br />
-* eg. [ @Log::debug(true);@ ]
-
+Use $debug=true for all log content and php errors to be shown on Log::kill(), $debug=true returns a user friendly message.<br />
+eg. [ @Log::debug(true);@ ]
 
 
 *notify*<br />
 // @void Log::notify(string $email)@<br />
-* Notifies the email when fatal error occurs on non-debug mode. <br />
-* eg. [ @Log::notify('example@example.com');@ ]
-
+Notifies the email when fatal error occurs on non-debug mode. <br />
+eg. [ @Log::notify('example@example.com');@ ]
 
 
 *has_warnings*<br />
 // @bool Log::has_warnings()@<br />
-* Check if a WARNING level error has already occurred on this page. <br />
-* eg. [ @if(Log::has_warnings()) print "there are critical errors already on this page";@ ]
-
+Check if a WARNING level error has already occurred on this page. <br />
+eg. [ @if(Log::has_warnings()) print "there are critical errors already on this page";@ ]
 
 
 *log*<br />
 // @void Log::add(string $where, string $text)@<br />
-* Logs an application event to the Log instance (trace stack)<br />
-* eg. [ @Log::add("footer", "The footer has been printed");@ ]
-
+Logs an application event to the Log instance (trace stack)<br />
+eg. [ @Log::add("footer", "The footer has been printed");@ ]
 
 
 *kill*<br />
 // @void Log::kill(string $text)@<br />
-* Like die(); but prints a pretty error/debug log to the user/developer.<br />
-* eg. [ @Log::kill("Required file not found");@ ]
+Like die(); but prints a pretty error/debug log to the user/developer.<br />
+eg. [ @Log::kill("Required file not found");@ ]
 
 
 <small>Note: after you've initiated N [ @Log::init(bool $debug);@ ] when can use trigger_error() throughout your application/libraries and N will collect your notices and errors and take according action.</small>
