@@ -110,7 +110,9 @@ class Utils{
 	
 	//public port for ref_build_querystring
 	static function build_querystring($getArr){
-		return self::ref_build_querystring($getArr, '', '');
+		if(is_array($getArr))
+			return self::ref_build_querystring($getArr, '', '');
+		return (string) $getArr;
 	}
 
 	//builds querystring from array (supports multi-dimensional arrays)
@@ -118,12 +120,12 @@ class Utils{
 		$qstr='';
 		foreach($newGet as $var=>$value){
 			if(is_array($value)){
-				$qstr.=self::build_querystring($value, $var."[", "]");
+				$qstr.="&".self::ref_build_querystring($value, $var."[", "]");
 			} else {
 				$qstr.="&";
 				if($start && $end){
-					$qstr.=$start.$var.$end."=".$value;
-				} else $qstr.=$var."=".$value;
+					$qstr.=$start.$var.$end."=".urlencode($value);
+				} else $qstr.=$var."=".urlencode($value);
 			}
 		}
 		return substr($qstr, 1);
