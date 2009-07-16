@@ -8,7 +8,7 @@ class Http{
 	
 	//post contents to a file
 	public static function file_post_contents($url, $post_data='') {
-	    if(!$url = parse_url($url){
+	    if(!$url = parse_url($url)){
 			trigger_error("file_post_contents : invalid url");
 			return false;
 		}
