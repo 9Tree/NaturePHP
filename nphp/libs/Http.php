@@ -7,8 +7,11 @@
 class Http{
 	
 	//post contents to a file
-	function file_post_contents($url, $post_data='') {
-	    $url = parse_url($url);
+	public static function file_post_contents($url, $post_data='') {
+	    if(!$url = parse_url($url){
+			trigger_error("file_post_contents : invalid url");
+			return false;
+		}
 
 	    if (!isset($url['port'])) {
 	      if ($url['scheme'] == 'http') { $url['port']=80; }
@@ -17,7 +20,7 @@ class Http{
 	    $url['query']=isset($url['query'])?$url['query']:'';
 
 	    $url['protocol']=$url['scheme'].'://';
-	    $eol="\r\n";
+		$eol="\r\n";
 		
 		//converts post data
 		$post_data=Utils::build_querystring($post_data);
@@ -40,7 +43,10 @@ class Http{
 	      $result=preg_replace($pattern,'',$result);
 	
 	      return $result;
-	    }
+	    } else {
+			trigger_error("file_post_contents : unable to reach file");
+			return false;
+		}
 	}
 }
 ?>
