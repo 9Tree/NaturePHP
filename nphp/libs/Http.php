@@ -21,7 +21,7 @@ class Http{
 		
 		//converts post data
 		$post_data=Utils::build_querystring($post_data);
-		print($post_data);
+
 	    $headers =  "POST ".$url['protocol'].$url['host'].$url['path']."?".$url['query']." HTTP/1.0".$eol. 
 	                "Host: ".$url['host'].$eol. 
 	                "Referer: ".$url['protocol'].$url['host'].$url['path'].$eol. 
@@ -34,11 +34,11 @@ class Http{
 	      $result = '';
 	      while(!feof($fp)) { $result .= fgets($fp, 128); }
 	      fclose($fp);
-	      if (!$headers) {
-	        //removes headers
-	        $pattern="/^.*\r\n\r\n/s";
-	        $result=preg_replace($pattern,'',$result);
-	      }
+
+	      //removes headers
+	      $pattern="/^.*\r\n\r\n/s";
+	      $result=preg_replace($pattern,'',$result);
+	
 	      return $result;
 	    }
 	}
