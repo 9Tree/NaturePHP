@@ -73,6 +73,7 @@ class Disk{
 	//make sure new filename is simple and has standard characters
 	function sanitize_file_name( $name ) { // Like but with periods
 		$name = strtolower( $name );
+		$name = Text::normalize( $name );
 		$name = preg_replace('/&.+?;/', '', $name); // kill entities
 		$name = str_replace( '_', '-', $name );
 		$name = preg_replace('/[^a-z0-9\s-.]/', '', $name);

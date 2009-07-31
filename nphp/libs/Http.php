@@ -29,7 +29,7 @@ class Http{
 	                "Host: ".$url['host'].$eol. 
 	                "Referer: ".$url['protocol'].$url['host'].$url['path'].$eol. 
 	                "Content-Type: application/x-www-form-urlencoded".$eol. 
-	                "Content-Length: ".strlen($url['query']).$eol.
+	                "Content-Length: ".strlen($post_data).$eol.
 	                $eol.$post_data;
 	    $fp = fsockopen($url['host'], $url['port'], $errno, $errstr, 30); 
 	    if($fp) {

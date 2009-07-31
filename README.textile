@@ -508,6 +508,12 @@ convert a plain text string to html<br />
 eg. [ @Text::to_html("Hi!\nI'm Joe.");@ ]
 
 
+*normalize*<br />
+// @string Text::normalize(string $str)@<br />
+converts most accented international characters to the correspondent simple charater<br />
+eg. [ @Text::normalize("Atenção! Estão a ler um exemplo Português!");@ ]
+
+
 
 
 
