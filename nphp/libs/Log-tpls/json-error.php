@@ -1,4 +1,8 @@
-
+<?php
+if(!headers_sent()){
+	print '{}';
+}
+?>
 
 /* -- Error
 
