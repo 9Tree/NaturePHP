@@ -896,7 +896,7 @@ eg. [ @$emailPasswords = $Database_inst->fetchKeyValue("select email, password f
 
 *insert*<br />
 // @var Database::insert(array $data, string $table)@<br />
-returns rendered current instance;<br />
+returns inserted id if possible, false on failure;<br />
 eg. [ @$Database_inst->insert(array("email"=>$email, $password=>md5($password), is_active=>true), "users");@ ]
 
 
