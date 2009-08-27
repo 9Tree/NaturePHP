@@ -152,6 +152,7 @@ if($D['submit']):
 		header('Content-Disposition: attachment; filename="'.$D['database'].'_'.$D['format'].'.sql"');
 		header("Content-Length: " . filesize($file) ."; ");
 		sql_dump();
+		Log::debug(false);
 		die();
 	}
 	
@@ -278,9 +279,13 @@ function sql_dump(){
 ";
 					$first=true;
 					foreach($DESCRIBED as $col){
-						if(!$first) print ",
+						if(!$first) {
+							print ",
 ";
-						print "	".o_ef($col['Field'])." ".$col['Type'];
+						} else {
+							$first=false;
+						} 
+						print "	".o_ef($col['Field'])." ".o_st($col['Type'])." ".($col['Null']?"NULL":"NOT NULL");
 						//set primary key on mssql
 						if($col['Field']==$PRIMARY_KEY && $D['format']=="mssql" && $HAS_IDENTITY){
 							print " identity(1,1)";
@@ -354,6 +359,24 @@ function s_ev($v){
 	return $DB->escapeValue($v);
 }
 
+
+//sanitize Types
+function o_st($t){
+	global $S;
+	if($S['format']=="mssql"){
+		if(strpos($t, "int")===0){
+			return "int";
+		} elseif(strpos($t, "timestamp")===0){
+			return "datetime";
+		} elseif(strpos($t, "tinyint")===0){
+			return "tinyint";
+		} elseif(strpos($t, "bigint")===0){
+			return "bigint";
+		} else {
+			return $t;
+		}
+	}
+}
 //auto escape output sql field
 function o_ef($v){
 	global $S;
