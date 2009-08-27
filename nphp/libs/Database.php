@@ -107,7 +107,7 @@ abstract class Database {
 	}
 	
 	//escape value function
-	function escapeValue($str){	
+	public function escapeValue($str){	
 		switch (gettype($str)){
 			case 'string'	:	$str = "'".$this->_escapeString($str)."'";
 				break;
