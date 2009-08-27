@@ -11,7 +11,7 @@
 //uncomment the following line to make it work
 //die();	//This file should be protected by default for security reasons
 
-include('includes/nphp/init.php');
+include('../init.php');
 
 Log::init(true);
 
@@ -60,7 +60,7 @@ if($D['submit']):
 			FROM
 			    information_schema.columns
 			WHERE
-			    table_name = '{table_name}';";
+			    table_name = {table_name};";
 			//get primary key
 			$S['sel_primary']="SELECT k.column_name
 			FROM information_schema.table_constraints t
@@ -68,7 +68,7 @@ if($D['submit']):
 			on t.constraint_name=k.constraint_name and t.table_catalog=k.table_catalog and t.table_name=k.table_name
 			WHERE t.constraint_type =  'PRIMARY KEY'
 			AND t.table_catalog =  '".$D['database']."'
-			AND t.table_name =  '{table_name}';";
+			AND t.table_name =  {table_name};";
 			//get unique keys
 			$S['sel_uniques']="SELECT k.column_name
 			FROM information_schema.table_constraints t
@@ -76,12 +76,12 @@ if($D['submit']):
 			on t.constraint_name=k.constraint_name and t.table_catalog=k.table_catalog and t.table_name=k.table_name
 			WHERE t.constraint_type =  'UNIQUE'
 			AND t.table_catalog =  '".$D['database']."'
-			AND t.table_name =  '{table_name}';";
+			AND t.table_name =  {table_name};";
 			//check auto_increment
 			$S['check_identity'] = "SELECT 
 										CASE 
 										WHEN 
-											columnproperty(object_id('{table_name}'), '{column_name}','IsIdentity') = 1 
+											columnproperty(object_id({table_name}), {column_name},'IsIdentity') = 1 
 											THEN 1
 										ELSE 0
 										END";
@@ -94,7 +94,7 @@ if($D['submit']):
 			//show tables
 			$S['sel_tables']="SHOW TABLES";
 			//describe table
-			$S['desc_table']="DESCRIBE `{table_name}`";
+			$S['desc_table']="DESCRIBE {table_name}";
 			//get primary key
 			$S['sel_primary']="SELECT k.column_name
 			FROM information_schema.table_constraints t
@@ -102,7 +102,7 @@ if($D['submit']):
 			USING ( constraint_name, table_schema, table_name ) 
 			WHERE t.constraint_type =  'PRIMARY KEY'
 			AND t.table_schema =  '".$D['database']."'
-			AND t.table_name =  '{table_name}';";
+			AND t.table_name =  {table_name};";
 			//get unique keys
 			$S['sel_uniques']="SELECT k.column_name
 			FROM information_schema.table_constraints t
@@ -110,11 +110,11 @@ if($D['submit']):
 			USING ( constraint_name, table_schema, table_name ) 
 			WHERE t.constraint_type =  'UNIQUE'
 			AND t.table_schema =  '".$D['database']."'
-			AND t.table_name =  '{table_name}';";
+			AND t.table_name =  {table_name};";
 			//check auto_increment
 			$S['check_identity'] = "SELECT AUTO_INCREMENT 
 			FROM information_schema.tables
-			WHERE table_name =  '{table_name}';";
+			WHERE table_name =  {table_name};";
 		break;
 	}
 
@@ -259,28 +259,28 @@ function sql_dump(){
 <?php 
 				//truncate
 				if($D['extra']=="truncate"){
-					print 'truncate table '.ef($table).$S['EOL']; 
+					print 'truncate table '.o_ef($table).$S['EOL']; 
 				} elseif($D['extra']=="schema"){
 					//drop old table
-					print 'drop table '.ef($table).$S['EOL'];
+					print 'drop table '.o_ef($table).$S['EOL'];
 					
 					//describe table
-					$DESCRIBED=$DB->fetch(str_replace("{table_name}", ef($table), $S['desc_table']));
+					$DESCRIBED=$DB->fetch(str_replace("{table_name}", s_ef($table), $S['desc_table']));
 					//get primary keys
-					$PRIMARY_KEY=$DB->fetchCell(str_replace("{table_name}", ef($table), $S['sel_primary']));
+					$PRIMARY_KEY=$DB->fetchCell(str_replace("{table_name}", s_ev($table), $S['sel_primary']));
 					//check if primary key is auto_increment
-					$HAS_IDENTITY=$DB->fetchCell(str_replace("{table_name}", ef($table), str_replace("{column_name}", $PRIMARY_KEY, $S['check_identity'])));
+					$HAS_IDENTITY=$DB->fetchCell(str_replace("{table_name}", s_ev($table), str_replace("{column_name}", s_ev($PRIMARY_KEY), $S['check_identity'])));
 					//get unique keys
-					$UNIQUE_KEYS=$DB->fetchCell(str_replace("{table_name}", ef($table), $S['sel_uniques']));
+					$UNIQUE_KEYS=$DB->fetchCell(str_replace("{table_name}", s_ev($table), $S['sel_uniques']));
 					
 					//generate new table schema
-					print "CREATE TABLE ".ef($table)."(
+					print "CREATE TABLE ".o_ef($table)."(
 ";
 					$first=true;
 					foreach($DESCRIBED as $col){
 						if(!$first) print ",
 ";
-						print "	".ef($col['Field'])." ".$col['Type'];
+						print "	".o_ef($col['Field'])." ".$col['Type'];
 						//set primary key on mssql
 						if($col['Field']==$PRIMARY_KEY && $D['format']=="mssql" && $HAS_IDENTITY){
 							print " identity(1,1)";
@@ -295,14 +295,14 @@ function sql_dump(){
 				}
 
 				//get table contents
-				$Contents = $DB->fetch("SELECT * from ".ef($table));
+				$Contents = $DB->fetch("SELECT * from ".s_ef($table));
 				
 				//cycle them
 				foreach($Contents as $Content){
 					?>
 <?php 
 					//print intro
-					print 'INSERT INTO '.ef($table).' (';
+					print 'INSERT INTO '.o_ef($table).' (';
 					//print fields, keep values
 					$first=true;
 					$values="";
@@ -311,8 +311,8 @@ function sql_dump(){
 							print ", ";
 							$values.=", ";
 						} else $first=false;
-						print ef($key);	//print o campo
-						$values.=ev($value);
+						print o_ef($key);	//print o campo
+						$values.=o_ev($value);
 					}
 					//print values
 					print ') VALUES('.$values.')'.$S['EOL']; 
@@ -328,13 +328,13 @@ function sql_dump(){
 					}
 					
 					//add primary key
-					print "ALTER TABLE ".ef($table)." ADD PRIMARY KEY (".ef($PRIMARY_KEY).")".$S['EOL'];
+					print "ALTER TABLE ".o_ef($table)." ADD PRIMARY KEY (".o_ev($PRIMARY_KEY).")".$S['EOL'];
 					//add auto_increment on mysql
 					if($D['format']=="mysql" && $HAS_IDENTITY){
-						print "ALTER TABLE ".ef($table)." MODIFY COLUMN ".ef($PRIMARY_KEY)." INT NOT NULL AUTO_INCREMENT".$S['EOL'];
+						print "ALTER TABLE ".o_ef($table)." MODIFY COLUMN ".o_ef($PRIMARY_KEY)." INT NOT NULL AUTO_INCREMENT".$S['EOL'];
 					}
 					//add unique
-					print "ALTER TABLE ".ef($table)." ADD UNIQUE (".ef($PRIMARY_KEY).")".$S['EOL'];
+					print "ALTER TABLE ".o_ef($table)." ADD UNIQUE (".o_ev($PRIMARY_KEY).")".$S['EOL'];
 				}
 				?>
 
@@ -343,14 +343,35 @@ function sql_dump(){
 <?php
 			}
 }
-//auto escape sql field
-function ev($v){
+//auto escape source sql field
+function s_ef($v){
 	global $DB;
 	return $DB->_escapeField($v);
 }
-//auto escape sql data
-function ev($v){
+//auto escape source sql data
+function s_ev($v){
 	global $DB;
 	return $DB->escapeValue($v);
+}
+
+//auto escape output sql field
+function o_ef($v){
+	global $S;
+	return $S['O_LS'].str_replace("'", $S['QR'], $v).$S['O_RS'];
+}
+//auto escape output sql data
+function o_ev($v){
+	global $S;
+
+	if(is_int($v)){
+		//integer
+		return $v;
+	} elseif(is_bool($v)) {
+		//bool
+		return $v?1:0;
+	} else {
+		//string (quotes replacement)
+		return "'".str_replace("'", $S['QR'], $v)."'";
+	}
 }
 ?>
