@@ -50,18 +50,17 @@ class Disk{
 		if ( $unique_filename_callback && function_exists( $unique_filename_callback ) ) {
 			$filename = $unique_filename_callback( $dir, $name );
 		} else {
-			$number = '';
+			$number = 0;
 
 			if ( !empty( $ext ) )
 				$ext = strtolower( ".$ext" );
 
-			$filename = str_replace( $ext, '', $filename );
 			// Strip % so the server doesn't try to decode entities.
-			$filename = str_replace('%', '', self::sanitize_file_name( $filename ) ) . $ext;
+			$filename = str_replace('%', '', self::sanitize_file_name( $name ) ) . $ext;
 
 			while ( file_exists( $dir . "/$filename" ) ) {
-				if ( '' == "$number$ext" )
-					$filename = $filename . ++$number . $ext;
+				if ( ! $number )
+					$filename = $name . ++$number . $ext;
 				else
 					$filename = str_replace( "$number$ext", ++$number . $ext, $filename );
 			}
@@ -71,12 +70,12 @@ class Disk{
 	}
 	
 	//make sure new filename is simple and has standard characters
-	function sanitize_file_name( $name ) { // Like but with periods
+	function sanitize_file_name( $name ) {
 		$name = strtolower( $name );
 		$name = Text::normalize( $name );
 		$name = preg_replace('/&.+?;/', '', $name); // kill entities
 		$name = str_replace( '_', '-', $name );
-		$name = preg_replace('/[^a-z0-9\s-.]/', '', $name);
+		$name = preg_replace('/[^a-z0-9\s-]/', '', $name);
 		$name = preg_replace('/\s+/', '-', $name);
 		$name = preg_replace('|-+|', '-', $name);
 		$name = trim($name, '-');
