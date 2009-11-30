@@ -41,18 +41,17 @@ class Text
 	
 	//convert a string to a safe javascript string
 	static function to_javascript($str, $separator='"'){
-		$str=str_replace("\n", " ", $str);
-		return str_replace($separator, "\\".$separator, $str);
+		return str_replace(array("\r\n", "\n", $separator), array("\n", " ", "\\".$separator), $str);
 	}
 	
 	//convert an html string to plain text
 	static function to_plain($str){
-		return preg_replace("/(<.*?>)/", " ", preg_replace("/<br((>)|( .*?>))/i", "\n", $str));
+		return preg_replace(array("/<br((>)|( .*?>))/i", "/(<.*?>)/"), array("\n", " "), str_replace(array("\r\n", "\n"), array("\n", " "), $str));
 	}
 	
 	//convert a plain text string to html
 	static function to_html($str){
-		return str_replace("\n", "<br />", str_replace("  ", " &nbsp;", str_replace("\t", "    ", $str)));
+		return str_replace(array("\t", "  ", "\r\n", "\n"), array("    ", " &nbsp;", "\n", "<br />"), $str);
 	}
 	
 	//remove extras spaces, tabs, etc.
@@ -83,7 +82,7 @@ class Text
 		if(self::$current_html_path=='') return false; 
 		
 		//clear newlines
-		$string  = str_replace("\n", '&-:newLine:-;', $string);
+		$string  = str_replace(array("\r\n", "\n"), array("\n", '&-:newLine:-;'), $string);
 		
 		//each html tag...
 		$string=preg_replace_callback('#(<(?![?/!]|[aA] ))(.*?[^?])(>)#', 'Text::correct_html_urls_callback1', $string);
