@@ -15,6 +15,9 @@
 			<li>
 				<a href="<?php Path::put('../database.php', __FILE__); ?>" title="Test Database">Database</a>
 			</li>
+			<li>
+				<a href="<?php Path::put('../mail.php', __FILE__); ?>" title="Test Email">Mail</a>
+			</li>
 			<div class="clear"></div>
 		</ul>
 		<div id="content">

@@ -41,7 +41,7 @@ class Text
 	
 	//convert a string to a safe javascript string
 	static function to_javascript($str, $separator='"'){
-		return str_replace(array("\r\n", "\n", $separator), array("\n", " ", "\\".$separator), $str);
+		return str_replace(array("\r\n", "\n", $separator), array("\\r\\n", "\\n", "\\".$separator), $str);
 	}
 	
 	//convert an html string to plain text
