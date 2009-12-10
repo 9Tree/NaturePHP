@@ -450,6 +450,20 @@ inserts value into specific array position, shifts higher items as necessary - o
 eg. [ @Utils::array_insert($array, 'test', 3);@ ]
 
 
+*array_ikey_exists*<br />
+// @mixed Utils::array_ikey_exists(mixed $needle, array $haystack)@<br />
+same as array_key_exists() but case insensitive, returns key if found, false if not;<br />
+eg. [ @Utils::array_ikey_exists("Test", array("joe"=>1, "test"=>2));@ ]
+
+
+*generate_password*<br />
+// @string Utils::generate_password([{options} $options])@<br />
+generates password with random characters from a possible string;<br />
+available {options} - int 'lenght', bool 'repeat', string 'possible'<br />
+length defaults to 8, possible characters defaults to "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"<br />
+eg. [ @Utils::generate_password(array('length'=>15));@ ]
+
+
 
 
 

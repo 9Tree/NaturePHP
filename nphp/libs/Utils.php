@@ -162,7 +162,7 @@ class Utils{
 		}	
 	}
 	
-	//same as array_key_exists() but case sensitive
+	//same as array_key_exists() but case insensitive
 	function array_ikey_exists($key,$arr){
 	    $key=strtolower($key);
 	    if($arr && is_array($arr))
@@ -173,6 +173,34 @@ class Utils{
 	        }
 	    }
 	    return false;
+	}
+	
+	//generate password
+	function generate_password (){
+		
+		//get options
+		$args=Utils::combine_args(func_get_args(), 0, array(
+								'length' => 8, 
+								'possible' => "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+								'repeat' => true));
+								
+		$password = "";
+		$i = 0; 
+		while ($i < $args['length']):
+
+			# pick a random character from the possible ones
+			$char = substr($args['possible'], mt_rand(0, strlen($args['possible'])-1), 1);
+
+			# we don't want this character if it's already in the password
+			if (!$args['repeat'] && !strstr($password, $char)):
+				$password .= $char;
+				$i++;
+			endif;
+
+		endwhile;
+
+		# done!
+		return $password;
 	}
 }
 ?>
