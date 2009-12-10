@@ -419,17 +419,30 @@ class Image
 	function save_children(){
 		
 		$args=Utils::combine_args(func_get_args(), 0, $this->save_defaults);
-		//secure option not available for children (basename must remain the same)
-		$args['secure'] = false;
+
 		//saves all children
 		$dest_folder=$args['folder'];	//keep val
 		$count=count($this->children);
+		$first = true;
 		for($i=0;$i<$count;$i++){	//cycle children
 			if($dest_folder!==false){
 				$args['folder']=$dest_folder."/".$this->children[$i]['name'];	//change folder appropriately 
 			}
-			$this->children[$i]['instance']->save($args);	//save child
-		}			
+			
+			//force secure only on first item
+			if($first){
+				$args['basename'] = $this->children[$i]['instance']->save($args);	//save child
+				if(!$args['basename']) return false;
+				//remove secure option for next images
+				$args['secure'] = false;
+				$first=false;
+			} else {
+				$this->children[$i]['instance']->save($args);	//save child
+			}
+			
+		}
+		
+		return $args['basename'];			
 	}
 	
 	//saves current images and all children
@@ -439,7 +452,7 @@ class Image
 		//saves self
 		if($args['basename']=$this->save($args)){
 			//saves dependant
-			$this->save_children($args)
+			$this->save_children($args);
 			return $args['basename'];
 		}
 		return false;	//something went wrong!
