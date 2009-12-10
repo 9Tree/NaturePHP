@@ -17,5 +17,7 @@ $image->children(array(
 	'thumb'			=>	"100x100#"));
 
 //saves all children
-$image->save_all(array('folder' => Path::to("uploads/images", __FILE__)));
+$filename = $image->save_all(array('folder' => Path::to("uploads/images", __FILE__)));
+
+var_dump($filename);
 ?>

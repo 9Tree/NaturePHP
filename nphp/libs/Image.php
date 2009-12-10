@@ -439,9 +439,8 @@ class Image
 		//saves self
 		if($args['basename']=$this->save($args)){
 			//saves dependant
-			if($this->save_children($args)){
-				return $args['basename'];
-			}
+			$this->save_children($args)
+			return $args['basename'];
 		}
 		return false;	//something went wrong!
 	}
