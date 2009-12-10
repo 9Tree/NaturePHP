@@ -440,7 +440,7 @@ class Image
 		if($args['basename']=$this->save($args)){
 			//saves dependant
 			if($this->save_children($args)){
-				return true;
+				return $args['basename'];
 			}
 		}
 		return false;	//something went wrong!
