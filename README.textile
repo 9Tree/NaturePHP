@@ -1098,13 +1098,13 @@ eg. [ @$instance->save(array('folder'=>'uploads/images'));@ ]
 *save_children*<br />
 // @void Image::save_children([{options} $options])@<br />
 saves all the dependent images created via @Image::children()@, creating a subfolder for each dependent image within the main save folder<br />
-same options as @Image::save()@ except for secure which is not applicable<br />
+same options as @Image::save()@ but secure only acts on first image saved, consecutive images will have first's basename<br />
 eg. [ @$instance->save_children(array('folder'=>'uploads/images'));@ ]
 
 
 *save*<br />
 // @void Image::save_all([{options} $options])@<br />
 saves both this image and the dependent children<br />
-same options as @Image::save()@<br />
+same options as @Image::save()@, secure only acts on original image<br />
 eg. [ @$instance->save_all(array('folder'=>'uploads/images'));@ ]
 

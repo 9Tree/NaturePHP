@@ -452,6 +452,7 @@ class Image
 		//saves self
 		if($args['basename']=$this->save($args)){
 			//saves dependant
+			$args['secure']=false;	//force children basename to be coherent with original
 			$this->save_children($args);
 			return $args['basename'];
 		}
