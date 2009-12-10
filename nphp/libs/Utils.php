@@ -195,6 +195,8 @@ class Utils{
 			if (!$args['repeat'] && !strstr($password, $char)):
 				$password .= $char;
 				$i++;
+			else:
+				$i++;
 			endif;
 
 		endwhile;
