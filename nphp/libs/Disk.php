@@ -7,7 +7,7 @@
 class Disk{
 	
 	//make new directory
-	function make_dir($target) {
+	static function make_dir($target) {
 		// from php.net/mkdir user contributed notes
 		if (file_exists($target)) {
 			if (! @ is_dir($target))
@@ -35,7 +35,7 @@ class Disk{
 	}
 	
 	//unique filename. Based on WordPress
-	function unique_filename( $dir, $filename, $unique_filename_callback = null ) {
+	static function unique_filename( $dir, $filename, $unique_filename_callback = null ) {
 		$filename = strtolower( $filename );
 		// separate the filename into a name and extension
 		$info = pathinfo($filename);
@@ -70,7 +70,7 @@ class Disk{
 	}
 	
 	//make sure new filename is simple and has standard characters
-	function sanitize_file_name( $name ) {
+	static function sanitize_file_name( $name ) {
 		$name = strtolower( $name );
 		$name = Text::normalize( $name );
 		$name = preg_replace('/&.+?;/', '', $name); // kill entities

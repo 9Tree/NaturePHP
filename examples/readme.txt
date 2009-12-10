@@ -13,9 +13,12 @@
 *
 **
 
-Just copy the examples/ and nphp/ folder to any folder on your server and it should be working
+Just copy the examples/ and nphp/ folder to any folder on your server and the basic should be working
 
 
+To get uploads working:
+
+1. set read/write permissions on exmples/uploads/ (recursively)
 
 
 To put the application actually working with the database:

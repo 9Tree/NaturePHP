@@ -3,18 +3,20 @@
  * Typical init file within an application (example)
  */
 
+//required for php 5.3 +
+date_default_timezone_set('Europe/Lisbon');
 
-// start NaturePhp
-$relative_path_to_nphp = "../../nphp/init.php";
-require(dirname(__FILE__)."/".$relative_path_to_nphp);	//this require will always work as long as relative path is correct
-														//even if this file is an included file somewhere else
-														//equivalent to Path::to($relative_path_to_nphp, __FILE__)
+// load NaturePhp
+require(dirname(__FILE__)."/../../nphp/init.php");	// this require will always work as long as relative path is correct
+													// even if this file is an included file somewhere else which is included
+													// somewhere else and so on...
+														// equivalent to Path::to("../../nphp/init.php", __FILE__)
 
 //start logging errors / notices
 Log::init($debug=true);
 
 //This variable serves just to toggle this example working with mysql
-Mem::set('use_db', true, 'example');	//change to true to use the Database connection
+Mem::set('use_db', false, 'example');	//change to true to use the Database connection
 
 
 //Setup database connection unless use_mysql is false

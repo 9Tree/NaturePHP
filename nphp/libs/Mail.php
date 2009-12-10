@@ -19,6 +19,11 @@ class Mail{
 						'attachments' => array()
 						));
 		
+		//debug notice information
+		$notice_info = $to.' (text'.($args['html']?'/html':'').($args['attachments']?'/attachments':'').')';
+		
+		
+		//start composing email
 		# create a boundary string. It must be unique
 		# so we use the MD5 algorithm to generate a random hash
 		$random_hash = md5(date('r', time()));
@@ -43,15 +48,13 @@ class Mail{
 		# html mode - write plain text only as alternative
 		if($args['html']){
 			$headers .= "Content-Type: multipart/alternative; boundary=\"PHP-alt-$random_hash\"\r\n";
-			$headers .= "--PHP-alt-$random_hash\r\n";
-		}
+			$headers .= "--PHP-alt-$random_hash\r\n";		
 		
-		$headers .= "Content-Type: text/plain; charset=\"utf-8\"\r\n";
-		$headers .= "Content-Transfer-Encoding: 7bit\r\n";
+			$headers .= "Content-Type: text/plain; charset=\"utf-8\"\r\n";
+			$headers .= "Content-Transfer-Encoding: 7bit\r\n";
 		
-		$headers .= "\r\n".$body."\r\n\r\n";
+			$headers .= "\r\n".$body."\r\n\r\n";
 		
-		if($args['html']){
 			$headers .= "--PHP-alt-$random_hash\r\n";
 			$headers .= "Content-Type: text/html; charset=\"utf-8\"\r\n";
 			$headers .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
@@ -67,6 +70,13 @@ class Mail{
 			$first = true;
 			foreach($args['attachments'] as $file){
 				
+				//file not found protection
+				if(!is_readable($file)){
+					trigger_error('<strong>Mail</strong> :: Attachment not found "'.$file.'"', E_USER_WARNING);
+					trigger_error("<strong>Mail</strong> :: Unable to send email to $notice_info", E_USER_WARNING);
+					return false;	//email cannot be properly sent - better not to send at all
+				}
+					
 				if(!$first){
 					//close previous one
 					$headers .= "\r\n";
@@ -90,27 +100,30 @@ class Mail{
 
 				$headers .= "\r\n".$attachment."\r\n\r\n"; 
 				
-				$headers .= "--PHP-mixed-$random_hash";
 			}
 			
 			if(!$first){
 				//close the last one
-				$headers .= "--\r\n\r\n";
+				$headers .= "--PHP-mixed-$random_hash--\r\n\r\n";
 			}
 		}
 		
+		//try sending the composed email
 		if(!mail( $to, $subject, $body, $headers )){
-			trigger_error('<strong>Mail</strong> :: Unable to send email.', E_USER_WARNING);
+			trigger_error("<strong>Mail</strong> :: Unable to send email to $notice_info", E_USER_WARNING);
 			return false;
+		} else {
+			trigger_error("<strong>Mail</strong> :: Email sent to $notice_info", E_USER_NOTICE);
+			return true;
 		}
-		return true;
+		
 	}
 	
 	
 	//send html mail
 	static function send_html($to, $subject, $html_body){
 		# vars
-		$args=Utils::combine_args(func_get_args(), 3, array());
+		$args=Utils::combine_args(func_get_args(), 3);
 		
 		#html body
 		$args['html'] = $html_body;

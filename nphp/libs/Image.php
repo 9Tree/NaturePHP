@@ -2,6 +2,19 @@
 #/*
 #* 9Tree Text Class - v0.1
 #* Image control functionalities
+#*
+#* Styles specification:
+#* 'scale'%				Height and width both scaled by specified percentage.
+#* 'scale-x'x'scale-y'%	Height and width individually scaled by specified percentages.
+#* 'width'				Width given, height automagically selected to preserve aspect ratio.
+#* x'height'			Height given, width automagically selected to preserve aspect ratio.
+#* 'width'x'height'		Maximum values of height and width given, aspect ratio preserved.
+#* 'width'x'height'^	Minimum values of width and height given, aspect ratio preserved.
+#* 'width'x'height'!	Width and height emphatically given, original aspect ratio ignored.
+#* 'width'x'height'>	Change as per 'width'x'height' but only if an image dimension exceeds a specified dimension.
+#* 'width'x'height'<	Same as 'width'x'height'^ but only if an image dimension is smaller than a specified dimension.
+#* 'area'@				Resize image to have specified area in pixels. Aspect ratio is preserved. (not implemented)
+#* 'width'x'height'#	Same as 'width'x'height'^ but centered and cropped to the 'not fit' dimension.
 #*/
 
 class Image
@@ -10,17 +23,23 @@ class Image
 	private $info=array(
 		'width'=>null, 
 		'height'=>null, 
-		'type'=>null, 
+		'type'=>null);
+		
+	//location info
+	private $options=array(
+		'path'=>null,
+		'folder'=>null, 
+		'basename'=>null, 
 		'transparentColorRed'=>null,
 		'transparentColorGreen'=>null,
 		'transparentColorBlue'=>null);
-		
-	//location info
-	private $location=array(
-		'path'=>null,
-		'folder'=>null, 
-		'basename'=>null);
-		
+	
+	//this is a constant
+	private $save_defaults=array(
+					'folder' => false,
+					'basename' => false,
+					'secure' => true);
+						
 	//main image identifier
 	private $image=null;
 	
@@ -31,7 +50,7 @@ class Image
 	
 	
 	//create instance function
-	function __construct(&$image, $info, $location){
+	function __construct(&$image, $info=array()){
 		
 		//no GD installed!!
 		if(!function_exists("imagecreatetruecolor")){
@@ -39,6 +58,8 @@ class Image
 			die();
 		}
 		
+		
+		//check is in internal resource format
 		if(is_array($image)) {
 			//image identifier
 			$this->image=&$image['resource'];
@@ -46,51 +67,58 @@ class Image
 			$this->info['width']=$image['width'];
 			$this->info['height']=$image['height'];
 			$this->info['type']=$image['type'];
-			$this->info['transparentColorRed']=$image['transparentColorRed'];
-			$this->info['transparentColorGreen']=$image['transparentColorGreen'];
-			$this->info['transparentColorGreen']=$image['transparentColorBlue'];
-			//location info
-			$this->location['path']=$image['path'];
-			$this->location['folder']=$image['folder'];
-			$this->location['basename']=$image['basename'];
-		} else {
-			trigger_error('<strong>Image</strong> :: unknown image/path in construct.', E_USER_WARNING);
+			//options
+			$this->options['transparentColorRed']=$image['transparentColorRed'];
+			$this->options['transparentColorGreen']=$image['transparentColorGreen'];
+			$this->options['transparentColorGreen']=$image['transparentColorBlue'];
+			$this->options['path']=$image['path'];
+			$this->options['folder']=$image['folder'];
+			$this->options['basename']=$image['basename'];
+			
+		} else {	//normal image instance
+			//image identifier
+			$this->image=&$image;
+			//image info
+			$this->info = array_merge($this->info, $info);
+			//options
+			$this->options = Utils::combine_args(func_get_args(), 2, $this->options);
 		}
+
 	}
 	
 	//STATIC FUNCTIONS
 	
 	//load image from path
-	static function &from_file($file){
+	static function from_file($file){
 		$info=array();
-		$location=array();
+		$options=array();
 		$image=null;
 		
 		//set location information
-		$location['path']=$file;
+		$options['path']=$file;
 		$path_parts=pathinfo($file);
-		$location['folder']=$path_parts['dirname'];
-		$location['basename']=$path_parts['basename'];
+		$options['folder']=$path_parts['dirname'];
+		$options['basename']=$path_parts['basename'];
 
 		
 		//these variables might not be filled
-		$info['transparentColorRed'] = null;
-        $info['transparentColorGreen'] = null;
-        $info['transparentColorBlue'] = null;
+		$options['transparentColorRed'] = null;
+        $options['transparentColorGreen'] = null;
+        $options['transparentColorBlue'] = null;
 		
 		// performs some error checking first
         // if source file does not exists
-        if (!file_exists($location['path'])) {
-            trigger_error('<strong>Image</strong> :: file not found "'.$location['path'].'"', E_USER_WARNING);
+        if (!file_exists($options['path'])) {
+            trigger_error('<strong>Image</strong> :: file not found "'.$options['path'].'"', E_USER_WARNING);
         // if source file is not readable
-        } elseif (!is_readable($image['path'])) {
+        } elseif (!is_readable($options['path'])) {
             // save the error level and stop the execution of the script
-            trigger_error('<strong>Image</strong> :: file is not readable "'.$location['path'].'"', E_USER_WARNING);
+            trigger_error('<strong>Image</strong> :: file is not readable "'.$options['path'].'"', E_USER_WARNING);
         // get source file width, height and type
         // and if founds a not-supported file type
-        } elseif (!list($info['width'], $info['height'], $info['type']) = @getimagesize($location['path'])) {
+        } elseif (!list($info['width'], $info['height'], $info['type']) = @getimagesize($options['path'])) {
             // save the error level and stop the execution of the script
-            trigger_error('<strong>Image</strong> :: unrecognized file type "'.$location['path'].'"', E_USER_NOTICE);
+            trigger_error('<strong>Image</strong> :: unrecognized file type "'.$options['path'].'"', E_USER_NOTICE);
         // if no errors so far
         } else {
 
@@ -102,44 +130,42 @@ class Image
                     // the following part gets the transparency color for a gif file
                     // this code is from the PHP manual and is written by
                     // fred at webblake dot net and webmaster at webnetwizard dotco dotuk, thanks!
-                    $fp = fopen($location['path'], "rb");
+                    $fp = fopen($options['path'], "rb");
                     $result = fread($fp, 13);
                     $colorFlag = ord(substr($result,10,1)) >> 7;
                     $background = ord(substr($result,11));
                     if ($colorFlag) {
                         $tableSizeNeeded = ($background + 1) * 3;
                         $result = fread($fp, $tableSizeNeeded);
-                        $info['transparentColorRed'] = ord(substr($result, $background * 3, 1));
-                        $info['transparentColorGreen'] = ord(substr($result, $background * 3 + 1, 1));
-                        $info['transparentColorBlue'] = ord(substr($result, $background * 3 + 2, 1));
+                        $options['transparentColorRed'] = ord(substr($result, $background * 3, 1));
+                        $options['transparentColorGreen'] = ord(substr($result, $background * 3 + 1, 1));
+                        $options['transparentColorBlue'] = ord(substr($result, $background * 3 + 2, 1));
                     }
                     fclose($fp);
                     // -- here ends the code related to transparency handling
                     // creates an image from file
-                    $image = @imagecreatefromgif($location['path']);
-					return true;
+                    $image = @imagecreatefromgif($options['path']);
                     break;
                 // if jpg
                 case 2:
                     // creates an image from file
-                    $image = @imagecreatefromjpeg($location['path']);
-					return true;
+                    $image = @imagecreatefromjpeg($options['path']);
                     break;
                 // if png
                 case 3:
                     // creates an image from file
-                    $image = @imagecreatefrompng($location['path']);
-					return true;
+                    $image = @imagecreatefrompng($options['path']);
                     break;
                 default:
                     // if file has an unsupported extension
                     // note that we call this if the file is not gif, jpg or png even though the getimagesize function
                     // handles more image types
                     $this->error = 3;
-                    trigger_error('<strong>Image</strong> :: unrecognized file type "'.$location['path'].'" (2)', E_USER_NOTICE);
+                    trigger_error('<strong>Image</strong> :: unrecognized file type "'.$options['path'].'" (2)', E_USER_NOTICE);
             }
 		}
-		return new Image($image, $info, $location);
+
+		return new Image($image, $info, $options);
 	}
 	
 	
@@ -155,12 +181,12 @@ class Image
         $image['resource'] = imagecreatetruecolor($image['width'], $image['height']);
         // if we have transparency in the image (gif)
         if (
-			isset($this->info['transparentColorRed']) && 
-			isset($this->info['transparentColorGreen']) && 
-			isset($this->info['transparentColorBlue'])) {
-				$image['transparentColorRed']=$this->info['transparentColorRed'];
-				$image['transparentColorGreen']=$this->info['transparentColorGreen'];
-				$image['transparentColorBlue']=$this->info['transparentColorBlue'];
+			isset($this->options['transparentColorRed']) && 
+			isset($this->options['transparentColorGreen']) && 
+			isset($this->options['transparentColorBlue'])) {
+				$image['transparentColorRed']=$this->options['transparentColorRed'];
+				$image['transparentColorGreen']=$this->options['transparentColorGreen'];
+				$image['transparentColorBlue']=$this->options['transparentColorBlue'];
 	            $transparent = imagecolorallocate(
 								$image['resource'], 
 								$image['transparentColorRed'], 
@@ -182,107 +208,136 @@ class Image
 	function resize($style){
 		//checks operation/values
 		$style=$this->parse_style($style);
+		//initializes image
+		$image=null;
+		$src_x=0;
+		$src_y=0;
+		$height=0;
+		$width=0;
+		$o_width=$this->info['width'];
+		$o_height=$this->info['height'];
+		
 		switch($style['operation']){
-			case "*":	//multiply both width and height
+			
+			case "%":	//multiply both width and height
 				//new image with final measures
-				$style['width']=$this->info['width']*$style['multiplier'];
-				$style['height']=$this->info['height']*$style['multiplier'];
-				$image=$this->new_resource($style['width'], $style['height']);
-				imagecopyresampled($image['resource'], $this->image, 0, 0, 0, 0, $style['width'], $style['height'], $this->info['width'], $this->info['height']);
-			break;
-			case ">":	//force this width
-				$this->resize_force_width($image, $style);
-			break;
-			case "<":	//force this height
-				$this->resize_force_height($image, $style);
-			break;
-			case "#":	//auto: fit fill
-				if($this->info['height']/$style['height'] > $this->info['width']/$style['width']){
-					$this->resize_force_width($image, $style);	
-				} else {
-					$this->resize_force_height($image, $style);
+				if(isset($style['percentage'])){	//simple percentage
+					$ratio = $style['percentage']/100;
+					$width=(int)($this->info['width']*$ratio);
+					$height=(int)($this->info['height']*$ratio);
+				} else {	//specific percentage
+					$width=(int)($this->info['width']*$style['width']/100);
+					$height=(int)($this->info['height']*$style['height']/100);
 				}
 			break;
-			case "|":	//auto: fit within
+			
+			case "force_width":	//force this width
+				$width=$style['width'];
+				$height=(int)($this->info['height']*$style['width']/$this->info['width']);
+			break;
+			
+			case "force_height":	//force this height
+				$height=$style['height'];
+				$width=(int)($this->info['width']*$style['height']/$this->info['height']);
+			break;
+			
+			case ">":	//fit within
+				if($this->info['height']<$style['height'] && $this->info['width']<$style['width']){
+					$width=$style['width'];
+					$height=$style['height'];
+					break;
+				}
+			case "normal":
 				if($this->info['height']/$style['height'] > $this->info['width']/$style['width']){
-					$this->resize_force_height($image, $style);	
+					$height=$style['height'];
+					$width=(int)($this->info['width']*$style['height']/$this->info['height']);
 				} else {
-					$this->resize_force_width($image, $style);
+					$width=$style['width'];
+					$height=(int)($this->info['height']*$style['width']/$this->info['width']);
 				}
 			break;
-			default:	//simple resize
-				//new image with final measures
-				$image=$this->new_resource($style['width'], $style['height']);
-				imagecopyresampled($image['resource'], $this->image, 0, 0, 0, 0, $style['width'], $style['height'], $this->info['width'], $this->info['height']);
+			
+			case "<":	//fit outside
+				if($this->info['height']>$style['height'] && $this->info['width']>$style['width']){
+					$width=$style['width'];
+					$height=$style['height'];
+					break;
+				}
+			case "^":
+				if($this->info['height']/$style['height'] > $this->info['width']/$style['width']){
+					$width=$style['width'];
+					$height=(int)($this->info['height']*$style['width']/$this->info['width']);
+				} else {
+					$height=$style['height'];
+					$width=(int)($this->info['width']*$style['height']/$this->info['height']);
+				}
+			break;
+			
+			case "!":
+				$width=$style['width'];
+				$height=$style['height'];
+			break;
+			
+			case "#":
+				$width=$style['width'];
+				$height=$style['width'];
+				if($this->info['height']/$style['height'] > $this->info['width']/$style['width']){
+					
+					$o_height=(int)($this->info['width']*$style['height']/$style['width']);
+					$src_y=(int)(($this->info['height']-$o_height)/2);
+				} else {
+					$o_width=(int)($this->info['width']*$style['height']/$style['width']);
+					$src_x=(int)(($this->info['width']-$o_width)/2);
+				}
 			break;
 		}
+		
+		
+		//general resize
+		$image=$this->new_resource($width, $height);
+		imagecopyresampled($image['resource'], $this->image, 0, 0, $src_x, $src_y, $width, $height, $o_width, $o_height);
+		
 		//set new information
-		$this->info['width']=$style['width'];
-		$this->info['height']=$style['height'];
+		$this->info['width']=$width;
+		$this->info['height']=$height;
 		//set new resource image
 		$this->image=&$image['resource'];
-	}
-	
-	//math for resize
-	function resize_force_width(&$image, &$style){
-		$ratio=$this->info['width']/$style['width'];	//ratio
-		$dest_h=(int)($this->info['height']/$ratio);	//dest_h
-		$style['height']=$dest_h>$style['height']?$style['height']:$dest_h;	//limit dest_h	
-		$src_y=(int)($this->info['height']-$style['height']/2);	//calculate where to start y crop
-		//new image with final measures
-		$image=$this->new_resource($style['width'], $style['height']);
-		imagecopyresampled($image['resource'], $this->image, 0, 0, 0, $src_y, $style['width'], $style['height'], $this->info['width'], $this->info['height']);
-	}
-	function resize_force_height(&$image, &$style){
-		$ratio=$this->info['height']/$style['height'];	//ratio
-		$dest_w=(int)($this->info['width']/$ratio);	//dest_w
-		$style['width']=$dest_w>$style['width']?$style['width']:$dest_w;	//limit dest_h	
-		$src_x=(int)($this->info['width']-$style['width']/2);	//calculate where to start x crop
-		//new image with final measures
-		$image=$this->new_resource($style['width'], $style['height']);
-		imagecopyresampled($image['resource'], $this->image, 0, 0, $src_x, 0, $style['width'], $style['height'], $this->info['width'], $this->info['height']);
 	}
 	
 	//parse style
 	function parse_style($style){
 		$arr=array();
-		if(strpos($style, '*')===0){
-			//simple resize
-			$arr['operation']='*';
-			$arr['multiplier']=substr($style, 1, 0);
-		} else {
-			if(strpos($style, '>')!==false){
-				//force width
-				$arr['operation']='>';
-			} elseif(strpos($style, '<')!==false){
-				//force height
-				$arr['operation']='<';
-			} elseif(strpos($style, '#')!==false){
-				//fit fill
-				$arr['operation']='#';
-			} elseif(strpos($style, '|')!==false){
-				//fit within
-				$arr['operation']='|';
-			} else {
-				//simple resize
-				$arr['operation']='=';
-			}
-			preg_match("@([0-9]+)x([0-9]+).*?@", $style, $matches);
+
+		if(preg_match("@^([0-9]+)x([0-9]+)(.*?)?$@", $style, $matches)){
+			//specific operation
+			$arr['operation']=$matches[3]?$matches[3]:"normal";
 			$arr['width']=$matches[1];
 			$arr['height']=$matches[2];
+		} elseif(substr($style, -1, 1)=="%") {
+			//percentage resize
+			$arr['operation']="%";
+			$arr['percentage']=substr($style, 0, -1);
+		} elseif(substr($style, 0, 1)=="x"){
+			//force height
+			$arr['operation']="force_height";
+			$arr['height']=substr($style, 1, strlen($style)-1);
+		} else {
+			$arr['operation']="force_width";
+			$arr['width']=$style;
 		}
+		
 		return $arr;
 	}
 	
 	//makes babies (aka thumbnails, resizes, etc)
 	function children($styles){
-		$location=$this->location;
+		$options=$this->options;
 		foreach($styles as $folder=>$style){
-			$location['folder'].="/".$folder;
-			$new_id=count($children);
+			$options['folder'].="/".$folder;
+			$new_id=count($this->children);
 			$this->children[$new_id]['name']=$folder;
 			$this->children[$new_id]['style']=$style;
-			$this->children[$new_id]['instance']=new Image(&$this->image, $this->info, $location);	//creates instance
+			$this->children[$new_id]['instance']=new Image(&$this->image, $this->info, $options);	//creates instance
 			$this->children[$new_id]['instance']->resize($style);	//resizes to style
 		}
 	}
@@ -292,64 +347,59 @@ class Image
 	//saves current image
 	function save(){
 		
-		$args=Utils::combine_args(func_get_args(), 0, array(
-						'folder' => false,
-						'filename' => false,
-						'secure' => true
-						));
+		$args=Utils::combine_args(func_get_args(), 0, $this->save_defaults);
 						
-		if($args['folder']!==false) $this->location['folder']=$args['folder'];	//filter folder
+		if($args['folder']!==false) $this->options['folder']=$args['folder'];	//filter folder
 		
-		if(!Disk::make_dir($this->location['folder']) && is_writable($this->location['folder'])){
-			trigger_error('<strong>Image</strong> :: Unable to create/use folder, permission denied or malformed path for "'.$location['folder'].'"', E_USER_WARNING);
+		if(!Disk::make_dir($this->options['folder']) && is_writable($this->options['folder'])){
+			trigger_error('<strong>Image</strong> :: Unable to create/use folder, permission denied or malformed path for "'.$this->options['folder'].'"', E_USER_WARNING);
 		} else {
 			
-			if($args['filename']!==false) $this->location['filename']=$args['filename'];	//filter filename
+			if($args['basename']!==false) $this->options['basename']=$args['basename'];	//filter filename
 			
 			//unique/sanitize
-			if($args['secure']) $this->location['filename']=Disk::unique_filename($this->location['folder'], $this->location['filename']);
+			if($args['secure']) $this->options['basename']=Disk::unique_filename($this->options['folder'], $this->options['basename']);
 			//set final path
-			$this->location['path'] = $this->location['folder']."/".$this->location['filename'];
+			$this->options['path'] = $this->options['folder']."/".$this->options['basename'];
 			//save the file
 	        // image saving process goes according to required extension
 	        switch ($this->info['type']) {
 	            // if gif
-	            case "gif":
+	            case IMAGETYPE_GIF:
 	                // if gd support for this file type is not available
 	                if (!function_exists("imagegif")) {
 	                    // save the error level and stop the execution of the script
 	                    trigger_error('<strong>Image</strong> :: GD does not support gif files.', E_USER_WARNING);
 	                    return false;
 	                // if, for some reason, file could not be created
-	                } elseif (@!imagegif($this->image, $this->location['path'])) {
+	                } elseif (@!imagegif($this->image, $this->options['path'])) {
 	                    // save the error level and stop the execution of the script
 	                    trigger_error('<strong>Image</strong> :: Unknown error, unable to save gif file.', E_USER_WARNING);
 	                    return false;
 	                }
 	                break;
 	            // if jpg
-	            case "jpg":
-	            case "jpeg":
+	            case IMAGETYPE_JPEG:
 	                // if gd support for this file type is not available
 	                if (!function_exists("imagejpeg")) {
 	                    // save the error level and stop the execution of the script
 	                    trigger_error('<strong>Image</strong> :: GD does not support jpeg files.', E_USER_WARNING);
 	                    return false;
 	                // if, for some reason, file could not be created
-	                } elseif (@!imagejpeg($this->image, $this->location['path'])) {
+	                } elseif (@!imagejpeg($this->image, $this->options['path'])) {
 	                    // save the error level and stop the execution of the script
 	                    trigger_error('<strong>Image</strong> :: Unknown error, unable to save jpeg file.', E_USER_WARNING);
 	                    return false;
 	                }
 	                break;
-	            case "png":
+	            case IMAGETYPE_PNG:
 	                // if gd support for this file type is not available
 	                if (!function_exists("imagepng")) {
 	                    // save the error level and stop the execution of the script
 	                    trigger_error('<strong>Image</strong> :: GD does not support png files.', E_USER_WARNING);
 	                    return false;
 	                // if, for some reason, file could not be created
-	                } elseif (@!imagepng($this->image, $this->location['path'])) {
+	                } elseif (@!imagepng($this->image, $this->options['path'])) {
 	                    // save the error level and stop the execution of the script
 	                    trigger_error('<strong>Image</strong> :: Unknown error, unable to save png file.', E_USER_WARNING);
 	                    return false;
@@ -357,38 +407,43 @@ class Image
 					break;
 	            // if not a supported file extension
 	            default:
+					trigger_error('<strong>Image</strong> :: Unrecognized file format "'.$this->info['type'].'"', E_USER_WARNING);
 	                return false;
 	        }
 	        // if file was created successfully return filename
-	        return $this->location['filename'];
+	        return $this->options['basename'];
 		}
 	}
 	
-	//saves current images and all children
-	function save_all(){
+	//saves all the dependant images
+	function save_children(){
 		
-		$args=Utils::combine_args(func_get_args(), 0, array(
-						'save_original' => true,
-						'folder' => false,
-						'filename' => false,
-						'secure' => true
-						));
-		//saves self
-		if($args['save_original']) {
-			$args['filename']=$this->save($args);
-			if($args['filename']===false) return false;	//something went wrong!
-		}
-		
+		$args=Utils::combine_args(func_get_args(), 0, $this->save_defaults);
+		//secure option not available for children (basename must remain the same)
+		$args['secure'] = false;
 		//saves all children
 		$dest_folder=$args['folder'];	//keep val
 		$count=count($this->children);
 		for($i=0;$i<$count;$i++){	//cycle children
 			if($dest_folder!==false){
-				$args['folder']=$dest_folder."/".$this->$children[$i]['name'];	//change folder appropriately 
+				$args['folder']=$dest_folder."/".$this->children[$i]['name'];	//change folder appropriately 
 			}
-			$this->$children[$i]['instance']->save($args);	//save child
-		}
+			$this->children[$i]['instance']->save($args);	//save child
+		}			
+	}
+	
+	//saves current images and all children
+	function save_all(){
 		
+		$args=Utils::combine_args(func_get_args(), 0, $this->save_defaults);
+		//saves self
+		if($args['basename']=$this->save($args)){
+			//saves dependant
+			if($this->save_children($args)){
+				return true;
+			}
+		}
+		return false;	//something went wrong!
 	}
 
 }

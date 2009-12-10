@@ -2,9 +2,20 @@
 // Application configuration / startup Nphp
 require('includes/init.php');
 
-$image=&Image::from_file(Path::to("images/Samurai.jpg", __FILE__));
+//creates image instance from file
+$image=Image::from_file(Path::to("images/Samurai.jpg", __FILE__));
 
-$image->children(array('thumb'=>"100x100#", "preview"=>"300x300|"));
+//creates children images
+$image->children(array(
+	'scale'			=>	'50%', 
+	'specific_scale'=>	'75x50%', 
+	'fixed_width'	=>	"100", 
+	'fixed_height'	=>	"x100", 
+	"fit_within"	=>	"100x200>",
+	"fit_outside"	=>	"100x200^",
+	"forced"		=>	"200x200!",
+	'thumb'			=>	"100x100#"));
 
-$image->save_all(array('folder' => Path::to("files/images", __FILE__)));
+//saves all children
+$image->save_all(array('folder' => Path::to("uploads/images", __FILE__)));
 ?>

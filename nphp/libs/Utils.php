@@ -35,12 +35,12 @@ class Utils{
 	}
 	
 	//combines function mixed arguments set with default variables, returns as object
-	static function combine_args($func_args, $start_index, $defaults=false){
+	static function combine_args($func_args, $start_index, $defaults=array()){
 
 		//emptyness test
 		if(!isset($func_args[$start_index])){
-			if(!$defaults){
-				return array();
+			if(!is_array($defaults)){
+				return $defaults;
 			} else {
 				return self::mixed_to_array($defaults);
 			}

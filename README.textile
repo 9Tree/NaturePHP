@@ -27,6 +27,8 @@ h2. -//######################## README INDEX
 ** 3.12: Template .. #Templates manager class</li>
 ** 3.13: Database .. #Awesome sql interface (based on dbFacile by greaterscope)</li>
 ** 3.14: Event ..... #Event/action and filtering functionalities (based on Wordpress add_action and add_filter)</li>
+** 3.15: Mail ...... #Email functionalities</li>
+** 3.16: Image ..... #Image manipulation class</li>
 
 
 <small>Notes: 
@@ -156,7 +158,7 @@ eg. [ @Log::debug(true);@ ]
 *notify*<br />
 // @void Log::notify(string $email)@<br />
 Notifies the email when fatal error occurs on non-debug mode. <br />
-eg. [ @Log::notify('example@example.com');@ ]
+eg. [ @Log::notify('example&#64;example.com');@ ]
 
 
 *has_warnings*<br />
@@ -965,4 +967,130 @@ eg. [ @Event::add_filter("post_content", "myFunction");@ ]<br />
 // @string Event::filter(string $filter, string $str)@<br />
 filters string $str through all queued event functions in queue order<br />
 eg. [ @Event::filter("post_content", $post_content);@ ]
+
+
+
+
+h3. -//######################## Event
+
+
+*3.14: Event	.......... #Event/action and filtering functionalities (based on Wordpress add_action and add_filter)*
+
+<small>Note: This class is static</small>
+
+_Methods_
+
+*add*<br />
+// @array Event::add(string $event, function $callback[, $position=false])@<br />
+adds callback to execute on event call, optional $position in queue. <br />
+eg. [ @Event::add("header_finished", "myFunction");@ ]<br />
+	Note: Callback is called internally on Event::fire("header_finished") like myFunction("header_finished");
+
+
+*fire*<br />
+// @array Event::fire(string $event)@<br />
+fires all queued event functions in queue order<br />
+eg. [ @Event::fire("header_finished");@ ]
+
+
+*add_filter*<br />
+// @string Event::add_filter(string $filter, function $callback[, $position=false])@<br />
+adds filtering callback to execute on filter call, optional $position in queue.<br />
+eg. [ @Event::add_filter("post_content", "myFunction");@ ]<br />
+<small>Note: Callback is called internally on Event::filter("header_finished") like myFunction($str, "header_finished");</small>
+
+
+*filter*<br />
+// @string Event::filter(string $filter, string $str)@<br />
+filters string $str through all queued event functions in queue order<br />
+eg. [ @Event::filter("post_content", $post_content);@ ]
+
+
+
+
+h3. -//######################## Mail
+
+
+*3.15: Mail		.......... #Email functionalities*
+
+<small>Note: This class is static</small>
+
+_Methods_
+
+*send*<br />
+// @bool Mail::send(string $to, string $subject, string $body [, {options} $options])@<br />
+send an email (enhanced mail() );<br />
+available {options} - string 'from', string 'cc', string 'bcc', string 'reply-to', array 'attachments', string 'html'<br />
+eg. [ @Mail::send(string $to, string $subject, string $body, array('attachments'=>array('image.jpg', 'readme.txt')));@ ]
+
+
+*send_html*<br />
+// @array Mail::send_html(string $to, string $subject, string $body [, {options} $options])@<br />
+same as @Mail::send()@ but @$body@ should be html instead of plain text<br />
+eg. [ @Mail::send_html("example&#64;example.com", "A subject", "Hello!<br /><br />kthxbye");@ ]
+
+
+
+
+h3. -//######################## Image
+
+
+*3.16: Image	.......... #Image manipulation class*
+
+_Methods_
+
+*Image*<br />
+// @instance Image::__contruct(resource &$image, array $info [, {options} $options])@<br />
+Create an image instance;<br />
+@$info@ should be like: @list($info['width'], $info['height'], $info['type']) = getimagesize($options['path']);@<br />
+available {options} - string 'folder', string 'basename', string 'bcc', string 'transparentColorRed', string 'transparentColorGreen', string 'transparentColorBlue'<br />
+eg. [ @$Image_instance = new Image($image, $info);@ ]
+
+*from_file*<br />
+// @instance Image::from_file(string $filepath)@<br />
+Create an instance directly from an image file;<br />
+eg. [ @$Image_instance = Image::from_file("images/image.jpg");@ ]
+
+
+*resize*<br />
+// @void Image::resize(string $style)@<br />
+eg. [ @$instance->resize("100x100#");@ ]<br />
+@$style@ should be of the following:<br />
+* 'scale'% ............. Height and width both scaled by specified percentage.
+* 'scale-x'x'scale-y'% . Height and width individually scaled by specified percentages.
+* 'width' .............. Width given, height automagically selected to preserve aspect ratio.
+* x'height' ............ Height given, width automagically selected to preserve aspect ratio.
+* 'width'x'height' ..... Maximum values of height and width given, aspect ratio preserved.
+* 'width'x'height'^	.... Minimum values of width and height given, aspect ratio preserved.
+* 'width'x'height'!	.... Width and height emphatically given, original aspect ratio ignored.
+* 'width'x'height'&gt;	.... Change as per 'width'x'height' but only if an image dimension exceeds a specified dimension.
+* 'width'x'height'&lt;	.... Same as 'width'x'height'^ but only if an image dimension is smaller than a specified dimension.
+* 'width'x'height'#	.... Same as 'width'x'height'^ but centered and cropped to the 'not fit' dimension.
+
+
+*children*<br />
+// @void Image::children(array $styles)@<br />
+@$styles@ is like @array('folder1'=>"300x300>", 'folder2'=>"100x100#")@<br />
+eg. [ @$instance->children(array('thumb'=>"300x300>", 'preview'=>"100x100#"));@ ]
+
+
+*save*<br />
+// @void Image::save([{options} $options])@<br />
+saves the current image<br />
+available {options} - string 'folder', string 'basename', bool 'secure' (guarantees file uniqueness, true by default)<br />
+eg. [ @$instance->save(array('folder'=>'uploads/images'));@ ]
+
+
+*save_children*<br />
+// @void Image::save_children([{options} $options])@<br />
+saves all the dependent images created via @Image::children()@, creating a subfolder for each dependent image within the main save folder<br />
+same options as @Image::save()@ except for secure which is not applicable<br />
+eg. [ @$instance->save_children(array('folder'=>'uploads/images'));@ ]
+
+
+*save*<br />
+// @void Image::save_all([{options} $options])@<br />
+saves both this image and the dependent children<br />
+same options as @Image::save()@<br />
+eg. [ @$instance->save_all(array('folder'=>'uploads/images'));@ ]
 

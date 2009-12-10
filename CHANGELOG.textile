@@ -1,5 +1,17 @@
 h2. NaturePhp Changelog
 
+
+
+h3. # v0.4
+
+* Corrected windows/unix newline problems
+* Added SQLDumper utility (experimental)
+* Image class added (image and thumbnails)
+* Mail class added (mail, html format, attachments)
+
+
+
+
 h3. # v0.3.6
 
 * Path::url_to with better windows support (case insensitive);

@@ -19,19 +19,21 @@ if(isset($_POST['send_email'])){
 	
 	$subject ="Test email from NaturePHP";
 	
-	$body = "
-	Hello,<br />
-	i'm only an email example sent through NaturePHP's Mail class.<br /><br />
-	Thanks.
-	";
+	$body = "Hello,
+i'm only an email example sent through NaturePHP's Mail class.
+
+
+Thanks.";
 	
 	if(isset($_POST['attachment'])){
-		$options['attachments'] = array("readme.txt");
+		$options['attachments'] = array("readme.txt", "images/Samurai.jpg");
 	}
 	
 	
 	
 	if(isset($_POST['html'])){
+		$body = Text::to_html($body);	// Text::to_html converts the plain text string to html format
+										// not necessary if $body was already some html code
 		Mail::send_html($to, $subject, $body, $options);
 	} else {
 		Mail::send($to, $subject, $body, $options);
@@ -60,6 +62,8 @@ Log::add('Content starting.');
 		<p><input type="submit" name="send_email" value="Send test email &rarr;"></p>
 	</form>
 </div>
+
+
 <?php
 Log::add('Content ended.');
 
