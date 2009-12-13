@@ -107,13 +107,16 @@ abstract class Database {
 	}
 	
 	//escape value function
-	public function escapeValue($str){	
+	public function escapeValue($str){
 		switch (gettype($str)){
-			case 'string'	:	$str = "'".$this->_escapeString($str)."'";
+			case 'string'	:	$str = "'".$this->_escapeString($str)."'";	//escape strings
 				break;
-			case 'boolean'	:	$str = ($str === FALSE) ? 0 : 1;
+			case 'double'	:	$str = "'$str'";	//put doubles as strings
 				break;
-			default			:	$str = 'NULL';
+			case 'boolean'	:	$str = ($str === FALSE) ? 0 : 1;	//booleans to 1/0
+				break;
+			case 'integer'	: break;	//leave integers be
+			default			:	$str = 'NULL';		//rest put to null
 				break;
 		}
 		return $str;
