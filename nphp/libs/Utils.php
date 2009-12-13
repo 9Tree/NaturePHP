@@ -176,7 +176,7 @@ class Utils{
 	}
 	
 	//generate password
-	function generate_password (){
+	static function generate_password(){
 		
 		//get options
 		$args=Utils::combine_args(func_get_args(), 0, array(
@@ -192,10 +192,8 @@ class Utils{
 			$char = substr($args['possible'], mt_rand(0, strlen($args['possible'])-1), 1);
 
 			# we don't want this character if it's already in the password
-			if (!$args['repeat'] && !strstr($password, $char)):
+			if ($args['repeat'] || !strpos($password, $char)!==false):
 				$password .= $char;
-				$i++;
-			else:
 				$i++;
 			endif;
 

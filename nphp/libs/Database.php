@@ -113,7 +113,7 @@ abstract class Database {
 				break;
 			case 'boolean'	:	$str = ($str === FALSE) ? 0 : 1;
 				break;
-			default			:	$str = ($str === NULL) ? 'NULL' : $str;
+			default			:	$str = 'NULL';
 				break;
 		}
 		return $str;
