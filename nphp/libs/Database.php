@@ -184,8 +184,8 @@ abstract class Database {
 			$sql = substr($sql, 0, -1).') '.substr($values, 0, -1).')'; // strip off last commas and concat the sql statement
 			
 		} else {
-      $sql .= $this->_insert_default_values();
-    }
+      		$sql .= $this->_insert_default_values();
+    	}
 		
 		
 		//execute	
