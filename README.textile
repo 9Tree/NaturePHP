@@ -748,7 +748,15 @@ eg. [ @Disk::make_dir("nphp/manage/includes");@ ]
 *sanitize_file_name*<br />
 // @string Disk::sanitize_file_name(string $filename)@<br />
 make sure new filename is simple and has standard characters;<br />
-eg. [ @Disk::sanitize_file_name("nphp/manage/includes/test.php");@ ]
+return the sanitized filename;<br />
+eg. [ @$filename = Disk::sanitize_file_name("nphp/manage/includes/test.php");@ ]
+
+
+*unique_filename*<br />
+// @string Disk::unique_filename(string $folder, string $filename)@<br />
+same as Disk::sanitize_file_name() but guarantees uniqueness of the file in the destination folder and changes the filename as necessary;<br />
+returns the new unique filename (without folder);<br />
+eg. [ @$filename = Disk::unique_filename("uploads/", "new_image.png");@ ]
 
 
 
