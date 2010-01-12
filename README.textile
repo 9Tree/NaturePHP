@@ -1,4 +1,4 @@
-h2. NaturePHP Pack v0.3.6
+h2. NaturePHP Pack v0.4
 
 <small>10/07/2009</small>
 
