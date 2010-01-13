@@ -39,27 +39,38 @@ class Mail{
 		# bcc
 		if($args['bcc']) 		$headers .= "bcc: ".$args['bcc']."\r\n";
 		
+		$message = "";
+		
 		# add boundary string and mime type specification
 		if($args['attachments']){
-			$headers .= "Content-Type: multipart/mixed; boundary=\"PHP-mixed-$random_hash\"\r\n";
-			$headers .= "--PHP-mixed-$random_hash\r\n";
+			$headers .= "Content-Type: multipart/mixed; boundary=\"PHP-mixed-$random_hash\"";
+			$message .= "--PHP-mixed-$random_hash\r\n";
 		}
 		
 		# html mode - write plain text only as alternative
-		if($args['html']){
-			$headers .= "Content-Type: multipart/alternative; boundary=\"PHP-alt-$random_hash\"\r\n";
-			$headers .= "--PHP-alt-$random_hash\r\n";		
+		if($args['html'] || $args['attachments']){
+			if(!$args['attachments']){
+				$headers .= "Content-Type: multipart/alternative; boundary=\"PHP-alt-$random_hash\"";
+			} else {
+				$message .= "Content-Type: multipart/alternative; boundary=\"PHP-alt-$random_hash\"\r\n\r\n";
+			}
+			$message .= "--PHP-alt-$random_hash\r\n";		
 		
-			$headers .= "Content-Type: text/plain; charset=\"utf-8\"\r\n";
-			$headers .= "Content-Transfer-Encoding: 7bit\r\n";
+			$message .= "Content-Type: text/plain; charset=\"utf-8\"\r\n";
+			$message .= "Content-Transfer-Encoding: 7bit\r\n";
 		
-			$headers .= "\r\n".$body."\r\n\r\n";
-		
-			$headers .= "--PHP-alt-$random_hash\r\n";
-			$headers .= "Content-Type: text/html; charset=\"utf-8\"\r\n";
-			$headers .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-			$headers .= "\r\n".$args['html']."\r\n\r\n";
-			$headers .= "--PHP-alt-$random_hash--\r\n\r\n";
+			$message .= "\r\n".$body."\r\n\r\n";
+			
+			if($args['html']){
+				$message .= "--PHP-alt-$random_hash\r\n";
+				$message .= "Content-Type: text/html; charset=\"utf-8\"\r\n";
+				$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
+				$message .= "\r\n".$args['html']."\r\n\r\n";
+			}
+			
+			$message .= "--PHP-alt-$random_hash--\r\n\r\n";
+		} else {
+			$message = $body;
 		}
 
 		#attachments
@@ -79,7 +90,7 @@ class Mail{
 					
 				if(!$first){
 					//close previous one
-					$headers .= "\r\n";
+					$message .= "\r\n";
 				} else $first = false;
 				
 				//read the atachment file contents into a string,
@@ -93,23 +104,24 @@ class Mail{
 				$attachment = chunk_split(base64_encode(file_get_contents($file)));
 				
 				
-				$headers .= "--PHP-mixed-$random_hash\r\n"; 
-				$headers .= "Content-Type: $ftype; name=\"$filename\"\r\n";
-				$headers .= "Content-Transfer-Encoding: base64\r\n"; 
-				$headers .= "Content-Disposition: attachment\r\n";
+				$message .= "--PHP-mixed-$random_hash\r\n"; 
+				$message .= "Content-Type: $ftype; name=\"$filename\"\r\n";
+				$message .= "Content-Transfer-Encoding: base64\r\n"; 
+				$message .= "Content-Disposition: attachment\r\n";
 
-				$headers .= "\r\n".$attachment."\r\n\r\n"; 
+				$message .= "\r\n".$attachment."\r\n\r\n"; 
 				
 			}
 			
 			if(!$first){
 				//close the last one
-				$headers .= "--PHP-mixed-$random_hash--\r\n\r\n";
+				$message .= "--PHP-mixed-$random_hash--\r\n\r\n";
 			}
 		}
 		
+		
 		//try sending the composed email
-		if(!mail( $to, $subject, $body, $headers )){
+		if(!mail( $to, $subject, $message, $headers )){
 			trigger_error("<strong>Mail</strong> :: Unable to send email to $notice_info", E_USER_WARNING);
 			return false;
 		} else {
