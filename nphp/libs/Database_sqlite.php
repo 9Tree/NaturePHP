@@ -1,7 +1,7 @@
 <?php
-class Database_mysql extends Database {
-	public $type='mysql';
-	public $insert_default_values=" () values()";
+class Database_sqlite extends Database {
+	public $type='sqlite';
+	public $insert_default_values=" DEFAULT VALUES";
 
 	// opens MySQL database connection
 	protected function _open() {
@@ -11,32 +11,20 @@ class Database_mysql extends Database {
 							'database'		=> null, 
 							'user'			=> null, 
 							'password'		=> null, 
-							'host' 			=> 'localhost',
-							'port' 			=> null,
-							'charset'		=> 'utf8',
-							'collation'		=> 'utf8_general_ci'
+							'mode' 			=> 0666
 							));
 					
 		//tries connection
-		if(!$this->connection = mysql_connect(($args['host'].($args['port']?':'.$args['port']:'')), $args['user'], $args['password'])){
-			trigger_error('<strong>Database</strong> :: MySQL Database connection failed', E_USER_WARNING);
+		if(!$this->connection = sqlite_open($args['database'], $args['mode'])){
+			trigger_error('<strong>Database</strong> :: SQLite Database connection failed', E_USER_WARNING);
 			return null;
 		}
-		
-		//tries database selection
-		if(!@mysql_select_db($args['database'], $this->connection)){
-			trigger_error('<strong>Database</strong> :: MySQL Database selection failed: ' . $this->_error(), E_USER_WARNING);
-		}
-		
-		//sets charset and collation
-		$this->execute("SET NAMES '".$args['charset']."' collate '".$args['collation']."'");
-		$this->execute("SET CHARACTER SET '".$args['charset']."'");
 
 		return $this->connection;
 	}
 	
 	function _close() {
-		mysql_close($this->connection);
+		sqlite_close($this->connection);
 	}
 	
 	function _insert_default_values(){
@@ -56,7 +44,7 @@ class Database_mysql extends Database {
 	}
 	
 	protected function _escapeString($string) {
-		return mysql_real_escape_string( get_magic_quotes_gpc()?stripslashes($string):$string );
+		return sqlite_escape_string( get_magic_quotes_gpc()?stripslashes($string):$string );
 	}
 	
 	function _escapeField($field){
@@ -64,15 +52,15 @@ class Database_mysql extends Database {
 	}
 	
 	protected function _query($sql) {
-		return mysql_query($sql, $this->connection);
+		return sqlite_query($sql, $this->connection);
 	}
 	
 	protected function _affectedRows() {
-		return mysql_affected_rows($this->connection);
+		return sqlite_changes($this->connection);
 	}
 
 	protected function _error() {
-		return mysql_error($this->connection);
+		return sqlite_error_string(sqlite_last_error($this->connection));
 	}
 
 	
@@ -83,22 +71,22 @@ class Database_mysql extends Database {
 
 	protected function _fetchAll() {
 		$data = array();
-		while($row = mysql_fetch_assoc($this->result)) {
+		while($row = sqlite_fetch_array($this->result, SQLITE_ASSOC)) {
 			$data[] = $row;
 		}
 		return $data;
 	}
 
 	protected function _fetchRow() {
-		return mysql_fetch_assoc($this->result);
+		return sqlite_fetch_array($this->result, SQLITE_ASSOC);
 	}
 
 	protected function _lastID() {
-		return mysql_insert_id($this->connection);
+		return sqlite_last_insert_rowid($this->connection);
 	}
 
 	protected function _numberRows() {
-		return mysql_num_rows($this->result);
+		return sqlite_num_rows($this->result);
 	}
 	
 }
