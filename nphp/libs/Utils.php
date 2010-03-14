@@ -120,7 +120,7 @@ class Utils{
 		$qstr='';
 		foreach($newGet as $var=>$value){
 			if(is_array($value)){
-				$qstr.="&".self::ref_build_querystring($value, $var."[", "]");
+				$qstr.="&".self::ref_build_querystring($value, $start.$var.$end."[", "]");
 			} else {
 				$qstr.="&";
 				if($start && $end){

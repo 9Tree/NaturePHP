@@ -286,7 +286,7 @@ class Image
 					$o_height=(int)($this->info['width']*$style['height']/$style['width']);
 					$src_y=(int)(($this->info['height']-$o_height)/2);
 				} else {
-					$o_width=(int)($this->info['width']*$style['height']/$style['width']);
+					$o_width=(int)($this->info['height']*$style['width']/$style['height']);
 					$src_x=(int)(($this->info['width']-$o_width)/2);
 				}
 			break;

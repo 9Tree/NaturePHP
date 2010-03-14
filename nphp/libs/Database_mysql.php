@@ -72,7 +72,7 @@ class Database_mysql extends Database {
 	}
 
 	protected function _error() {
-		return mysql_error($this->connection);
+		return $this->connection ? mysql_error($this->connection) : "MySQL not connected";
 	}
 
 	

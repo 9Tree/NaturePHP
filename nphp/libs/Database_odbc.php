@@ -87,7 +87,7 @@ class Database_odbc extends Database {
 	}
 
 	protected function _error() {
-		return odbc_errormsg($this->connection);
+		return $this->connection ? odbc_errormsg($this->connection) : "ODBC not connected";
 	}
 
 	

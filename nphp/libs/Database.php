@@ -15,7 +15,7 @@ abstract class Database {
 	protected $connection; 				// Database connection resource
 	protected $name; 					// connection name
 	
-	private static $types = array('mysql', 'odbc');
+	private static $types = array('mysql', 'odbc', 'sqlite', 'mssql');
 	
 	protected $result;					//used to store results
 	
@@ -63,9 +63,9 @@ abstract class Database {
 	
 	//close connection and remove references to instance
 	function close() {
-		$this->close();
+		$this -> _close();
 		unset(Database::$instances[$this->instance_id]);
-		if($this->instance_id==Database::$last_instance_id) unset(Database::$instance);
+		# if($this->instance_id==Database::$last_instance_id) unset(Database::$instance);
 	}
 	
 	//secure string
@@ -339,6 +339,12 @@ abstract class Database {
 			return $data;
 		} else
 			return array();
+	}
+	
+	function __destruct() {
+		if ($this->connection) {
+			$this -> close();
+		}
 	}
 }
 

@@ -1,7 +1,7 @@
 <?php
-class Database_sqlite extends Database {
-	public $type='sqlite';
-	public $insert_default_values=" DEFAULT VALUES";
+class Database_mssql extends Database {
+	public $type='mssql';
+	public $insert_default_values=" default values";
 
 	// opens MySQL database connection
 	protected function _open() {
@@ -11,20 +11,26 @@ class Database_sqlite extends Database {
 							'database'		=> null, 
 							'user'			=> null, 
 							'password'		=> null, 
-							'mode' 			=> 0666
+							'host' 			=> 'localhost',
+							'port' 			=> null
 							));
 					
 		//tries connection
-		if(!$this->connection = sqlite_open($args['database'], $args['mode'])){
-			trigger_error('<strong>Database</strong> :: SQLite Database connection failed', E_USER_WARNING);
+		if(!$this->connection = mssql_connect(($args['host'].($args['port']?':'.$args['port']:'')), $args['user'], $args['password'])){
+			trigger_error('<strong>Database</strong> :: MSSQL Database connection failed', E_USER_WARNING);
 			return null;
+		}
+		
+		//tries database selection
+		if(!@mssql_select_db($args['database'], $this->connection)){
+			trigger_error('<strong>Database</strong> :: MSSQL Database selection failed: ' . $this->_error(), E_USER_WARNING);
 		}
 
 		return $this->connection;
 	}
 	
 	function _close() {
-		sqlite_close($this->connection);
+		mssql_close($this->connection);
 	}
 	
 	function _insert_default_values(){
@@ -44,7 +50,7 @@ class Database_sqlite extends Database {
 	}
 	
 	protected function _escapeString($string) {
-		return sqlite_escape_string( get_magic_quotes_gpc()?stripslashes($string):$string );
+		return addslashes( get_magic_quotes_gpc()?stripslashes($string):$string );
 	}
 	
 	function _escapeField($field){
@@ -52,41 +58,48 @@ class Database_sqlite extends Database {
 	}
 	
 	protected function _query($sql) {
-		return sqlite_query($sql, $this->connection);
+		return mssql_query($sql, $this->connection);
 	}
 	
 	protected function _affectedRows() {
-		return sqlite_changes($this->connection);
+		return mssql_rows_affected($this->connection);
 	}
 
 	protected function _error() {
-		return $this->connection ? sqlite_error_string(sqlite_last_error($this->connection)) : "SQLite not connected";
+		return $this->connection ? mssql_get_last_message($this->connection) : "MSSQL not connected";
 	}
 
 	
 	protected function _fetch() {
-		// use mysql_data_seek to get to row index ?
+		// use mssql_data_seek to get to row index ?
 		return $this->_fetchAll();
 	}
 
 	protected function _fetchAll() {
 		$data = array();
-		while($row = sqlite_fetch_array($this->result, SQLITE_ASSOC)) {
+		while($row = mssql_fetch_assoc($this->result)) {
 			$data[] = $row;
 		}
 		return $data;
 	}
 
 	protected function _fetchRow() {
-		return sqlite_fetch_array($this->result, SQLITE_ASSOC);
+		return mssql_fetch_assoc($this->result);
 	}
 
 	protected function _lastID() {
-		return sqlite_last_insert_rowid($this->connection);
+		$id = ""; 
+		$rs = mssql_query("SELECT @@identity AS id", $this->connection); 
+		if ($row = mssql_fetch_row($rs)) { 
+			$id = trim($row[0]); 
+		} 
+		mssql_free_result($rs); 
+
+		return $id;
 	}
 
 	protected function _numberRows() {
-		return sqlite_num_rows($this->result);
+		return mssql_num_rows($this->result);
 	}
 	
 }
