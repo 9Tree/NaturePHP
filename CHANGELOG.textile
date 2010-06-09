@@ -2,6 +2,15 @@ h2. NaturePhp Changelog
 
 
 
+h3. # v0.4.1
+
+* Path::setBase() now fully working, great for auto-path corrections for ajax calls.
+* Database now supports MSSQL (mssql PHP extension) and SQLite 2.0.
+* Mail class improvements.
+* Added some usage examples (check folder exmples/).
+* Minor bug corrections
+
+
 h3. # v0.4
 
 * Corrected windows/unix newline problems

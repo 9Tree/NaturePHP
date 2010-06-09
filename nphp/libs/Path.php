@@ -44,9 +44,15 @@ class Path{
 	}
 	
 	//set base script
-	static function setBase($new_path){
+	static function setBase($new_path, $cur_file){
 		$me=&self::getInstance();
-		$me->script_base=$new_path;
+		$me->script_base = 	self::combine(
+								self::combine(
+									$new_path, 
+									self::relative($cur_file, $_SERVER['SCRIPT_FILENAME'])
+								), 
+								$_SERVER['SCRIPT_FILENAME']
+							).".";
 	}
 	 
 	//combine $curPath as base and relative $path to get new fullpath

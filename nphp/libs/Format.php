@@ -24,10 +24,13 @@ class Format{
 	}
 	
 	//number format in i18n (eg. 10.000,05)
-	static function number_i18n($number, $decimals = 0) {
-		$decimal_point=",";
-		$thousands_sep=".";
-		return number_format($number, $decimals, $decimal_point, $thousands_sep);
+	static function number_i18n($number, $decimals = 2) {
+		return number_format($number, $decimals, ",", ".");
+	}
+	
+	//number format in us format (eg. 10,000.05)
+	static function us_number($number, $decimals = 2) {
+		return number_format($number, $decimals, ".", ",");
 	}
 }
 ?>
