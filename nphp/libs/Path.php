@@ -54,6 +54,16 @@ class Path{
 								$_SERVER['SCRIPT_FILENAME']
 							).".";
 	}
+	
+	//set base script uri
+	static function setBaseUri($request_uri){
+		$me=&self::getInstance();
+		if(strpos("?", $request_uri)!==false){
+			$parts = explode("?", $request_uri);
+			$request_uri = $parts[0];
+		}
+		$me->script_base = self::combine(self::relative($request_uri, $_SERVER['SCRIPT_NAME']), $_SERVER['SCRIPT_FILENAME']).".";
+	}
 	 
 	//combine $curPath as base and relative $path to get new fullpath
 	static function combine($curPath, $path, $case_sensitive=true){
@@ -107,11 +117,17 @@ class Path{
 		if(substr($pathTo, 0, 1)=="/") $pathTo=substr($pathTo, 1, strlen($pathTo)-1);
 		
 		//splits file
-		$tmp_arr=explode("/", $pathTo);
-		$add_after=$tmp_arr[count($tmp_arr)-1];
 		
+		if(substr($pathTo, -1, 1)=="/"){
+			$pathTo=dirname($pathTo.".").'/';;
+			$add_after="";
+		} else {
+			$tmp_arr=explode("/", $pathTo);
+			$add_after=$tmp_arr[count($tmp_arr)-1];
+			$pathTo=dirname($pathTo).'/';
+		}
 		$pathFrom=dirname($pathFrom).'/';
-		$pathTo=dirname($pathTo).'/';
+		
 		
 		//strips common folders
 		$pf_len=strlen($pathFrom);

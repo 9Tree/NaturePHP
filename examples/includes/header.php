@@ -18,6 +18,9 @@
 			<li>
 				<a href="<?php Path::put('../mail.php', __FILE__); ?>" title="Test Email">Mail</a>
 			</li>
+			<li>
+				<a href="<?php Path::put('../routes/', __FILE__); ?>" title="Test Routes">Routes</a>
+			</li>
 			<div class="clear"></div>
 		</ul>
 		<div id="content">

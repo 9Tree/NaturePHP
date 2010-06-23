@@ -175,6 +175,19 @@ class Utils{
 	    return false;
 	}
 	
+	//same as shuffle but works with associative arrays
+	function shuffle($array) {
+	    $keys = array_keys($array);
+
+	    shuffle($keys);
+		$new = array();
+	    foreach($keys as $key) {
+	        $new[$key] = $array[$key];
+	    }
+
+	    return $new;
+	}
+	
 	//generate password
 	static function generate_password(){
 		

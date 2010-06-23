@@ -464,6 +464,11 @@ length defaults to 8, possible characters defaults to "0123456789abcdefghijklmno
 eg. [ @Utils::generate_password(array('length'=>15));@ ]
 
 
+*shuffle*<br />
+// @array Utils::shuffle(array $array)@<br />
+same as shuffle() but supports associative arrays;<br />
+eg. [ @$shuffled_array = Utils::shuffle(array("joe"=>"mary", "test"=>2, "foo"=>"bar"));@ ]
+
 
 
 
