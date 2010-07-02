@@ -46,7 +46,22 @@ class Text
 	
 	//convert an html string to plain text
 	static function to_plain($str){
-		return preg_replace(array("/<br((>)|( .*?>))/i", "/(<.*?>)/"), array("\n", " "), str_replace(array("\r\n", "\n"), array("\n", " "), $str));
+		return html_entity_decode(
+			str_replace(
+				"&nbsp;",
+				" ",
+				preg_replace(
+					array("/<br((>)|( .*?>))/i", "/(<.*?>)/"), 
+					array("\n", " "), 
+					str_replace(
+						array("\r\n", "\n"), 
+						array("\n", " "), 
+						$str
+					)
+				)
+			),
+		ENT_COMPAT,
+		"UTF-8");
 	}
 	
 	//convert a plain text string to html
@@ -56,7 +71,7 @@ class Text
 	
 	//remove extras spaces, tabs, etc.
 	static function simple_spaces($str){
-		return str_replace("\n ", "\n", preg_replace("/\s+/mi", " ", str_replace("\t", " ", $str)));
+		return str_replace("\n ", "\n", preg_replace("/ +/mi", " ", str_replace("\t", " ", $str)));
 	}
 	
 	//plain simple - to_plain followed by simple_spaces

@@ -20,7 +20,7 @@ class Time{
 	
 	//mysql formated time
 	static function mysql_time($gmt_offset = 0) {
-		if ( $gmt_offset==0 ) $d = gmdate('Y-m-d H:i:s');
+		if ( $gmt_offset==0 ) $d = date('Y-m-d H:i:s');
 		else $d = gmdate('Y-m-d H:i:s', (time() + ($gmt_offset * 3600)));
 		return $d;
 	}

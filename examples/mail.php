@@ -16,10 +16,14 @@ if(isset($_POST['send_email'])){
 	$options = array();
 	$options['from'] = $_POST['from_email'];
 	//$options['cc'] = "carlos.ouro@9tree.net";
+	//$options['use_smtp'] = true;
+	//$options['smtp_server'] = 'smtp.mydomain.com';
+	//$options['smtp_username'] = 'info@mydomain.com';
+	//$options['smtp_password'] = 'mypassword';
 	
 	$subject ="Test email from NaturePHP";
 	
-	$body = "Hello,
+	$body = "Hello,    
 i'm only an email example sent through NaturePHP's Mail class.
 
 

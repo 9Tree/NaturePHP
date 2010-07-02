@@ -16,7 +16,8 @@ class Mail{
 						'from' => null,
 						'reply-to' => null,
 						'html' => null,
-						'attachments' => array()
+						'attachments' => array(),
+						'use_smtp' => false
 						));
 		
 		//debug notice information
@@ -38,39 +39,41 @@ class Mail{
 		if($args['cc']) 		$headers .= "cc: ".$args['cc']."\r\n";
 		# bcc
 		if($args['bcc']) 		$headers .= "bcc: ".$args['bcc']."\r\n";
-		
-		$message = "";
+		# subject
+		$headers .= "Subject: ".$subject."\r\n";
 		
 		# add boundary string and mime type specification
 		if($args['attachments']){
-			$headers .= "Content-Type: multipart/mixed; boundary=\"PHP-mixed-$random_hash\"";
-			$message .= "--PHP-mixed-$random_hash\r\n";
+			$headers .= "Content-Type: multipart/mixed; boundary=\"PHP-mixed-$random_hash\"\r\n\r\n";
+			$headers .= "--PHP-mixed-$random_hash\r\n";
 		}
 		
 		# html mode - write plain text only as alternative
 		if($args['html'] || $args['attachments']){
-			if(!$args['attachments']){
-				$headers .= "Content-Type: multipart/alternative; boundary=\"PHP-alt-$random_hash\"";
-			} else {
-				$message .= "Content-Type: multipart/alternative; boundary=\"PHP-alt-$random_hash\"\r\n\r\n";
-			}
-			$message .= "--PHP-alt-$random_hash\r\n";		
-		
-			$message .= "Content-Type: text/plain; charset=\"utf-8\"\r\n";
-			$message .= "Content-Transfer-Encoding: 7bit\r\n";
-		
-			$message .= "\r\n".$body."\r\n\r\n";
+			//composed email header
+			$headers .= "Content-Type: multipart/alternative; boundary=\"PHP-alt-$random_hash\"\r\n\r\n";
 			
+			//plain text version
+			$headers .= "--PHP-alt-$random_hash\r\n";		
+			$headers .= "Content-Type: text/plain; charset = \"utf-8\"\r\n";
+			$headers .= "Content-Transfer-Encoding: 8bit\r\n";
+			$headers .= "\r\n".str_replace("\n", "\r\n", str_replace("\r\n", "\n", $body))."\r\n\r\n\r\n";
+			
+			//html content
 			if($args['html']){
-				$message .= "--PHP-alt-$random_hash\r\n";
-				$message .= "Content-Type: text/html; charset=\"utf-8\"\r\n";
-				$message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
-				$message .= "\r\n".$args['html']."\r\n\r\n";
+				$headers .= "--PHP-alt-$random_hash\r\n";
+				$headers .= "Content-Type: text/html; charset = \"utf-8\"\r\n";
+				$headers .= "Content-Transfer-Encoding: 8bit\r\n\r\n";
+				$headers .= "\r\n".$args['html']."\r\n\r\n";
 			}
 			
-			$message .= "--PHP-alt-$random_hash--\r\n\r\n";
+			$headers .= "--PHP-alt-$random_hash--\r\n\r\n";
+			
+			
 		} else {
-			$message = $body;
+			$headers .= "Content-Type: text/plain; charset = \"utf-8\"\r\n";
+			$headers .= "Content-Transfer-Encoding: 8bit\r\n";
+			$headers .= "\r\n".$body."\r\n\r\n\r\n";
 		}
 
 		#attachments
@@ -90,7 +93,7 @@ class Mail{
 					
 				if(!$first){
 					//close previous one
-					$message .= "\r\n";
+					$headers .= "\r\n";
 				} else $first = false;
 				
 				//read the atachment file contents into a string,
@@ -98,29 +101,33 @@ class Mail{
 				//and split it into smaller chunks
 				$filename=basename($file);
 				
-				if($finfo_avail) $ftype = finfo_file($finfo, $filename);
+				if($finfo_avail) $ftype = finfo_file($finfo, $file);
 				else $ftype = "unknown";
 				
 				$attachment = chunk_split(base64_encode(file_get_contents($file)));
 				
 				
-				$message .= "--PHP-mixed-$random_hash\r\n"; 
-				$message .= "Content-Type: $ftype; name=\"$filename\"\r\n";
-				$message .= "Content-Transfer-Encoding: base64\r\n"; 
-				$message .= "Content-Disposition: attachment\r\n";
+				$headers .= "--PHP-mixed-$random_hash\r\n"; 
+				$headers .= "Content-Type: $ftype; name=\"$filename\"\r\n";
+				$headers .= "Content-Transfer-Encoding: base64\r\n"; 
+				$headers .= "Content-Disposition: attachment\r\n";
 
-				$message .= "\r\n".$attachment."\r\n\r\n"; 
+				$headers .= "\r\n".$attachment."\r\n\r\n"; 
 				
 			}
 			
 			if(!$first){
 				//close the last one
-				$message .= "--PHP-mixed-$random_hash--\r\n\r\n";
+				$headers .= "--PHP-mixed-$random_hash--\r\n\r\n";
 			}
 		}
 		
 		
 		//try sending the composed email
+		if($args['use_smtp']) return self::smtp_send($to, $headers, $args);
+		
+		$message = "";
+		
 		if(!mail( $to, $subject, $message, $headers )){
 			trigger_error("<strong>Mail</strong> :: Unable to send email to $notice_info", E_USER_WARNING);
 			return false;
@@ -143,5 +150,104 @@ class Mail{
 		#send
 		self::send($to, $subject, Text::to_plain_simple($html_body), $args);
 	}
+	
+	static function smtp_send($to, $headers){
+		
+		$args=Utils::combine_args(func_get_args(), 2, array(
+						'smtp_server' => NULL,
+						'smtp_ssl' => false,
+						'smtp_port' => 25,
+						'smtp_timeout' => 30,
+						'smtp_username' => NULL,
+						'smtp_password' => NULL,
+						'smtp_localhost' => 'locahost',
+						'smtp_newline' => "\r\n"
+						));
+		
+		//Connect to the host on the specified port
+		$smtpConnect = fsockopen($args['smtp_server'], $args['smtp_port'], $errno, $errstr, $args['smtp_timeout']);
+		$smtpResponse = fgets($smtpConnect, 515);
+		if(empty($smtpConnect) || substr($smtpResponse, 0, 3)>=400) {
+			trigger_error("<strong>Mail</strong> :: Unable to connect to SMTP $smtpResponse", E_USER_WARNING);
+			return false;
+		}
+		
+		//Say Hello to SMTP
+		fputs($smtpConnect, "HELO " .$args['smtp_localhost']. "\r\n");
+		$smtpResponse = fgets($smtpConnect, 515);
+		if(empty($smtpConnect) || substr($smtpResponse, 0, 3)>=400) {
+			trigger_error("<strong>Mail</strong> :: SMTP: HELO failed. $smtpResponse", E_USER_WARNING);
+			return false;
+		}
+		
+		//Request Auth Login
+		fputs($smtpConnect,"AUTH LOGIN\r\n");
+		$smtpResponse = fgets($smtpConnect, 515);
+		if(empty($smtpConnect) || substr($smtpResponse, 0, 3)>=400) {
+			trigger_error("<strong>Mail</strong> :: SMTP: Auth Request failed. $smtpResponse", E_USER_WARNING);
+			return false;
+		}
+
+		//Send username
+		fputs($smtpConnect, base64_encode($args['smtp_username']) . "\r\n");
+		$smtpResponse = fgets($smtpConnect, 515);
+		if(empty($smtpConnect) || substr($smtpResponse, 0, 3)>=400) {
+			trigger_error("<strong>Mail</strong> :: SMTP: Username failed. $smtpResponse", E_USER_WARNING);
+			return false;
+		}
+
+		//Send password
+		fputs($smtpConnect, base64_encode($args['smtp_password']) . "\r\n");
+		$smtpResponse = fgets($smtpConnect, 515);
+		if(empty($smtpConnect) || substr($smtpResponse, 0, 3)>=400) {
+			trigger_error("<strong>Mail</strong> :: SMTP: Password failed. $smtpResponse", E_USER_WARNING);
+			return false;
+		}
+
+
+		//Email From
+		fputs($smtpConnect, "MAIL FROM: " .$args['from']. "\r\n");
+		$smtpResponse = fgets($smtpConnect, 515);
+		if(empty($smtpConnect) || substr($smtpResponse, 0, 3)>=400) {
+			trigger_error("<strong>Mail</strong> :: SMTP: FROM failed. $smtpResponse", E_USER_WARNING);
+			return false;
+		}
+
+		//Email To
+		fputs($smtpConnect, "RCPT TO: " .$to. "\r\n");
+		$smtpResponse = fgets($smtpConnect, 515);
+		if(empty($smtpConnect) || substr($smtpResponse, 0, 3)>=400) {
+			trigger_error("<strong>Mail</strong> :: SMTP: RCPT failed. $smtpResponse", E_USER_WARNING);
+			return false;
+		}
+
+		//The Email
+		fputs($smtpConnect, "DATA\r\n");
+		$smtpResponse = fgets($smtpConnect, 515);
+		if(empty($smtpConnect) || substr($smtpResponse, 0, 3)>=400) {
+			trigger_error("<strong>Mail</strong> :: SMTP: DATA header failed. $smtpResponse", E_USER_WARNING);
+			return false;
+		}
+
+
+		fputs($smtpConnect, $headers."\r\n.\r\n");
+		$smtpResponse = fgets($smtpConnect, 515);
+		if(empty($smtpConnect) || substr($smtpResponse, 0, 3)>=400) {
+			trigger_error("<strong>Mail</strong> :: SMTP: Sending data failed. $smtpResponse", E_USER_WARNING);
+			return false;
+		}	
+		
+		// Say Bye to SMTP
+		fputs($smtpConnect,"QUIT\r\n"); 
+		$smtpResponse = fgets($smtpConnect, 515); 
+		if(empty($smtpConnect) || substr($smtpResponse, 0, 3)>=400) {
+			trigger_error("<strong>Mail</strong> :: SMTP: QUIT failed. $smtpResponse", E_USER_WARNING);
+			return false;
+		}
+		
+		
+		return true;	
+	}
+	
 }
 ?>
