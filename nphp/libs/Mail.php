@@ -33,12 +33,14 @@ class Mail{
 		
 		# from
 		if($args['from']) 		$headers .= "From: ".$args['from']."\r\n";
+		# to
+		$headers .= "To: ".$to."\r\n";
 		# reply-to
 		if($args['reply-to']) 	$headers .= "Reply-To: ".$args['reply-to']."\r\n";
 		# cc
 		if($args['cc']) 		$headers .= "cc: ".$args['cc']."\r\n";
 		# bcc
-		if($args['bcc']) 		$headers .= "bcc: ".$args['bcc']."\r\n";
+		if($args['bcc'] && !$args['use_smtp']) 		$headers .= "bcc: ".$args['bcc']."\r\n";
 		# subject
 		$headers .= "Subject: ".$subject."\r\n";
 		
@@ -124,11 +126,17 @@ class Mail{
 		
 		
 		//try sending the composed email
-		if($args['use_smtp']) return self::smtp_send($to, $headers, $args);
+		if($args['use_smtp']) {
+			$to_array = explode(";", str_replace(",", ";", $to));
+			$cc_array = explode(";", str_replace(",", ";", $args['cc']));
+			$bcc_array = explode(";", str_replace(",", ";", $args['bcc']));
+			$to_array = array_merge($to_array, $cc_array, $bcc_array);
+			
+			return self::smtp_send($to_array, $headers, $args);
+		}
 		
-		$message = "";
 		
-		if(!mail( $to, $subject, $message, $headers )){
+		if(!mail( $to, $subject, "", $headers )){
 			trigger_error("<strong>Mail</strong> :: Unable to send email to $notice_info", E_USER_WARNING);
 			return false;
 		} else {
@@ -151,7 +159,7 @@ class Mail{
 		self::send($to, $subject, Text::to_plain_simple($html_body), $args);
 	}
 	
-	static function smtp_send($to, $headers){
+	static function smtp_send($to_array, $headers){
 		
 		$args=Utils::combine_args(func_get_args(), 2, array(
 						'smtp_server' => NULL,
@@ -214,12 +222,18 @@ class Mail{
 		}
 
 		//Email To
-		fputs($smtpConnect, "RCPT TO: " .$to. "\r\n");
-		$smtpResponse = fgets($smtpConnect, 515);
-		if(empty($smtpConnect) || substr($smtpResponse, 0, 3)>=400) {
-			trigger_error("<strong>Mail</strong> :: SMTP: RCPT failed. $smtpResponse", E_USER_WARNING);
-			return false;
+		foreach($to_array as $to){
+			$to = trim($to);
+			if($to){
+				fputs($smtpConnect, "RCPT TO: " .$to. "\r\n");
+				$smtpResponse = fgets($smtpConnect, 515);
+				if(empty($smtpConnect) || substr($smtpResponse, 0, 3)>=400) {
+					trigger_error("<strong>Mail</strong> :: SMTP: RCPT failed. $smtpResponse", E_USER_WARNING);
+					return false;
+				}
+			}
 		}
+		
 
 		//The Email
 		fputs($smtpConnect, "DATA\r\n");
