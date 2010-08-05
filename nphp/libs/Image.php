@@ -92,7 +92,7 @@ class Image
 	//load image from path
 	static function from_file($file){
 		$info=array();
-		$options=array();
+		$options = Utils::combine_args(func_get_args(), 1, $this->options);
 		$image=null;
 		
 		//set location information
