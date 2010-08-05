@@ -32,7 +32,8 @@ class Image
 		'basename'=>null, 
 		'transparentColorRed'=>null,
 		'transparentColorGreen'=>null,
-		'transparentColorBlue'=>null);
+		'transparentColorBlue'=>null,
+		'quality'=>75);
 	
 	//this is a constant
 	private $save_defaults=array(
@@ -280,7 +281,7 @@ class Image
 			
 			case "#":
 				$width=$style['width'];
-				$height=$style['width'];
+				$height=$style['height'];
 				if($this->info['height']/$style['height'] > $this->info['width']/$style['width']){
 					
 					$o_height=(int)($this->info['width']*$style['height']/$style['width']);
@@ -386,20 +387,23 @@ class Image
 	                    trigger_error('<strong>Image</strong> :: GD does not support jpeg files.', E_USER_WARNING);
 	                    return false;
 	                // if, for some reason, file could not be created
-	                } elseif (@!imagejpeg($this->image, $this->options['path'])) {
+	                } elseif (@!imagejpeg($this->image, $this->options['path'], $this->options['quality'])) {
 	                    // save the error level and stop the execution of the script
 	                    trigger_error('<strong>Image</strong> :: Unknown error, unable to save jpeg file.', E_USER_WARNING);
 	                    return false;
 	                }
 	                break;
 	            case IMAGETYPE_PNG:
+					//calculate image quality
+					$pngQuality = ($this->options['quality'] - 100) / 11.111111;
+					$pngQuality = round(abs($pngQuality));
 	                // if gd support for this file type is not available
 	                if (!function_exists("imagepng")) {
 	                    // save the error level and stop the execution of the script
 	                    trigger_error('<strong>Image</strong> :: GD does not support png files.', E_USER_WARNING);
 	                    return false;
 	                // if, for some reason, file could not be created
-	                } elseif (@!imagepng($this->image, $this->options['path'])) {
+	                } elseif (@!imagepng($this->image, $this->options['path'], $pngQuality)) {
 	                    // save the error level and stop the execution of the script
 	                    trigger_error('<strong>Image</strong> :: Unknown error, unable to save png file.', E_USER_WARNING);
 	                    return false;
