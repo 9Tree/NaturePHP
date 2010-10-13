@@ -88,7 +88,7 @@ class Template{
 	}
 	private function defaultKeys($mode){
 		//define mode
-		switch($args['mode']){
+		switch($mode){
 			case 'php':
 			case 'javascript':
 				$mode_escape_l="/*";
@@ -105,7 +105,7 @@ class Template{
 		$pattern.='(.*?)'.Utils::sanitize_regex_pattern($mode_escape_r).'/';
 		$this->str=preg_replace($pattern, '{#\\1}', $this->str);
 	}
-	function addContent($part, &$content){
+	function addContent($part, $content){
 		$this->str=str_replace("{#$part/}", $content, $this->str);
 	}
 	function render(){

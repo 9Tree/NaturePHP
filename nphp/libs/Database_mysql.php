@@ -26,7 +26,9 @@ class Database_mysql extends Database {
 		//tries database selection
 		if(!@mysql_select_db($args['database'], $this->connection)){
 			trigger_error('<strong>Database</strong> :: MySQL Database selection failed: ' . $this->_error(), E_USER_WARNING);
+			return null;
 		}
+		$this->is_connected = true;
 		
 		//sets charset and collation
 		$this->execute("SET NAMES '".$args['charset']."' collate '".$args['collation']."'");

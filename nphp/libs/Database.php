@@ -14,6 +14,7 @@ but have to be implemented on the extended classes (eg. Database_mysql );
 abstract class Database {
 	protected $connection; 				// Database connection resource
 	protected $name; 					// connection name
+	public $is_connected = false;	//connection status
 	
 	private static $types = array('mysql', 'odbc', 'sqlite', 'mssql');
 	

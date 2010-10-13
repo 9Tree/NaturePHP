@@ -119,7 +119,7 @@ class Path{
 		//splits file
 		
 		if(substr($pathTo, -1, 1)=="/"){
-			$pathTo=dirname($pathTo.".").'/';;
+			$pathTo=dirname($pathTo.".").'/';
 			$add_after="";
 		} else {
 			$tmp_arr=explode("/", $pathTo);

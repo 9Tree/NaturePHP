@@ -44,6 +44,9 @@ class Image
 	//main image identifier
 	private $image=null;
 	
+	//main image what
+	private $watermark=null;
+	
 	//children images (thumbs, resizes, etc)
 	public $children=array();
 	//error control variable - TO-DO
@@ -87,12 +90,24 @@ class Image
 
 	}
 	
+	function __clone(){
+		// Force a copy of all references, otherwise
+		// it will point to same object.
+		
+		//replicate watermark
+		$this->watermark = clone $this->watermark;
+		
+		//replicate children
+		$imax = count($this->children);
+		for($i=0; $i<$imax; $i++) $this->children[$i]['instance'] = clone $this->children[$i]['instance'];
+	}
+	
 	//STATIC FUNCTIONS
 	
 	//load image from path
 	static function from_file($file){
 		$info=array();
-		$options = Utils::combine_args(func_get_args(), 1, $this->options);
+		$options = Utils::combine_args(func_get_args(), 1, array());
 		$image=null;
 		
 		//set location information
@@ -341,6 +356,32 @@ class Image
 			$this->children[$new_id]['instance']=new Image(&$this->image, $this->info, $options);	//creates instance
 			$this->children[$new_id]['instance']->resize($style);	//resizes to style
 		}
+	}
+	
+	
+	function set_watermark($file, $styles='all', $original_too=false){
+		
+		if(is_string($file)){
+			$this->watermark = Image::from_file($file);
+		} elseif(is_object($file)) {
+			$this->watermark = $file;
+		} else {
+			trigger_error('<strong>Image</strong> :: Unable to set watermark, incorrect file/resource format.', E_USER_WARNING);
+			return;
+		}
+		
+		//transforms children
+		foreach($this->children as $child){
+			if($styles=='all' || in_array()) $child['instance']->set_watermark($this->watermark);
+		}
+		
+		//transforms original
+		if($styles=='all' || $original_too){
+			$this->watermark->resize($this->info['width'].'x'.$this->info['height'].'#');
+			
+			imagecopymerge($this->image, $this->watermark->image, 0, 0, 0, 0, $this->info['width'], $this->info['height'], 100);
+		}
+		
 	}
 	
 	//FINAL FUNCTIONS

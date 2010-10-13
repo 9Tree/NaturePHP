@@ -126,17 +126,20 @@ class Mail{
 		
 		
 		//try sending the composed email
+		$check = null;
 		if($args['use_smtp']) {
 			$to_array = explode(";", str_replace(",", ";", $to));
 			$cc_array = explode(";", str_replace(",", ";", $args['cc']));
 			$bcc_array = explode(";", str_replace(",", ";", $args['bcc']));
 			$to_array = array_merge($to_array, $cc_array, $bcc_array);
 			
-			return self::smtp_send($to_array, $headers, $args);
+			$check = self::smtp_send($to_array, $headers, $args);
+		} else {
+			$check = mail( $to, $subject, "", $headers );
 		}
 		
 		
-		if(!mail( $to, $subject, "", $headers )){
+		if(!$check){
 			trigger_error("<strong>Mail</strong> :: Unable to send email to $notice_info", E_USER_WARNING);
 			return false;
 		} else {
@@ -156,7 +159,7 @@ class Mail{
 		$args['html'] = $html_body;
 		
 		#send
-		self::send($to, $subject, Text::to_plain_simple($html_body), $args);
+		return self::send($to, $subject, Text::to_plain_simple($html_body), $args);
 	}
 	
 	static function smtp_send($to_array, $headers){

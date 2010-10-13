@@ -31,16 +31,16 @@ class ShellProcess{
 
     function start($commandJob, $log='/dev/null') { 
 
-        $command = "bash -c \"".str_replace('"', '\\"', $commandJob)." < /dev/null > $log 2>&1 & echo $!\" & echo $!";
-		print "running: ".$command."<br />";
+		$command = "nohup  $commandJob >>$log 2>&1 & disown & echo $!";
+		
 		$op = null;
         exec($command ,$op); 
-        $pid = ((int)$op[0])+1; 
+        $pid = ((int)$op[0]); 
 
         if($pid!="") return $pid; 
 
         return false; 
-    } 
+    }
 
     function exists($pid) { 
 

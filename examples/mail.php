@@ -23,11 +23,70 @@ if(isset($_POST['send_email'])){
 	
 	$subject ="Test email from NaturePHP";
 	
-	$body = "Hello,    
+	if(!isset($_POST['html'])):
+		$body = "Hello,    
 i'm only an email example sent through NaturePHP's Mail class.
 
 
 Thanks.";
+	
+	else:
+	ob_start();
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<title>[NaturePHP] Test html email</title>
+	
+</head>
+
+<body style="background:#f7f7f7; padding:20px;">
+
+	<div style="font-size:16px; padding:15px; background:white; font-family: Helvetica, 'Lucida Grande', Tahoma, Verdana, Arial;">
+		
+		<span>NaturePHP</span>
+		
+		<br /><br />
+		
+		<span style="font-size:26px; color:#333; line-height:1.4em; font-weight:bold;">This is only an email example sent through NaturePHP's Mail class.</span>
+		
+		<br /><br />
+		
+		Hi there,
+		
+		<br /><br />
+		
+		apparently it works.
+		
+		<div style="padding:20px; background:#ecf3fe; line-height:1.4em; margin:25px 0; border:1px #91c7e1 solid;">
+			
+			<span style="font-size:18px; font-weight:bold;">A nice box</span>
+			
+			<br />
+			
+			With some example content.
+			
+			<br /><br />
+			
+			<a href="http://naturephp.org" style="color:#479bce;">http://naturephp.org</a>
+			
+		</div>
+		
+		<div style="font-size:14px;">
+			<strong>Have a question?</strong> - Contact us at <a href="mailto:someone@9tree.net">someone@9tree.net</a>
+		</div>
+		
+	</div>
+
+</body>
+</html>	
+<?php
+	$body = ob_get_clean();
+	endif;
 	
 	if(isset($_POST['attachment'])){
 		$options['attachments'] = array("readme.txt", "images/Samurai.jpg");
@@ -36,8 +95,6 @@ Thanks.";
 	
 	
 	if(isset($_POST['html'])){
-		$body = Text::to_html($body);	// Text::to_html converts the plain text string to html format
-										// not necessary if $body was already some html code
 		Mail::send_html($to, $subject, $body, $options);
 	} else {
 		Mail::send($to, $subject, $body, $options);

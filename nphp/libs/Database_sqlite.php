@@ -19,6 +19,7 @@ class Database_sqlite extends Database {
 			trigger_error('<strong>Database</strong> :: SQLite Database connection failed', E_USER_WARNING);
 			return null;
 		}
+		$this->is_connected = true;
 
 		return $this->connection;
 	}

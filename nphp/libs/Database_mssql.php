@@ -24,7 +24,9 @@ class Database_mssql extends Database {
 		//tries database selection
 		if(!@mssql_select_db($args['database'], $this->connection)){
 			trigger_error('<strong>Database</strong> :: MSSQL Database selection failed: ' . $this->_error(), E_USER_WARNING);
+			return null;
 		}
+		$this->is_connected = true;
 
 		return $this->connection;
 	}

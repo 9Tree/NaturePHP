@@ -19,9 +19,21 @@ class Time{
 	}
 	
 	//mysql formated time
-	static function mysql_time($gmt_offset = 0) {
-		if ( $gmt_offset==0 ) $d = date('Y-m-d H:i:s');
-		else $d = gmdate('Y-m-d H:i:s', (time() + ($gmt_offset * 3600)));
+	static function mysql_time($offset = 0) {
+		if ( $offset==0 ) $d = date('Y-m-d H:i:s');
+		else $d = date('Y-m-d H:i:s', (time() + $offset));
+		return $d;
+	}
+	
+	static function utc_timestamp($gmt_offset = 0){
+		if ( $gmt_offset==0 ) $d = gmdate('Y-m-d\TH:i:s\Z');
+		else $d = gmdate('Y-m-d\TH:i:s\Z', (time() + $gmt_offset));
+		return $d;
+	}
+	
+	static function ymd_date($offset = 0){
+		if ( $offset==0 ) $d = date('Ymd');
+		else $d = date('Ymd', (time() + $offset));
 		return $d;
 	}
 	
