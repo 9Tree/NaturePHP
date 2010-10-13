@@ -95,7 +95,7 @@ class Image
 		// it will point to same object.
 		
 		//replicate watermark
-		$this->watermark = clone $this->watermark;
+		if($this->watermark) $this->watermark = clone $this->watermark;
 		
 		//replicate children
 		$imax = count($this->children);
