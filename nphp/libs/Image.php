@@ -386,8 +386,7 @@ class Image
 		
 		//transforms children
 		foreach($this->children as $child){
-			if($styles=='all' || in_array($child['name'], $styles)){
-				$child['instance']->set_watermark($this->watermark);			} 
+			if($styles=='all' || in_array($child['name'], $styles)) $child['instance']->set_watermark(clone $this->watermark);
 		}
 		
 		//transforms original
