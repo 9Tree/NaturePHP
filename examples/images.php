@@ -3,7 +3,7 @@
 require('includes/init.php');
 
 //creates image instance from file
-$image=Image::from_file(Path::to("images/Samurai.jpg", __FILE__));
+$image=Image::from_file(Path::to("images/clio_wallpaper.jpeg", __FILE__));
 
 //creates children images
 $image->children(array(
@@ -15,7 +15,7 @@ $image->children(array(
 	"fit_outside"	=>	"100x200^",
 	"forced"		=>	"200x200!",
 	'thumb'			=>	"100x100#",
-	'watermarked'	=>	"300x300"
+	'watermarked'	=>	"500x500"
 	));
 
 //set watermark
