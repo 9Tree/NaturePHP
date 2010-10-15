@@ -171,6 +171,8 @@ class Image
                 case 3:
                     // creates an image from file
                     $image = @imagecreatefrompng($options['path']);
+					imagealphablending($image, true);
+					imagesavealpha($image, true);
                     break;
                 default:
                     // if file has an unsupported extension
@@ -200,6 +202,8 @@ class Image
 			isset($this->options['transparentColorRed']) && 
 			isset($this->options['transparentColorGreen']) && 
 			isset($this->options['transparentColorBlue'])) {
+				
+				
 				$image['transparentColorRed']=$this->options['transparentColorRed'];
 				$image['transparentColorGreen']=$this->options['transparentColorGreen'];
 				$image['transparentColorBlue']=$this->options['transparentColorBlue'];
@@ -210,7 +214,17 @@ class Image
 								$image['transparentColorBlue']);
 	            imagefilledrectangle($image['resource'], 0, 0, $image['width'], $image['height'], $transparent);
 	            imagecolortransparent($image['resource'], $transparent);
-        }
+		//png transparency
+	    } elseif($this->info['type'] == 3){
+
+			imagealphablending($image['resource'], true);
+
+			$color = imagecolortransparent($image['resource'], imagecolorallocatealpha($image['resource'], 0, 0, 0, 127));
+
+			imagefill($image['resource'], 0, 0, $color);
+			imagesavealpha($image['resource'], true);
+
+		}
         // return new image resource
         return $image;
 	}
@@ -372,14 +386,14 @@ class Image
 		
 		//transforms children
 		foreach($this->children as $child){
-			if($styles=='all' || in_array()) $child['instance']->set_watermark($this->watermark);
+			if($styles=='all' || in_array($child['name'], $styles)){
+				$child['instance']->set_watermark($this->watermark);			} 
 		}
 		
 		//transforms original
 		if($styles=='all' || $original_too){
 			$this->watermark->resize($this->info['width'].'x'.$this->info['height'].'#');
-			
-			imagecopymerge($this->image, $this->watermark->image, 0, 0, 0, 0, $this->info['width'], $this->info['height'], 100);
+			imagecopy($this->image, $this->watermark->image, 0, 0, 0, 0, $this->info['width'], $this->info['height']);
 		}
 		
 	}

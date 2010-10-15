@@ -56,11 +56,13 @@ class Disk{
 				$ext = strtolower( ".$ext" );
 
 			// Strip % so the server doesn't try to decode entities.
-			$filename = str_replace('%', '', self::sanitize_file_name( $name ) ) . $ext;
+			$s_name = str_replace('%', '', self::sanitize_file_name( $name ));
+			
+			$filename = $s_name . $ext;
 
 			while ( file_exists( $dir . "/$filename" ) ) {
 				if ( ! $number )
-					$filename = $name . ++$number . $ext;
+					$filename = $s_name . ++$number . $ext;
 				else
 					$filename = str_replace( "$number$ext", ++$number . $ext, $filename );
 			}
