@@ -18,7 +18,7 @@ class Database_mysql extends Database {
 							));
 					
 		//tries connection
-		if(!$this->connection = mysql_connect(($args['host'].($args['port']?':'.$args['port']:'')), $args['user'], $args['password'])){
+		if(!$this->connection = mysql_connect(($args['host'].($args['port']?':'.$args['port']:'')), $args['user'], $args['password'], true)){
 			trigger_error('<strong>Database</strong> :: MySQL Database connection failed', E_USER_WARNING);
 			return null;
 		}
