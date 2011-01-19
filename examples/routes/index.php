@@ -39,7 +39,8 @@ include("../includes/header.php");
 </a> |
 <a href="<?php print Routes::url_to('yearly_archive', array('year'=>2009)); ?>">
 	Archive 2009
-</a>
+</a> |
+<a href="<?php print Routes::this_url(array('username'=>'Maria')); ?>">Same page, but Maria's</a>
 <?php
 
 print "<h3>Page Name: ".Routes::$current."</h3>";
@@ -77,8 +78,6 @@ Routes::$_PATH contents:<br />
 <br /><br />	
 $_GET contents:<br />
 <?php print Text::to_html(Utils::s_var_dump($_GET)); ?>
-
 <?php
-
 include("../includes/footer.php");
 ?>

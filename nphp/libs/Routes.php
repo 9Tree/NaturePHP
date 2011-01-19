@@ -7,6 +7,8 @@
 class Routes{
 	//check wether init() has run
 	private $initiated = false;
+	public static $current_static = true;
+	public static $is404 = false;
 	//uri variable holders
 	public static $_PATH = array();
 	//current page - populated after init()
@@ -45,6 +47,7 @@ class Routes{
 			if($path == $location) {
 				//found our path!!
 				self::$current = $page;
+				self::$current_static = true;
 				return;
 			}
 		}
@@ -109,13 +112,15 @@ class Routes{
 			
 			if($its_this){
 				//found a dynamic match!
+				self::$current_static = false;
 				self::$current = $page;
 				self::$_PATH = $tmpPath;
 				return;
 			}
 			
 		}
-		
+		//nothing was found - set 404 true
+		self::$is404 = true;
 	}
 	
 	public static function simple($page_path, $page_name){
@@ -196,7 +201,12 @@ class Routes{
 	}
 	
 	public static function this_url($vars=array(), $qs=array()){
-		
+		$new_get = array_merge((is_array($_GET) ? $_GET : array()), $qs);
+		if(self::$current_static){
+			return self::url_to(self::$current, $new_get);
+		} else {
+			return self::url_to(self::$current, array_merge(self::$_PATH, $vars), $new_get);
+		}
 	}
 }
 ?>
