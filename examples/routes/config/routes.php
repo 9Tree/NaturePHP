@@ -15,10 +15,11 @@ Routes::simple(Path::url_to('../Company/About', __FILE__), 'About_the_Company');
 #users page
 Routes::dynamic(Path::url_to('../:username', __FILE__), 'user_page');	
 #users photos main page
-Routes::dynamic(Path::url_to('../:username/photos', __FILE__), 'user_photos');
+Routes::dynamic(Path::url_to('../:username/photos', __FILE__), 'user_photos', true);
 #a photo	
 Routes::dynamic(Path::url_to('../:username/photos/:id', __FILE__), 'photo_page');
 #the archive by year	
-Routes::dynamic(Path::url_to('../archive/:year', __FILE__), 'yearly_archive') 
-
+Routes::dynamic(Path::url_to('../archive/:year', __FILE__), 'yearly_archive');
+#users photos main page
+Routes::dynamic(Path::url_to('../archive/:username/photos', __FILE__), 'user_archive', true);
 ?>

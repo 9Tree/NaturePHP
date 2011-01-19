@@ -66,6 +66,8 @@ switch(Routes::$current){
 	case "yearly_archive":
 	print Routes::$_PATH['year']."'s archive";
 	break;
+	case "user_archive":
+	print Routes::$_PATH['username']."'s archived photos";
 }
 
 ?>

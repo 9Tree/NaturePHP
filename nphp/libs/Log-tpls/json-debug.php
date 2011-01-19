@@ -1,6 +1,6 @@
 <?php
 if(!headers_sent()){
-	print '{}';
+	//print '{}';
 }
 ?>
 			
