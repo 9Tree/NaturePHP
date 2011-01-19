@@ -25,13 +25,13 @@ include("../includes/header.php");
 <a href="<?php Routes::put('home'); ?>">
 	Go to home
 </a> |
-<a href="<?php Routes::put('About_the_Company', array('hi'=>1)); /*on a static page, the array is the $_GET*/ ?>">
+<a href="<?php Routes::put('About_the_Company', array('test'=>1)); /*on a static page, the array is the $_GET*/ ?>">
 	Company
 </a> | 
 <a href="<?php Routes::put('user_photos', array('username'=>'John')); /*on a dynamic page, the 1st array are the vars*/ ?>">
 	John's photos
 </a> |
-<a href="<?php Routes::put('photo_page', array('username'=>'John', 'id'=>1), array('hi'=>1)); /*and the 2nd array is the $_GET*/  ?>">
+<a href="<?php Routes::put('photo_page', array('username'=>'John', 'id'=>1), array('test'=>1)); /*and the 2nd array is the $_GET*/  ?>">
 	Photo #1
 </a> |
 <a href="<?php print Routes::url_to('user_page', array('username'=>'John')); /*same as Routes::put() but returns string instead of printing*/?>">
@@ -40,7 +40,7 @@ include("../includes/header.php");
 <a href="<?php print Routes::url_to('yearly_archive', array('year'=>2009)); ?>">
 	Archive 2009
 </a> |
-<a href="<?php print Routes::this_url(array('username'=>'Maria')); ?>">Same page, but Maria's</a>
+<a href="<?php print Routes::this_url(array('username'=>'Maria'), array('get_in'=>array('test'=>1),'#'=>'top')); ?>">Same page, but Maria's</a>
 <?php
 
 print "<h3>Page Name: ".Routes::$current."</h3>";

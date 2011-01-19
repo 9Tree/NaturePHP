@@ -200,8 +200,13 @@ class Routes{
 		print self::url_to($page_name, $vars, $qs);
 	}
 	
-	public static function this_url($vars=array(), $qs=array()){
-		$new_get = array_merge((is_array($_GET) ? $_GET : array()), $qs);
+	public static function this_url($vars=array()){
+		$args=Utils::combine_args(func_get_args(), 1, array(
+				'get_in'=>array(),
+				'get_out'=>array(),
+				'#'=>''
+				));
+		$new_get = Path::this_qs($args);
 		if(self::$current_static){
 			return self::url_to(self::$current, $new_get);
 		} else {

@@ -170,6 +170,19 @@ class Path{
 				'get_out'=>array(),
 				'#'=>''
 				));
+		$newGet = self::this_qs($args);
+		$qstr=Utils::build_querystring($newGet);
+		$var=(!empty($qstr))?"?".$qstr:'';
+		
+		return $_SERVER['SCRIPT_NAME'].$var;	
+	}
+	
+	static function this_qs(){
+		$args=Utils::combine_args(func_get_args(), 0, array(
+				'get_in'=>array(),
+				'get_out'=>array(),
+				'#'=>''
+				));
 		if(!is_array($args['get_in'])) $args['get_in']=array();
 		if(!is_array($args['get_out'])) $args['get_out']=array();
 		$newGet=array();
@@ -185,11 +198,8 @@ class Path{
 				$newGet[$name]=&$args['get_in'][$name];
 			}
 		}
-		$qstr=Utils::build_querystring($newGet);
-		$var=(!empty($qstr))?"?".$qstr:'';
-		$hash=(!empty($args['#']))?"#".$args['#']:'';
-		
-		return $_SERVER['SCRIPT_NAME'].$var.$hash;	
+		if(isset($args['#'])) $newGet['#']=$args['#'];
+		return $newGet;	
 	}
 	
 	//request uri for all systems (from Drupal)

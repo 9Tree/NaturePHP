@@ -111,7 +111,9 @@ class Utils{
 	//public port for ref_build_querystring
 	static function build_querystring($getArr){
 		if(is_array($getArr))
-			return self::ref_build_querystring($getArr, '', '');
+			$qs = self::ref_build_querystring($getArr, '', '');
+			$hash=(isset($getArr['#']))?"#".urlencode($getArr['#']):'';
+			return $qs.$hash;
 		return (string) $getArr;
 	}
 
@@ -119,15 +121,18 @@ class Utils{
 	private static function ref_build_querystring(&$newGet, $start, $end){
 		$qstr='';
 		foreach($newGet as $var=>$value){
-			if(is_array($value)){
-				$qstr.="&".self::ref_build_querystring($value, $start.$var.$end."[", "]");
-			} else {
-				$qstr.="&";
-				if($start && $end){
-					$qstr.=$start.$var.$end."=".urlencode($value);
-				} else $qstr.=$var."=".urlencode($value);
+			if($var!='#'){
+				if(is_array($value)){
+					$qstr.="&".self::ref_build_querystring($value, $start.$var.$end."[", "]");
+				} else {
+					$qstr.="&";
+					if($start && $end){
+						$qstr.=$start.$var.$end."=".urlencode($value);
+					} else $qstr.=$var."=".urlencode($value);
+				}
 			}
 		}
+		
 		return substr($qstr, 1);
 	}
 	
