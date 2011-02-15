@@ -1,6 +1,6 @@
 <?php
 #/*
-#* NaturePHP initialization file - v0.4.1
+#* NaturePHP initialization file - v0.4.5
 #* The only required include file - starts lib autoloader system
 #* Use require('nphp/init.php'); to start using NaturePHP
 # 
@@ -16,13 +16,14 @@ if(!version_compare(PHP_VERSION, '5.0.0', '>=')){
 
 
 #/*
-#* NaturePhp Nphp Class - v0.4.1
+#* NaturePhp Nphp Class - v0.4.5
 #* Default NaturePhp environment class
 #*/
 
 //Nphp core functionalities
 class Nphp{
-	static $version='0.4.1';
+	static $version='0.4.5';
+	static $routing=false;
 	static function lib_is_loaded($lib){
 		if(class_exists($lib)) return true;
 		return false;

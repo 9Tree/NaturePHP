@@ -148,6 +148,9 @@ class Text
 
 	    return strtr($string, $table);
 	}
+	static function url_alias($string){
+		return Disk::sanitize_file_name($string);
+	}
 }
 
 ?>

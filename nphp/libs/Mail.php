@@ -167,6 +167,7 @@ class Mail{
 		$args=Utils::combine_args(func_get_args(), 2, array(
 						'smtp_server' => NULL,
 						'smtp_ssl' => false,
+						'smtp_tls' => false,
 						'smtp_port' => 25,
 						'smtp_timeout' => 30,
 						'smtp_username' => NULL,
@@ -174,6 +175,10 @@ class Mail{
 						'smtp_localhost' => 'locahost',
 						'smtp_newline' => "\r\n"
 						));
+		
+		
+		if($args['smtp_ssl'] && !preg_match("/:\/\//", $args['smtp_server'])) $args['smtp_server'] = "ssl://".$args['smtp_server'];
+		else if($args['smtp_tls'] && !preg_match("/:\/\//", $args['smtp_server'])) $args['smtp_server'] = "tls://".$args['smtp_server'];
 		
 		//Connect to the host on the specified port
 		$smtpConnect = fsockopen($args['smtp_server'], $args['smtp_port'], $errno, $errstr, $args['smtp_timeout']);

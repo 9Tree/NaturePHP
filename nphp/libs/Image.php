@@ -367,7 +367,7 @@ class Image
 			$new_id=count($this->children);
 			$this->children[$new_id]['name']=$folder;
 			$this->children[$new_id]['style']=$style;
-			$this->children[$new_id]['instance']=new Image(&$this->image, $this->info, $options);	//creates instance
+			$this->children[$new_id]['instance']=new Image($this->image, $this->info, $options);	//creates instance
 			$this->children[$new_id]['instance']->resize($style);	//resizes to style
 		}
 	}

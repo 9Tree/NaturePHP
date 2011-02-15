@@ -6,7 +6,6 @@
 
 class Routes{
 	//check wether init() has run
-	private $initiated = false;
 	public static $current_static = true;
 	public static $is404 = false;
 	//uri variable holders
@@ -118,6 +117,7 @@ class Routes{
 				return;
 			}
 			
+			Nphp::$routing=true;
 		}
 		//nothing was found - set 404 true
 		self::$is404 = true;
@@ -186,7 +186,7 @@ class Routes{
 				$first_field=false;
 			}
 			
-			if(strpos(":", $page)!==false){
+			if(strpos($page, ":")!==false){
 				trigger_error('<strong>Routes</strong> :: missing fields in page "'.$page_name.'" call. ('.$page.')', E_USER_WARNING);
 			}
 			

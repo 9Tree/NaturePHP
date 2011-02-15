@@ -112,7 +112,7 @@ class Utils{
 	static function build_querystring($getArr){
 		if(is_array($getArr))
 			$qs = self::ref_build_querystring($getArr, '', '');
-			$hash=(isset($getArr['#']))?"#".urlencode($getArr['#']):'';
+			$hash=(isset($getArr['#']) && $getArr['#'])?"#".urlencode($getArr['#']):'';
 			return $qs.$hash;
 		return (string) $getArr;
 	}

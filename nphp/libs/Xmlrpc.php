@@ -8,6 +8,7 @@
  *
  * Note: original exception system has been replaced with trigger_error() 
  * to better adjust usage within NaturePhp. by Carlos Ouro
+ * A few features and bug corrections added too.
  *
  */
 class Xmlrpc {
