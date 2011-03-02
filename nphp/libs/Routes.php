@@ -16,6 +16,7 @@ class Routes{
 	private $static_pages = array();
 	private $dynamic_pages = array();
 	private $dyn_field_count = array();
+	private $dyn_fields = array();
 	private $dyn_first_null = array();
 	private $pages_types = array();
 	
@@ -135,7 +136,14 @@ class Routes{
 		$me->pages_types[$page_name] = 'dynamic';
 		if(substr($page_path, -1, 1)=="/") $page_path = substr($page_path, 0, strlen($page_path)-1);
 		$me->dynamic_pages[$page_name] = $page_path;
-		$me->dyn_field_count[$page_name] = substr_count($page_path, "/")+1;
+		$fields = explode("/", $page_path);
+		$me->dyn_fields[$page_name] = array();
+		foreach($fields as $field){
+			if(substr($field, 0, 1)==":"){
+				$me->dyn_fields[$page_name][] = substr($field, 1, strlen($field)-1);
+			}
+		}
+		$me->dyn_field_count[$page_name] = count($fields);
 		$me->dyn_first_null[$page_name] = $first_null;
 	}
 	
@@ -158,7 +166,7 @@ class Routes{
 		} elseif($me->pages_types[$page_name]=='dynamic'){
 			
 			$page = $me->dynamic_pages[$page_name];
-			$first_field=true;
+
 			foreach($vars as $field=>$content){
 				
 				$bfield = ":".$field;
@@ -175,7 +183,7 @@ class Routes{
 				//clear null fields
 				if(!$content){
 					//check if field can be null
-					if($first_field && $me->dyn_first_null[$page_name]){
+					if($me->dyn_first_null[$page_name] && $me->dyn_fields[$page_name][0]==$field){
 						$page = str_replace($bfield, '', $page);
 					} else trigger_error('<strong>Routes</strong> :: field "'.$field.'" in page "'.$page_name.'" cannot be null.', E_USER_WARNING);
 					
