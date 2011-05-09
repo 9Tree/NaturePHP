@@ -1,12 +1,11 @@
 <?php
 #/*
-#* 9Tree Text Class - v0.3.5
+#* 9Tree Text Class
 #* String control functionalities
 #*/
 
-class Text
-{
-	private static $current_html_path;
+class Text extends Nphp_static{
+	protected static $current_html_path;
 	
 	//str_replace n items
 	static function str_replace_count($search,$replace,$subject,$times) {
@@ -41,12 +40,12 @@ class Text
 	
 	//convert a string to a safe javascript string
 	static function to_javascript($str, $separator='"'){
-		return str_replace(array("\r\n", "\n", $separator), array("\\r\\n", "\\n", "\\".$separator), $str);
+		return self::fireHooks('to_javascript', str_replace(array("\r\n", "\n", $separator), array("\\r\\n", "\\n", "\\".$separator), $str), array($str, $separator));
 	}
 	
 	//convert an html string to plain text
 	static function to_plain($str){
-		return html_entity_decode(
+		return self::fireHooks('to_plain', html_entity_decode(
 			str_replace(
 				"&nbsp;",
 				" ",
@@ -61,17 +60,17 @@ class Text
 				)
 			),
 		ENT_COMPAT,
-		"UTF-8");
+		"UTF-8"), array($str));
 	}
 	
 	//convert a plain text string to html
 	static function to_html($str){
-		return str_replace(array("\t", "  ", "\r\n", "\n"), array("    ", " &nbsp;", "\n", "<br />"), $str);
+		return self::fireHooks('to_html', str_replace(array("\t", "  ", "\r\n", "\n"), array("    ", " &nbsp;", "\n", "<br />"), $str), array($str));
 	}
 	
 	//remove extras spaces, tabs, etc.
 	static function simple_spaces($str){
-		return str_replace("\n ", "\n", preg_replace("/ +/mi", " ", str_replace("\t", " ", $str)));
+		return self::fireHooks('simple_spaces', str_replace("\n ", "\n", preg_replace("/ +/mi", " ", str_replace("\t", " ", $str))), array($str));
 	}
 	
 	//plain simple - to_plain followed by simple_spaces
@@ -146,10 +145,10 @@ class Text
 				        'ÿ'=>'y','Ŕ'=>'R','ŕ'=>'r'
 					);
 
-	    return strtr($string, $table);
+	    return self::fireHooks('normalize', strtr($string, $table), $string);
 	}
 	static function url_alias($string){
-		return Disk::sanitize_file_name($string);
+		return self::fireHooks('url_alias', Disk::sanitize_file_name($string), $string);
 	}
 }
 

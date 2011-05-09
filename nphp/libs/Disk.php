@@ -1,10 +1,10 @@
 <?php
 #/*
-#* 9Tree Filesystem Class - v0.3.5
+#* 9Tree Filesystem Class
 #* Files & Folders functionalities
 #*/
 
-class Disk{
+class Disk extends Nphp_static{
 	
 	//make new directory
 	static function make_dir($target) {
@@ -68,20 +68,20 @@ class Disk{
 			}
 		}
 
-		return $filename;
+		return self::fireHooks('unique_filename', $filename, array($dir, $filename, $unique_filename_callback));
 	}
 	
 	//make sure new filename is simple and has standard characters
 	static function sanitize_file_name( $name ) {
-		$name = strtolower( $name );
-		$name = Text::normalize( $name );
-		$name = preg_replace('/&.+?;/', '', $name); // kill entities
-		$name = str_replace( '_', '-', $name );
-		$name = preg_replace('/[^a-z0-9\s-]/', '', $name);
-		$name = preg_replace('/\s+/', '-', $name);
-		$name = preg_replace('|-+|', '-', $name);
-		$name = trim($name, '-');
-		return $name;
+		$return = strtolower( $name );
+		$return = Text::normalize( $return );
+		$return = preg_replace('/&.+?;/', '', $return); // kill entities
+		$return = str_replace( '_', '-', $return );
+		$return = preg_replace('/[^a-z0-9\s-]/', '', $return);
+		$return = preg_replace('/\s+/', '-', $return);
+		$return = preg_replace('|-+|', '-', $return);
+		$return = trim($return, '-');
+		return self::fireHooks('sanitize_file_name', $return, array($name));
 	}
 }
 ?>

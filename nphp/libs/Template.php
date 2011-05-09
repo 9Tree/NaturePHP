@@ -1,11 +1,11 @@
 <?php
 #/*
-#* 9Tree Templates Class - v0.3.5
+#* 9Tree Templates Class
 #* Templates class
 #*/
 
 class Template{
-	private $str=false;
+	protected $str=false;
 	function __construct(){
 		$args=Utils::combine_args(func_get_args(), 0, array('file' => false, 'string' => false, 'part'=>false, 'mode'=>'auto', 'cache'=>true, 'content'=>false, 'correct_paths'=>true));
 		
@@ -86,7 +86,7 @@ class Template{
 			}
 		}
 	}
-	private function defaultKeys($mode){
+	protected function defaultKeys($mode){
 		//define mode
 		switch($mode){
 			case 'php':

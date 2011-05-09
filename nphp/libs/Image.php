@@ -1,6 +1,6 @@
 <?php
 #/*
-#* 9Tree Text Class - v0.1
+#* 9Tree Text Class
 #* Image control functionalities
 #*
 #* Styles specification:
@@ -17,8 +17,7 @@
 #* 'width'x'height'#	Same as 'width'x'height'^ but centered and cropped to the 'not fit' dimension.
 #*/
 
-class Image
-{		
+class Image{		
 	//image info
 	private $info=array(
 		'width'=>null, 

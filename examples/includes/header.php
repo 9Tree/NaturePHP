@@ -21,6 +21,9 @@
 			<li>
 				<a href="<?php Path::put('../routes/', __FILE__); ?>" title="Test Routes">Routes</a>
 			</li>
+			<li>
+				<a href="<?php Path::put('../session.php', __FILE__); ?>" title="Test Routes">Session</a>
+			</li>
 			<div class="clear"></div>
 		</ul>
 		<div id="content">

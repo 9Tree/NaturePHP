@@ -1,11 +1,10 @@
 <?php
 #/*
-#* 9Tree Event Class - v0.3.5
+#* 9Tree Event Class
 #* Event/action and filtering functionalities (based on Wordpress add_action and add_filter)
 #*/
 
-class Event
-{
+class Event extends Nphp_static{
 	
 	//private variables
 	private static $events=array(array());
@@ -21,7 +20,7 @@ class Event
 	}
 	
 	//add filter
-	static function add_filter($filter, $func, $priority=0){
+	static function add_filter($filter, $func, $priority=false){
 		if($priority===false){
 			self::$filters[$filter][] = $func;
 		} else {

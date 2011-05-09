@@ -11,7 +11,7 @@ functions declared starting with _ like _func() indicate functions that are not 
 but have to be implemented on the extended classes (eg. Database_mysql );
 */
 
-abstract class Database {
+abstract class Database extends Nphp_hookable{
 	protected $connection; 				// Database connection resource
 	protected $name; 					// connection name
 	public $is_connected = false;	//connection status
@@ -41,6 +41,7 @@ abstract class Database {
 		$this->instance_id = ++Database::$last_instance_id;	//set's $this instance_id
 		
 		if($args['name']) Database::$instances[$args['name']] = &$this;		//add's the instance to the instance stack with the provided name
+		self::fireHooks('__construct', null, $args);
 	}
 	
 	//general open
@@ -58,22 +59,22 @@ abstract class Database {
 		$class='Database_'.$args['type'];
 		$o = new $class($args);
 		$o->_open($args);
-
-		return $o;
+		
+		return self::fireHooks('open', $o, $args, $o);
 	}
 	
 	//close connection and remove references to instance
 	function close() {
 		$this -> _close();
-		unset(Database::$instances[$this->instance_id]);
-		# if($this->instance_id==Database::$last_instance_id) unset(Database::$instance);
+		self::fireHooks('close', null, array(), $this);
 	}
 	
 	//secure string
 	function secure($sql, $parameters=array()){
 		if(!empty($parameters)){
-			return vsprintf(str_replace("?", "%s", str_replace("%", "%%", $sql)), $this->escapeValues($parameters));
-		} else return $sql;
+			$return=vsprintf(str_replace("?", "%s", str_replace("%", "%%", $sql)), $this->escapeValues($parameters));
+		} else $return=$sql;
+		return self::fireHooks('secure', $return, array($sql, $parameters), $this);
 	}
 	
 	//builds query conditions from $args into $sql 
@@ -110,17 +111,17 @@ abstract class Database {
 	//escape value function
 	public function escapeValue($str){
 		switch (gettype($str)){
-			case 'string'	:	$str = "'".$this->_escapeString($str)."'";	//escape strings
+			case 'string'	:	$ret = "'".$this->_escapeString($str)."'";	//escape strings
 				break;
-			case 'double'	:	$str = "'$str'";	//put doubles as strings
+			case 'double'	:	$ret = "'$str'";	//put doubles as strings
 				break;
-			case 'boolean'	:	$str = ($str === FALSE) ? 0 : 1;	//booleans to 1/0
+			case 'boolean'	:	$ret = ($str === FALSE) ? 0 : 1;	//booleans to 1/0
 				break;
 			case 'integer'	: break;	//leave integers be
-			default			:	$str = 'NULL';		//rest put to null
+			default			:	$ret = 'NULL';		//rest put to null
 				break;
 		}
-		return $str;
+		return $ret;
 	}
 	
 	//escape values array
@@ -163,7 +164,7 @@ abstract class Database {
 		if(!$this->result && (error_reporting() & 1))
 			trigger_error('<strong>Database</strong> :: Error in query: ' . $this->_error(), E_USER_WARNING);
 		
-		return $this->result?true:false;
+		return self::fireHooks('execute', ($this->result?true:false), array($sql, $parameters), $this);
 	}
 	
 	//insert
@@ -192,9 +193,9 @@ abstract class Database {
 		//execute	
 		if($this->execute($sql, $parameters)) {
 			//return inserted id
-			return $this->_lastID($table);
+			return self::fireHooks('insert', $this->_lastID($table), array($data, $table), $this);
 		} else {
-			return false;
+			return self::fireHooks('insert', false, array($data, $table), $this);
 		}
 	}
 	
@@ -228,7 +229,7 @@ abstract class Database {
 		$this->execute($sql, $parameters);
 		
 		//return affected rows
-		return $this->_affectedRows();
+		return self::fireHooks('update', $this->_affectedRows(), $args, $this);
 	}
 	
 	//delete
@@ -247,7 +248,7 @@ abstract class Database {
 		$this->execute($sql);
 		
 		//return affected rows
-		return $this->_affectedRows();
+		return self::fireHooks('delete', $this->_affectedRows(), $args, $this);
 	}
 	
 	//number of available rows in $this->result

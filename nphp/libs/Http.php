@@ -4,7 +4,10 @@
 #* Http communications functionalities
 #*/
 
-class Http{
+class Http extends Nphp_static{
+	
+	protected static $has_curl=null;
+	protected static $curl_opts=array();
 	
 	//post contents to a file
 	public static function file_post_contents($url, $post_data='', $conn_to=30, $stream_to=30) {
@@ -61,6 +64,26 @@ class Http{
 			trigger_error("file_post_contents : unable to reach file");
 			return false;
 		}
+	}
+	
+	
+	//curl manager stuff
+	public static function check_curl(){
+		if(static::$has_curl===null) static::$has_curl=function_exists('curl_init');
+		return static::$has_curl;
+	}
+	public static function option($opts, $val=null){
+		if(is_array($opts)){
+			array_merge($curl_opts, $opts);
+		} else {
+			$curl_opts[$opts]=$val;
+		}
+	}
+	public static function check_options(){
+		
+	}
+	public static function curl_call(){
+		
 	}
 }
 ?>

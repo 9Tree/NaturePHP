@@ -1,13 +1,13 @@
 <?php
 #/*
-#* 9Tree Utilities Class - v0.3.5
+#* 9Tree Utilities Class
 #* Useful stuff
 #*/
 
-class Utils{
+class Utils extends Nphp_static{
 	
 	//transforms mixed variables (querystring, object or array) into array
-	private static function ref_mixed_to_array(&$mixed, &$args, &$i){
+	protected static function ref_mixed_to_array(&$mixed, &$args, &$i){
 
 		if(is_array($mixed) || is_object($mixed)){
 			foreach($mixed as $item=>$value){
@@ -118,7 +118,7 @@ class Utils{
 	}
 
 	//builds querystring from array (supports multi-dimensional arrays)
-	private static function ref_build_querystring(&$newGet, $start, $end){
+	protected static function ref_build_querystring(&$newGet, $start, $end){
 		$qstr='';
 		foreach($newGet as $var=>$value){
 			if($var!='#'){
@@ -168,7 +168,7 @@ class Utils{
 	}
 	
 	//same as array_key_exists() but case insensitive
-	function array_ikey_exists($key,$arr){
+	static function array_ikey_exists($key,$arr){
 	    $key=strtolower($key);
 	    if($arr && is_array($arr))
 	    {
@@ -181,7 +181,7 @@ class Utils{
 	}
 	
 	//same as shuffle but works with associative arrays
-	function shuffle($array) {
+	static function shuffle($array) {
 	    $keys = array_keys($array);
 
 	    shuffle($keys);
@@ -218,11 +218,44 @@ class Utils{
 		endwhile;
 
 		# done!
-		return $password;
+		return self::fireHooks('generate_password', $password, $args);
 	}
 	
 	static function is_assoc($array) {
 	    return (is_array($array) && (count($array)==0 || 0 !== count(array_diff_key($array, array_keys(array_keys($array))) )));
+	}
+	
+	static function serialize($data)
+	{
+		if (is_array($data))
+		{
+			foreach ($data as $key => $val)
+			{
+				$data[$key] = str_replace('\\', '{{slash}}', $val);
+			}
+		}
+		else
+		{
+			$data = str_replace('\\', '{{slash}}', $data);
+		}
+
+		return serialize($data);
+	}
+	static function unserialize($data)
+	{
+		$data = @unserialize(stripslashes($data));
+
+		if (is_array($data))
+		{
+			foreach ($data as $key => $val)
+			{
+				$data[$key] = str_replace('{{slash}}', '\\', $val);
+			}
+
+			return $data;
+		}
+
+		return str_replace('{{slash}}', '\\', $data);
 	}
 }
 ?>

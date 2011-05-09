@@ -1,22 +1,12 @@
 <?php
 #/*
-#* 9Tree Uris Class - v0.3.5
+#* 9Tree Uris Class
 #* Uris and Urls funcionalities
 #*/
 
-class Path{
+class Path extends Nphp_static{
 	
-	private $script_base=null;	
-	
-	//general instance method
-	private static function &getInstance(){
-		static $instance;
-		if(!isset($instance)){
-			$c=__CLASS__;
-			$instance=new $c;
-		}
-		return $instance;
-	}
+	private static $script_base=null;
 	
 	//combine physical paths (files and includes)
 	static function to($new_path, $cur_file){
@@ -31,7 +21,7 @@ class Path{
 	//combine url paths (urls and templates)
 	static function url_to($new_path, $cur_file){
 		static $unix;
-	    if(!isset($unix)) $unix=!Check::server_is_windows();
+	    if(!isset($unix)) $unix=!Info::server_is_windows();
 	
 		$cur_path=self::relative($cur_file, self::myBase(), $unix);
 		return self::combine($new_path, $cur_path);
@@ -39,14 +29,12 @@ class Path{
 	
 	//script base url
 	static function myBase(){
-		$me=&self::getInstance();
-		return $me->script_base ? $me->script_base : $_SERVER['SCRIPT_FILENAME'];
+		return self::$script_base ? self::$script_base : $_SERVER['SCRIPT_FILENAME'];
 	}
 	
 	//set base script
 	static function setBase($new_path, $cur_file){
-		$me=&self::getInstance();
-		$me->script_base = 	self::combine(
+		self::$script_base = 	self::combine(
 								self::combine(
 									$new_path, 
 									self::relative($cur_file, $_SERVER['SCRIPT_FILENAME'])
@@ -57,12 +45,11 @@ class Path{
 	
 	//set base script uri
 	static function setBaseUri($request_uri){
-		$me=&self::getInstance();
 		if(strpos("?", $request_uri)!==false){
 			$parts = explode("?", $request_uri);
 			$request_uri = $parts[0];
 		}
-		$me->script_base = self::combine(self::relative($request_uri, $_SERVER['SCRIPT_NAME']), $_SERVER['SCRIPT_FILENAME']).".";
+		self::$script_base = self::combine(self::relative($request_uri, $_SERVER['SCRIPT_NAME']), $_SERVER['SCRIPT_FILENAME']).".";
 	}
 	 
 	//combine $curPath as base and relative $path to get new fullpath
@@ -225,19 +212,20 @@ class Path{
 	
 	//clean uri string
 	function sanitize_url( $url ) {
-
-		if ('' == $url) return $url;
-		$url = preg_replace('|[^a-z0-9-~+_.?#=!&;,/:%@]|i', '', $url);
-		$strip = array('%0d', '%0a');
-		$url = str_replace($strip, '', $url);
-		$url = str_replace(';//', '://', $url);
-		/* If the URL doesn't appear to contain a scheme, we
-		 * presume it needs http:// appended (unless a relative
-		 * link starting with / or a php file).
-		*/
-		if ( strpos($url, ':') === false &&
-			substr( $url, 0, 1 ) != '/' && !preg_match('/^[a-z0-9-]+?\.php/i', $url) )
-			$url = 'http://' . $url;
+		$return = $url;
+		if ('' != $return) {
+			$return = preg_replace('|[^a-z0-9-~+_.?#=!&;,/:%@]|i', '', $return);
+			$strip = array('%0d', '%0a');
+			$return = str_replace($strip, '', $return);
+			$return = str_replace(';//', '://', $return);
+			/* If the URL doesn't appear to contain a scheme, we
+			 * presume it needs http:// appended (unless a relative
+			 * link starting with / or a php file).
+			*/
+			if ( strpos($return, ':') === false && substr( $return, 0, 1 ) != '/' && !preg_match('/^[a-z0-9-]+?\.php/i', $return) )
+				$return = 'http://' . $return;
+		}
+		return self::fireHooks('sanitize_url', $return, array($url));	
 	}
 }
 ?>

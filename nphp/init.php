@@ -1,6 +1,6 @@
 <?php
 #/*
-#* NaturePHP initialization file - v0.4.5
+#* NaturePHP initialization file
 #* The only required include file - starts lib autoloader system
 #* Use require('nphp/init.php'); to start using NaturePHP
 # 
@@ -9,22 +9,58 @@
 #*/
 
 //check required PHP_VERSION
-if(!version_compare(PHP_VERSION, '5.0.0', '>=')){
-	trigger_error('NaturePhp requires at least PHP 5', E_USER_ERROR);
-	die('NaturePhp requires at least php 5');
+if(!version_compare(PHP_VERSION, '5.3.0', '>=')){
+	trigger_error('NaturePhp 0.5 requires at least PHP 5.3', E_USER_ERROR);
+	die('NaturePhp 0.5 requires at least php 5.3');
 }
 
+#/*
+#* NaturePhp abstract classes
+#*/
+abstract class Nphp_hookable{
+	//hooks
+	protected static $hooks=array();
+	final public static function addHook($method, $func){
+		if(!isset(self::$hooks[$method])) self::$hooks[$method]=array();
+		self::$hooks[$method][]=$func;
+	}
+	final protected static function fireHooks($method, $return=null, $params=array(), $instance=null){
+		if(!isset(self::$hooks[$method])) return $return;
+		foreach(self::$hooks[$method] as $func){
+			$return=$func($return, $params, $instance);
+		}
+		return $return;
+	}
+}
+abstract class Nphp_static extends Nphp_hookable{
+	final private function  __construct(){}
+	final private function  __clone(){}
+	final private function __destruct(){}
+}
+abstract class Nphp_singleton extends Nphp_hookable{
+	final private function  __construct(){}
+	final private function  __clone(){}
+	protected static $_instance = NULL;
+	//general instance method
+	final public static function getInstance(){
+		if(null !== static::$_instance){
+			return static::$_instance;
+		}
+		static::$_instance = new static();
+		return static::$_instance;
+	}
+}
 
 #/*
-#* NaturePhp Nphp Class - v0.4.5
+#* NaturePhp Nphp Class
 #* Default NaturePhp environment class
 #*/
 
 //Nphp core functionalities
-class Nphp{
-	static $version='0.4.5';
-	static $routing=false;
-	static function lib_is_loaded($lib){
+class Nphp extends Nphp_static{
+	static protected $version='0.5.0';
+	static public $routing=false;
+	static public function lib_is_loaded($lib){
 		if(class_exists($lib)) return true;
 		return false;
 	}
@@ -42,14 +78,14 @@ class Nphp{
 		if(!isset($nphp_folder)){
 			$nphp_folder=dirname(__FILE__).'/';
 		}
-		return $nphp_folder;
+		return self::fireHooks('nphp_folder', $nphp_folder);
 	}
 	static function lib_path($lib){
-		//folders system (for namespaces) - only available when running on PHP 5.3+
+		//folders system (for namespaces)
 		$lib=str_replace("\\", "/", $lib);
 		
 		//builds path
-		return self::nphp_folder().'libs/'.$lib.'.php';
+		return self::fireHooks('lib_path', self::nphp_folder().'libs/'.$lib.'.php');
 	}
 	static function load_lib($lib, $complete_path=false){
 		//get path

@@ -1,10 +1,10 @@
 <?php
 #/*
-#* 9Tree Routes Class - v0.2.2
+#* 9Tree Routes Class
 #* Routing funcionalities
 #*/
 
-class Routes{
+class Routes extends Nphp_static{
 	//check wether init() has run
 	public static $current_static = true;
 	public static $is404 = false;
@@ -13,22 +13,12 @@ class Routes{
 	//current page - populated after init()
 	public static $current = NULL;
 	//configuration holder
-	private $static_pages = array();
-	private $dynamic_pages = array();
-	private $dyn_field_count = array();
-	private $dyn_fields = array();
-	private $dyn_first_null = array();
-	private $pages_types = array();
-	
-	//general instance method
-	private static function &getInstance(){
-		static $instance;
-		if(!isset($instance)){
-			$c=__CLASS__;
-			$instance=new $c;
-		}
-		return $instance;
-	}
+	protected static $static_pages = array();
+	protected static $dynamic_pages = array();
+	protected static $dyn_field_count = array();
+	protected static $dyn_fields = array();
+	protected static $dyn_first_null = array();
+	protected static $pages_types = array();
 	
 	public static function init(){
 		// Set new base path
@@ -40,10 +30,9 @@ class Routes{
 		$location = Path::relative($location, $_SERVER['SCRIPT_NAME']);
 		if(substr($location, -1, 1)=="/") $location = substr($location, 0, strlen($location)-1);
 		
-		$me = &self::getInstance();
 		//check within configured paths
 		//first check within static paths (much faster)
-		foreach($me->static_pages as $page => $path){
+		foreach(self::$static_pages as $page => $path){
 			if($path == $location) {
 				//found our path!!
 				self::$current = $page;
@@ -59,8 +48,8 @@ class Routes{
 		//gather possible matches
 		$dyn_top_matches=array();
 		$dyn_matches=array();
-		foreach($me->dyn_field_count as $page=>$number){
-			if($me->dyn_first_null[$page] && $loc_num_fields==$number-1){
+		foreach(self::$dyn_field_count as $page=>$number){
+			if(self::$dyn_first_null[$page] && $loc_num_fields==$number-1){
 				$dyn_top_matches[$page]['number'] = $number;
 				$dyn_top_matches[$page]['top'] = true;
 			} elseif($loc_num_fields==$number){
@@ -74,7 +63,7 @@ class Routes{
 		foreach($dyn_matches as $page => $match){
 			
 			//field count
-			$path = $me->dynamic_pages[$page];
+			$path = self::$dynamic_pages[$page];
 			$fields = explode("/", $path);
 			$num_fields = $match['number'];
 			
@@ -125,47 +114,44 @@ class Routes{
 	}
 	
 	public static function simple($page_path, $page_name){
-		$me = &self::getInstance();
-		$me->pages_types[$page_name] = 'static';
+		self::$pages_types[$page_name] = 'static';
 		if(substr($page_path, -1, 1)=="/") $page_path = substr($page_path, 0, strlen($page_path)-1);
-		$me->static_pages[$page_name] = $page_path;
+		self::$static_pages[$page_name] = $page_path;
 	}
 	
 	public static function dynamic($page_path, $page_name, $first_null=false){
-		$me = &self::getInstance();
-		$me->pages_types[$page_name] = 'dynamic';
+		self::$pages_types[$page_name] = 'dynamic';
 		if(substr($page_path, -1, 1)=="/") $page_path = substr($page_path, 0, strlen($page_path)-1);
-		$me->dynamic_pages[$page_name] = $page_path;
+		self::$dynamic_pages[$page_name] = $page_path;
 		$fields = explode("/", $page_path);
-		$me->dyn_fields[$page_name] = array();
+		self::$dyn_fields[$page_name] = array();
 		foreach($fields as $field){
 			if(substr($field, 0, 1)==":"){
-				$me->dyn_fields[$page_name][] = substr($field, 1, strlen($field)-1);
+				self::$dyn_fields[$page_name][] = substr($field, 1, strlen($field)-1);
 			}
 		}
-		$me->dyn_field_count[$page_name] = count($fields);
-		$me->dyn_first_null[$page_name] = $first_null;
+		self::$dyn_field_count[$page_name] = count($fields);
+		self::$dyn_first_null[$page_name] = $first_null;
 	}
 	
-	public static function url_to($page_name, $vars=array(), $qs=array()){
-		$me = &self::getInstance();
+	public static function url_to($page_name, $vars=array(), $qs=array(), $ignore_unrecognized=false){
 		
 		//check that page exists						
-		if(!isset($me->pages_types[$page_name])) {
+		if(!isset(self::$pages_types[$page_name])) {
 			trigger_error('<strong>Routes</strong> :: page definition not found "'.$page_name.'" - perhaps your missing route configuration?', E_USER_WARNING);
 			return '';
 		}
 		
 		//static pages
 		
-		if($me->pages_types[$page_name]=='static'){
+		if(self::$pages_types[$page_name]=='static'){
 			$qs = $vars;
-			$page = $me->static_pages[$page_name];
+			$page = self::$static_pages[$page_name];
 			
 			
-		} elseif($me->pages_types[$page_name]=='dynamic'){
+		} elseif(self::$pages_types[$page_name]=='dynamic'){
 			
-			$page = $me->dynamic_pages[$page_name];
+			$page = self::$dynamic_pages[$page_name];
 
 			foreach($vars as $field=>$content){
 				
@@ -176,14 +162,14 @@ class Routes{
 					$bfield = $bfield.'/';	
 					$extra = '/';
 					//or field is at the end
-				} elseif(strpos($page, $bfield)+strlen($bfield)!=strlen($page)){
+				} elseif(!$ignore_unrecognized&&strpos($page, $bfield)+strlen($bfield)!=strlen($page)){
 					trigger_error('<strong>Routes</strong> :: unrecognized field "'.$field.'" in page "'.$page_name.'"', E_USER_WARNING);
 				}
 				
 				//clear null fields
 				if(!$content){
 					//check if field can be null
-					if($me->dyn_first_null[$page_name] && $me->dyn_fields[$page_name][0]==$field){
+					if(self::$dyn_first_null[$page_name] && self::$dyn_fields[$page_name][0]==$field){
 						$page = str_replace($bfield, '', $page);
 					} else trigger_error('<strong>Routes</strong> :: field "'.$field.'" in page "'.$page_name.'" cannot be null.', E_USER_WARNING);
 					
@@ -216,9 +202,9 @@ class Routes{
 				));
 		$new_get = Path::this_qs($args);
 		if(self::$current_static){
-			return self::url_to(self::$current, $new_get);
+			return self::url_to(self::$current, $new_get, array(), true);
 		} else {
-			return self::url_to(self::$current, array_merge(self::$_PATH, $vars), $new_get);
+			return self::url_to(self::$current, array_merge(self::$_PATH, $vars), $new_get, true);
 		}
 	}
 }

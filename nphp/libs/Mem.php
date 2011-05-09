@@ -1,25 +1,15 @@
 <?php
 #/*
-#* 9Tree Varbay Class - v0.3.5
+#* 9Tree Mem Class
 #* Useful variables holding class
 #*/
 
-class Mem{
+class Mem extends Nphp_static{
 	
 	//private variables
-	private $keys=array(array());
-	private $values=array(array());
-	private $locks=array(array());
-	
-	//general instance method
-	private static function &getInstance(){
-		static $instance;
-		if(!isset($instance)){
-			$c=__CLASS__;
-			$instance=new $c;
-		}
-		return $instance;
-	}
+	private static $keys=array(array());
+	private static $values=array(array());
+	private static $locks=array(array());
 	
 	//functionS
 	//set
@@ -30,28 +20,24 @@ class Mem{
 	static function &getRef($var, $bay, $required=false){return self::getVar($var, $bay, $required);}
 	//lock
 	static function lock($var, $bay){
-		$me=&self::getInstance();
-		$index=array_search($var, $me->keys[$bay]);
-		$me->locks[$bay][$index]=true;
+		$index=array_search($var, self::$keys[$bay]);
+		self::$locks[$bay][$index]=true;
 	}
 	static function unlock($var, $bay){
-		$me=&self::getInstance();
-		$index=array_search($var, $me->keys[$bay]);
-		$me->locks[$bay][$index]=false;
+		$index=array_search($var, self::$keys[$bay]);
+		self::$locks[$bay][$index]=false;
 	}
 	//check
 	static function is_locked($var, $bay){
-		$me=&self::getInstance();
-		$index=array_search($var, $me->keys[$bay]);
+		$index=array_search($var, self::$keys[$bay]);
 		if($index!==false){
-			return $me->locks[$bay][$index];
+			return self::$locks[$bay][$index];
 		} else return false;
 	}
 	static function is_set($var, $bay){
-		$me=&self::getInstance();
-		if(!$var) return isset($me->keys[$bay]);
-		if(!isset($me->keys[$bay])) return false;
-		if(array_search($var, $me->keys[$bay])===false) return false;
+		if(!$var) return isset(self::$keys[$bay]);
+		if(!isset(self::$keys[$bay])) return false;
+		if(array_search($var, self::$keys[$bay])===false) return false;
 		return true;
 	}
 	
@@ -59,10 +45,9 @@ class Mem{
 	//PRIVATE FUNCTIONS
 	private static function &getVar(&$var, &$bay, &$required){
 		if(self::is_set($var, $bay)){
-			$me=&self::getInstance();
-			$index=array_search($var, $me->keys[$bay]);
-			if(isset($me->keys[$bay][$index])){
-				return $me->values[$bay][$index];
+			$index=array_search($var, self::$keys[$bay]);
+			if(isset(self::$keys[$bay][$index])){
+				return self::$values[$bay][$index];
 			} elseif($required) {
 				Log::kill("Mem :: required variable \"".$class."\" value not found in bay \"".$bay."\".");
 			}
@@ -73,20 +58,19 @@ class Mem{
 		return $var;
 	}
 	private static function setVar(&$var, &$value, &$bay){
-		$me=&self::getInstance();
-		if(!isset($me->keys[$bay])) $me->keys[$bay]=array();
-		$index=array_search($var, $me->keys[$bay]);
+		if(!isset(self::$keys[$bay])) self::$keys[$bay]=array();
+		$index=array_search($var, self::$keys[$bay]);
 		if($index!==false){
-			if($me->is_locked($var, $bay)){
+			if(self::$is_locked($var, $bay)){
 				Log::add("Mem", "variable \"".$var."\" could not be set in bay \"".$bay."\". Variable is locked.");
 				return false;
 			}
 		} else {
-			$index=count($me->keys[$bay]);
+			$index=count(self::$keys[$bay]);
 		}
-		$me->keys[$bay][$index]=&$var;
-		$me->values[$bay][$index]=&$value;
-		$me->locks[$bay][$index]=false;
+		self::$keys[$bay][$index]=&$var;
+		self::$values[$bay][$index]=&$value;
+		self::$locks[$bay][$index]=false;
 		return true;
 	}
 }

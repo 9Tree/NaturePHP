@@ -11,13 +11,13 @@
  * A few features and bug corrections added too.
  *
  */
-class Xmlrpc {
-    private $host;
-    private $path;
-    private $connection;
-    private $debug = false;
-    private $user;
-    private $pass;
+class Xmlrpc{
+    protected $host;
+    protected $path;
+    protected $connection;
+    protected $debug = false;
+    protected $user;
+    protected $pass;
 
     public function  __construct($host,$path) {
         $this->host = $host;
@@ -38,7 +38,7 @@ class Xmlrpc {
     public function call($methodName, $args=array()) {
         $request = $this->encodeRequest($methodName,$args);
         if ($this->debug) {
-            echo "REQUEST:\n$request\n\n";
+			trigger_error('<strong>XmlRPC</strong> :: CURL REQUEST: '.$request, E_USER_NOTICE);
         }
         $conn = $this->getConnection();
         curl_setopt($conn, CURLOPT_RETURNTRANSFER, 1);
@@ -55,14 +55,13 @@ class Xmlrpc {
             curl_setopt($conn, CURLOPT_USERPWD,$this->user.':'.$this->pass);
 
         $response = curl_exec($conn);
-        
+       	
         if ($this->debug) {
-            echo "CURL INFO:\n";
-            foreach(curl_getinfo($conn) as $name => $val)
-                echo $name . ': ';
-				echo var_dump($val);
-				echo "\n";
-            echo "\n\nRESPONSE:\n$response";
+			trigger_error('<strong>XmlRPC</strong> :: CURL INFO starting.', E_USER_NOTICE);
+			foreach(curl_getinfo($conn) as $name => $val)
+				trigger_error('<strong>XmlRPC</strong> :: '.$name.': '.$val, E_USER_NOTICE);
+			trigger_error('<strong>XmlRPC</strong> :: RESPONSE:<br />'.str_replace("\n", '<br />', $response), E_USER_NOTICE);
+			trigger_error('<strong>XmlRPC</strong> :: CURL INFO ended.', E_USER_NOTICE);
         }
         $httpCode = curl_getinfo($conn,CURLINFO_HTTP_CODE);
         if ($httpCode != 200) {
@@ -82,7 +81,7 @@ class Xmlrpc {
         return call_user_method_array('call',$this, array($name, $arguments));
     }
 
-    private function encodeRequest($methodName,$args) {
+    protected function encodeRequest($methodName,$args) {
         $req = '<?xml version="1.0" encoding="UTF-8" ?>';
         $params = '';
         foreach($args as $arg) {
@@ -92,40 +91,50 @@ class Xmlrpc {
         $req .= "\n<methodCall><methodName>$methodName</methodName><params>$params</params></methodCall>";
         return $req;
     }
-    private function parseResponse($xmlStr) {
+    protected function parseResponse($xmlStr) {
+		libxml_use_internal_errors(true);
         $xml = simplexml_load_string(trim($xmlStr));
-        $response = array();
-        
-        if (count($xml->fault) > 0) {
-            //An error was returned
-            $fault = $this->parseValue($xml->fault->value);
-            trigger_error("<strong>XmlRPC</strong> :: ".$fault->faultCode.": ".$fault->faultString, E_USER_WARNING);
-        }
-		
-		if(isset($xml->params->param)){
-			if(is_array($xml->params->param)){
+		$response = array();
 
-				if (count($xml->params->param) == 1)
-		            $scalar = true;
+		if(!$xml){
+			trigger_error("<strong>XmlRPC</strong> :: Failed Loading.", E_USER_WARNING);
+			$errors = libxml_get_errors();
+		    foreach($errors as $error) {
+				trigger_error("<strong>XmlRPC</strong> :: ".$error->message, E_USER_WARNING);
+		    }
+		} else {
+			//check faults
+			if (count($xml->fault) > 0) {
+	            //An error was returned
+	            $fault = $this->parseValue($xml->fault->value);
+	            trigger_error("<strong>XmlRPC</strong> :: Fault ".$fault->faultCode.": ".$fault->faultString, E_USER_WARNING);
+	        }
+			//parse data
+			if(isset($xml->params->param)){
+				if(is_array($xml->params->param)){
 
-		        foreach($xml->params->param as $param) {
-		            $valueStruct = $param->value;
+					if (count($xml->params->param) == 1)
+			            $scalar = true;
 
-		            $value = $this->parseValue($valueStruct);
-		            if ($scalar)
-		                return $value;
-		            else
-		                $response[] = $value;
-		        }
+			        foreach($xml->params->param as $param) {
+			            $valueStruct = $param->value;
 
-			} else {
-				$response[] = $xml->params->param;
+			            $value = $this->parseValue($valueStruct);
+			            if ($scalar)
+			                return $value;
+			            else
+			                $response[] = $value;
+			        }
+
+				} else {
+					$response[] = $xml->params->param;
+				}
 			}
 		}
         
         return $response;
     }
-    private function parseValue($valueStruct) {
+    protected function parseValue($valueStruct) {
         switch(true) {
             case count($valueStruct->struct) > 0:
                 $value = new stdClass();
@@ -159,7 +168,7 @@ class Xmlrpc {
                 return (string)$valueStruct->base64;
         }
     }
-    private function disconnect() {
+    protected function disconnect() {
         if ($this->connection)
             @curl_close($this->connection);
         $this->connection = null;
@@ -167,7 +176,7 @@ class Xmlrpc {
     protected function getUrl() {
         return sprintf('http://%s%s',$this->host,$this->path);
     }
-    private function getConnection() {
+    protected function getConnection() {
         if (!$this->connection)
             $this->connection = curl_init($this->getUrl());
         return $this->connection;
@@ -179,7 +188,7 @@ class Xmlrpc {
 
 /* PARMS */
 class XmlRPC_Parm {
-    private $value;
+    protected $value;
 
     public function __construct($value) {
         $this->value = $value;

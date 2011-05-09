@@ -1,10 +1,10 @@
 <?php
 #/*
-#* 9Tree Mail Class - v0.1
+#* 9Tree Mail Class
 #* Mail funcionalities
 #*/
 
-class Mail{
+class Mail extends Nphp_static{
 	
 	//default send mail
 	static function send($to, $subject, $body){
@@ -19,6 +19,10 @@ class Mail{
 						'attachments' => array(),
 						'use_smtp' => false
 						));
+		
+		
+		if(!self::fireHooks('send_check', true, array($to, $subject, $body, $args))) return;
+		$to=self::fireHooks('send_to', $to, array($to, $subject, $body, $args));
 		
 		//debug notice information
 		$notice_info = $to.' (text'.($args['html']?'/html':'').($args['attachments']?'/attachments':'').')';

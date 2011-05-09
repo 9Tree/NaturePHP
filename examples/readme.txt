@@ -29,4 +29,4 @@ To put the application actually working with the database:
 
 3.  Edit the includes/init.php file and setup the connection details at Database::open(...)
 
-4.  Edit the Mem::set('using_mysql', false, 'example'); to Mem::set('using_mysql', true, 'example');
+4.  Edit the Mem::set('use_db', false, 'example'); to Mem::set('use_db', true, 'example');

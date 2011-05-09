@@ -4,7 +4,7 @@
 #* Measures, conversions, number formats, etc.
 #*/
 
-class Format{
+class Format extends Nphp_static{
 	
 	//auto-format byte size
 	static function byte_size($bytes, $decimals = 0) {

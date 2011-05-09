@@ -1,12 +1,12 @@
 <?php
 #/*
-#* 9Tree Shell Processes Class - v0.3.5
+#* 9Tree Shell Processes Class
 #* Shell process interaction functionalities (Unix)
 #*/
 
-class ShellProcess{
+class ShellProcess extends Nphp_static{
 	
-  function execute($command, $timeout = 60, $sleep = 2) { 
+  static function execute($command, $timeout = 60, $sleep = 2) { 
         // First, execute the process, get the process ID 
 
         $pid = self::start($command); 
@@ -29,7 +29,7 @@ class ShellProcess{
         return false; 
     } 
 
-    function start($commandJob, $log='/dev/null') { 
+    static function start($commandJob, $log='/dev/null') { 
 
 		$command = "nohup  $commandJob >>$log 2>&1 & disown & echo $!";
 		
@@ -42,7 +42,7 @@ class ShellProcess{
         return false; 
     }
 
-    function exists($pid) { 
+    static function exists($pid) { 
 
         exec("ps ax | grep $pid 2>&1", $output); 
 
@@ -61,7 +61,7 @@ class ShellProcess{
         return false; 
     } 
 
-    function kill($pid) { 
+    static function kill($pid) { 
         exec("kill -9 $pid", $output); 
     }
 

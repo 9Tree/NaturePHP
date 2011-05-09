@@ -1,42 +1,23 @@
 <?php
-include('../nphp/init.php');
+// Application configuration / startup Nphp
+require('includes/init.php');
 
+//layout variables (it's just the way i usually do it...)
+$PAGE['id']				= 'xmlrpc';
+$PAGE['title'] 			= 'NaturePhp Example - XmlRpc';
+$PAGE['active_menu'] 	= 'xmlrpc';
 
+//application header
+include('includes/header.php');
 
 //post
-$title = "my blog post title";
-$keywords = "";
-$categories = array("Test");
-$body = "This is just a quick <a href=\"http://google.com\">test</a>";
+$host = "test.xmlrpc.wordtracker.com";
+$path = "/";
 
-$host = "mydomain.com";
-$path = "/blog/xmlrpc.php";
-$username = "admin";
-$password = "mypwd";
-$encoding='UTF-8';
-
-
-
-
-
-$title = htmlentities($title,ENT_NOQUOTES,$encoding);
-$keywords = htmlentities($keywords,ENT_NOQUOTES,$encoding);
-
-$content = array(
-    'title' => $title,
-    'description' => $body,
-    'mt_allow_comments' => 0, # 1 to allow comments
-    'mt_allow_pings' => 0, # 1 to allow trackbacks
-    'post_type' => 'post',
-    'mt_keywords' => $keywords,
-    'categories' => $categories
-);
-
-$params = array(0,$username,$password,$content,true);
-
+$params = array("guest");
 $rpc = new Xmlrpc($host, $path);
-$rpc->setCredentials($username, $password);
+//$rpc->setCredentials($username, $password);
 $rpc->setDebug(true);
-var_dump($rpc->call('metaWeblog.newPost', $params));
+var_dump($rpc->call('ping', $params));
 
 ?>

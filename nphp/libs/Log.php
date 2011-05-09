@@ -1,43 +1,32 @@
 <?php
 #/*
-#* 9Tree Control Class - v0.3.5
-#* Basic error control and path control funcionalities
+#* 9Tree Log Class
+#* Error control/logging funcionalities
 #*/
-
-class Log
-{
+class Log extends Nphp_singleton{
 	
 	//private variables
-	private static $debug=false;
-	private static $warning=false;
-	private static $notification_email=null;
-	private static $killed=false;
-	private $events=array();
-	
-	
-	//general instance method
-	private static function &getInstance(){
-		static $instance;
-		if(!isset($instance)){
-			$c=__CLASS__;
-			$instance=new $c;
-		}
-		return $instance;
-	}	
+	protected static $debug=false;
+	protected static $warning=false;
+	protected static $notification_email=null;
+	protected static $killed=false;
+	protected static $events=array();	
 	
 	//init control system
-	static function init($debug=false){
+	public static function init($debug=false){
 		self::debug($debug);
 		self::handle_errors();
+		self::getInstance();
+		self::fireHooks('init');
 	}
 	
 	//set debug mode on/off
-	static function debug($debug){
-		self::$debug=$debug;
+	public static function debug($debug){
+		self::$debug=self::fireHooks('debug', $debug);
 	}
 	
 	//handle errors
-	static function handle_errors(){
+	public static function handle_errors(){
 		//visible errors
 		ini_set("display_errors", "1");
 		ini_set("display_startup_errors", "1");
@@ -53,7 +42,7 @@ class Log
 	}
 	
 	//get error type from code
-	static function get_error_type($code){
+	public static function get_error_type($code){
 		if($code==1) return 'E_ERROR';
 		if($code==2) return 'E_WARNING';
 		if($code==4) return 'E_PARSE';
@@ -80,7 +69,7 @@ class Log
 	}
 	
 	//error handler
-	static function errorHandler($errno, $errmsg, $filename, $linenum, $vars){
+	public static function errorHandler($errno, $errmsg, $filename, $linenum, $vars){
 		if( (
 			$errno==E_WARNING ||
 			$errno==E_PARSE ||
@@ -118,22 +107,23 @@ class Log
 	}
 	
 	//error handler
-	static function exceptionHandler($exception){
+	public static function exceptionHandler($exception){
 		self::kill($exception);
 	}
 	
 	//check for critical errors
-	static function has_warnings(){
+	public static function has_warnings(){
 		return self::$warning;
 	}
 	
 	//pretty die()
-	static function kill($FATAL_ERROR){
+	public static function kill($FATAL_ERROR){
+		self::fireHooks('kill', null, array($FATAL_ERROR));
 		
-		if(Nphp::lib_exists('Check')){	//checks request mode
-			$json_mode=Check::is_json_requested();
-			$xml_mode=Check::is_xml_requested();
-			$ajax_mode=Check::request_is_ajax();
+		if(Nphp::lib_exists('Info')){	//checks request mode
+			$json_mode=Info::is_json_requested();
+			$xml_mode=Info::is_xml_requested();
+			$ajax_mode=Info::request_is_ajax();
 		} else {	//defaults to html mode
 			$json_mode=false;
 			$xml_mode=false;
@@ -155,13 +145,13 @@ class Log
 			
 			//ouput
 			if($json_mode){
-				include(dirname(__FILE__).'/Log-tpls/json-error-debug.php');
+				include(dirname(__FILE__).'/../resources/Log-tpls/json-error-debug.php');
 			} elseif($xml_mode){		
-				include(dirname(__FILE__).'/Log-tpls/xml-error-debug.php');
+				include(dirname(__FILE__).'/../resources/Log-tpls/xml-error-debug.php');
 			} elseif($ajax_mode) {
-				include(dirname(__FILE__).'/Log-tpls/xml-error-debug.php');
+				include(dirname(__FILE__).'/../resources/Log-tpls/xml-error-debug.php');
 			} else {
-				include(dirname(__FILE__).'/Log-tpls/html-error-debug.php');
+				include(dirname(__FILE__).'/../resources/Log-tpls/html-error-debug.php');
 			}
 			
 		} else {	//non-debug mode
@@ -182,13 +172,13 @@ class Log
 
 			//non-debug output
 			if($json_mode){
-				include(dirname(__FILE__).'/Log-tpls/json-error.php');
+				include(dirname(__FILE__).'/../resources/Log-tpls/json-error.php');
 			} elseif($xml_mode){
-				include(dirname(__FILE__).'/Log-tpls/xml-error.php');
+				include(dirname(__FILE__).'/../resources/Log-tpls/xml-error.php');
 			} elseif($ajax_mode) {
-				include(dirname(__FILE__).'/Log-tpls/xml-error.php');
+				include(dirname(__FILE__).'/../resources/Log-tpls/xml-error.php');
 			} else {
-				include(dirname(__FILE__).'/Log-tpls/html-error.php');
+				include(dirname(__FILE__).'/../resources/Log-tpls/html-error.php');
 			}
 		}
 		
@@ -199,16 +189,16 @@ class Log
 	}
 	
 	//Notices management
-	static function add($desc, $type='Info'){
-		$me=&self::getInstance();
-		$count=count($me->events);
-		$me->events[$count]['type']=&$type;
-		$me->events[$count]['desc']=&$desc;
+	public static function add($desc, $type='Info'){
+		$count=count(self::$events);
+		self::$events[$count]['type']=$type;
+		self::$events[$count]['desc']=$desc;
+		self::fireHooks('add', null, array($desc, $type));
 	}
 	
 	//Sets notification email
-	static function notify($email){
-		if(Check::email($email)){
+	public static function notify($email){
+		if(Nphp::lib_exists('Check') && Check::email($email)){
 			self::$notification_email=$email;
 		} else {
 			//invalid email...
@@ -216,26 +206,26 @@ class Log
 		}
 	}
 	
-	static function list_events($html_list=true){
-		$me=&self::getInstance();
+	public static function list_events($html_list=true){
 		$dump=array();
-		$imax=count($me->events);
+		$imax=count(self::$events);
 		for ($i=0; $i<$imax; $i++){
-			if($me->events[$i]['type']!=""){
-				$dump[$i]='<strong>'.$me->events[$i]['type'].'</strong> :: '.$me->events[$i]['desc'];
+			if(self::$events[$i]['type']!=""){
+				$dump[$i]='<strong>'.self::$events[$i]['type'].'</strong> :: '.self::$events[$i]['desc'];
 			} else {
-				$dump[$i]=$me->events[$i]['desc'];
+				$dump[$i]=self::$events[$i]['desc'];
 			}
 		}
 		return '<li>'.implode("</li>\n\n<li>", $dump).'</li>';
 	}
 	
-	function __destruct() {
+	public function __destruct() {
+		self::fireHooks('__destruct');
 		if(self::$debug && !self::$killed){ 
-			if(Nphp::lib_exists('Check')){	//checks request mode
-				$json_mode=Check::is_json_requested();
-				$xml_mode=Check::is_xml_requested();
-				$ajax_mode=Check::request_is_ajax();
+			if(Nphp::lib_exists('Info')){	//checks request mode
+				$json_mode=Info::is_json_requested();
+				$xml_mode=Info::is_xml_requested();
+				$ajax_mode=Info::request_is_ajax();
 			} else {	//defaults to html mode
 				$json_mode=false;
 				$xml_mode=false;
@@ -244,15 +234,15 @@ class Log
 			
 			if($json_mode){
 				//debug in json's comments
-				include(dirname(__FILE__).'/Log-tpls/json-debug.php');
+				include(dirname(__FILE__).'/../resources/Log-tpls/json-debug.php');
 			} elseif($xml_mode){
 				//debug in xml's comments
-				include(dirname(__FILE__).'/Log-tpls/xml-debug.php');
+				include(dirname(__FILE__).'/../resources/Log-tpls/xml-debug.php');
 			} elseif($ajax_mode){
 				//no debug for now - raises many issues
 			} else {
 				//debug in html
-				include(dirname(__FILE__).'/Log-tpls/html-debug.php');
+				include(dirname(__FILE__).'/../resources/Log-tpls/html-debug.php');
 			}
 		}
 	}

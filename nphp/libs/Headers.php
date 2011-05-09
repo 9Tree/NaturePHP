@@ -4,17 +4,16 @@
 #* File/application headers funcionalities
 #*/
 
-class Headers{
+class Headers extends Nphp_static{
 	
 	//redirect function
 	static function redirect($link, $from=false){
 
 		if($from && !preg_match("#(ht|f)tps?://#", $link)) {
-			$link=Path::url_to($link, $from);
+			$redirect=Path::url_to($link, $from);
 		}
 			
-		//print "redirect to ".$link;die;
-		header ("Location: ".$link);
+		header ("Location: ".self::fireHooks('redirect', $redirect, array($link, $from)));
 		exit(0);
 	}
 	
@@ -24,10 +23,12 @@ class Headers{
 		@ header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 		@ header('Cache-Control: no-cache, must-revalidate, max-age=0');
 		@ header('Pragma: no-cache');
+		self::fireHooks('nocache');
 	}
 	
 	//http status (403, 500, 404, etc)
 	static function http_status( $header ) {
+		$header=self::fireHooks('http_status', $header);
 		$text = self::get_http_status_desc( $header );
 
 		if ( empty( $text ) )
@@ -37,7 +38,6 @@ class Headers{
 		if ( ('HTTP/1.1' != $protocol) && ('HTTP/1.0' != $protocol) )
 			$protocol = 'HTTP/1.0';
 		$status_header = "$protocol $header $text";
-
 		return @header( $status_header, true, $header );
 	}
 	
@@ -56,7 +56,8 @@ class Headers{
 			else self::cache();
 		} else self::nocache();
 		// Handle proxies
-		header("Vary: Accept-Encoding");	
+		header("Vary: Accept-Encoding");
+		self::fireHooks('json', null, $args);	
 	}
 	
 	//cache headers
@@ -65,6 +66,7 @@ class Headers{
 		@ header("Expires: " . gmdate("D, d M Y H:i:s", $expires) . " GMT");
 		@ header('Cache-Control: must-revalidate, max-age='.$expires);
 		@ header('Pragma: ');
+		self::fireHooks('cache', null, array($offset));
 	}
 	
 	//javascript headers
@@ -78,15 +80,17 @@ class Headers{
 		} else self::nocache();
 		// Handle proxies
 		header("Vary: Accept-Encoding");
+		self::fireHooks('javascript', null, array($cache));
 	}
 	
 	//gzip headers
 	static function gzip(){
 		header('Content-Encoding: gzip');
+		self::fireHooks('gzip');
 	}
 	
 	//get http status code description
-	private function get_http_status_desc( $code ) {
+	private static function get_http_status_desc( $code ) {
 		static $header_to_desc;
 
 		$code = (int) $code;
@@ -158,7 +162,7 @@ class Headers{
 			}
 			
 		} else $headers=getallheaders();	
-		return $headers;
+		return self::fireHooks('get_all', $headers);
 	}
 }
 ?>

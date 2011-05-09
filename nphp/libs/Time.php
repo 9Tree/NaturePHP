@@ -1,22 +1,12 @@
 <?php
 #/*
-#* 9Tree Time Class - v0.2.2
+#* 9Tree Time Class
 #* Time & Date funcionalities
 #*/
 
-class Time{
+class Time extends Nphp_static{
 	//timers start microtimes
-	public $stopwatch_timers=array();
-	
-	//general instance method
-	private static function &getInstance(){
-		static $instance;
-		if(!isset($instance)){
-			$c=__CLASS__;
-			$instance=new $c;
-		}
-		return $instance;
-	}
+	protected static $stopwatch_timers=array();
 	
 	//mysql formated time
 	static function mysql_time($offset = 0) {
@@ -39,26 +29,24 @@ class Time{
 	
 	//microtimer functions - useful for performance checks (start, read, stop ideas from Drupal)
 	static function stopwatch_start($name) {
-		$me=&self::getInstance();
 		$mtime = microtime();
 		$mtime = explode(' ', $mtime);
-		$me->stopwatch_timers[$name] = $mtime[1] + $mtime[0];
-		return $me->stopwatch_timers[$name];
+		self::$stopwatch_timers[$name] = $mtime[1] + $mtime[0];
+		return self::$stopwatch_timers[$name];
 	}
 	
 	static function stopwatch_read($name) {
-		$me=&self::getInstance();
 		$mtime = microtime();
 		$mtime = explode(' ', $mtime);
 		$mtime = $mtime[1] + $mtime[0];
-		return $me->stopwatch_timers[$name]-$mtime;
+		return self::$stopwatch_timers[$name]-$mtime;
 	}
 	
 	static function stopwatch_stop($name) {
 		$ret = self::stopwatch_read($name);
 		
 		$me=&self::getInstance();
-		unset($me->stopwatch_timers[$name]);
+		unset(self::$stopwatch_timers[$name]);
 		
 		return $ret;
 	}
