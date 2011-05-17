@@ -157,14 +157,22 @@ class Path extends Nphp_static{
 				'get_out'=>array(),
 				'#'=>''
 				));
-		$newGet = self::this_qs($args);
-		$qstr=Utils::build_querystring($newGet);
+		$qstr=self::this_qs($args);
 		$var=(!empty($qstr))?"?".$qstr:'';
 		
 		return $_SERVER['SCRIPT_NAME'].$var;	
 	}
 	
 	static function this_qs(){
+		$args=Utils::combine_args(func_get_args(), 0, array(
+				'get_in'=>array(),
+				'get_out'=>array(),
+				'#'=>''
+				));
+		return Utils::build_querystring(self::this_GET($args));
+	}
+	
+	static function this_GET(){
 		$args=Utils::combine_args(func_get_args(), 0, array(
 				'get_in'=>array(),
 				'get_out'=>array(),

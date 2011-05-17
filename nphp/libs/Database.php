@@ -117,7 +117,8 @@ abstract class Database extends Nphp_hookable{
 				break;
 			case 'boolean'	:	$ret = ($str === FALSE) ? 0 : 1;	//booleans to 1/0
 				break;
-			case 'integer'	: break;	//leave integers be
+			case 'integer'	:	$ret = $str;	//leave integers be
+				break;
 			default			:	$ret = 'NULL';		//rest put to null
 				break;
 		}
@@ -168,28 +169,35 @@ abstract class Database extends Nphp_hookable{
 	}
 	
 	//insert
-	function insert($data, $table){
+	function insert($data, $table=array()){
 		
-		$parameters=array();
-		
-		//insert query
-		$sql = 'insert into ' . $this->_escapeField($table);
-		
-		if(!empty($data)){	//insert data
-      $sql .= ' (';
-      $values = 'values(';
-			foreach($data as $key => $value) {
-				$sql .= $this->_escapeField($key) . ',';
-				$values .= '?,';
-				$parameters[] = $value;
-			}
-			$sql = substr($sql, 0, -1).') '.substr($values, 0, -1).')'; // strip off last commas and concat the sql statement
+		if(is_string($table)&&is_array($data)){
+			//data mode
 			
-		} else {
-      		$sql .= $this->_insert_default_values();
-    	}
+			$parameters=array();
+			//insert query
+			$sql = 'insert into ' . $this->_escapeField($table);
+
+			if(!empty($data)){	//insert data
+	      		$sql .= ' (';
+	      		$values = 'values(';
+				foreach($data as $key => $value) {
+					$sql .= $this->_escapeField($key) . ',';
+					$values .= '?,';
+					$parameters[] = $value;
+				}
+				$sql = substr($sql, 0, -1).') '.substr($values, 0, -1).')'; // strip off last commas and concat the sql statement
+
+			} else {
+	      		$sql .= $this->_insert_default_values();
+	    	}
+		} elseif(is_array($table)&&is_string($data)) {
+			//direct query mode
+			$sql = $data;
+			$parameters = $table;
+		} else trigger_error('<strong>Database</strong> :: unexpected set of parameters at insert()', E_USER_ERROR);
 		
-		
+
 		//execute	
 		if($this->execute($sql, $parameters)) {
 			//return inserted id
@@ -200,30 +208,37 @@ abstract class Database extends Nphp_hookable{
 	}
 	
 	//update
-	function update($data, $table){
+	function update($data, $table=array()){
 		
-		//get options
-		$args=Utils::combine_args(func_get_args(), 2, array('where'=>null, 'group'=>null, 'order'=>null, 'limit'=>null));
-		
-		$parameters=array();
-		
-		//create base query
-		$sql = 'update ' . $this->_escapeField($table);
-		if(!empty($data)){	//insert data
-			$sql .= ' set ';
-			foreach($data as $key => $value) {
-				$sql .= $this->_escapeField($key) . '=?,';
-				$parameters[] = $value;
+		if(is_string($table)&&is_array($data)){
+			//data mode
+			//get options
+			$args=Utils::combine_args(func_get_args(), 2, array('where'=>null, 'group'=>null, 'order'=>null, 'limit'=>null));
+
+			$parameters=array();
+
+			//create base query
+			$sql = 'update ' . $this->_escapeField($table);
+			if(!empty($data)){	//insert data
+				$sql .= ' set ';
+				foreach($data as $key => $value) {
+					$sql .= $this->_escapeField($key) . '=?,';
+					$parameters[] = $value;
+				}
+				$sql = substr($sql, 0, -1); // strip off last comma
+
+			} else {	//no data to insert
+				$sql = $sql.') '.$values.')'; // strip off last commas and concat the sql statement
 			}
-			$sql = substr($sql, 0, -1); // strip off last comma
-			
-		} else {	//no data to insert
-			$sql = $sql.') '.$values.')'; // strip off last commas and concat the sql statement
-		}
+
+			//insert query conditions (sql is changed by reference)
+			$sql = $this->build_query_conditions($sql, $args);
 		
-		
-		//insert query conditions (sql is changed by reference)
-		$sql = $this->build_query_conditions($sql, $args);
+		} elseif(is_array($table)&&is_string($data)) {
+			//direct query mode
+			$sql = $data;
+			$parameters = $table;
+		} else trigger_error('<strong>Database</strong> :: unexpected set of parameters at insert()', E_USER_ERROR);
 		
 		//execute
 		$this->execute($sql, $parameters);

@@ -200,7 +200,7 @@ class Routes extends Nphp_static{
 				'get_out'=>array(),
 				'#'=>''
 				));
-		$new_get = Path::this_qs($args);
+		$new_get = Path::this_GET($args);
 		if(self::$current_static){
 			return self::url_to(self::$current, $new_get, array(), true);
 		} else {
