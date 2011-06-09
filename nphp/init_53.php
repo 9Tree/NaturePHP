@@ -51,6 +51,7 @@ abstract class Nphp_singleton extends Nphp_hookable{
 class Nphp extends Nphp_static{
 	static protected $version='0.5.0';
 	static public $routing=false;
+	static private $extraFolders=array();
 	static public function lib_is_loaded($lib){
 		if(class_exists($lib)) return true;
 		return false;
@@ -58,10 +59,10 @@ class Nphp extends Nphp_static{
 	static function lib_exists($lib, $complete_path=false){
 		if(!$complete_path){
 			if(self::lib_is_loaded($lib)) return true;
-			$path=self::lib_path($lib);
-		} else $path=$lib;
+			$path=self::match_lib_path($lib);
+		} else $path=file_exists($lib)?$lib:false;
 		
-		return file_exists($path);
+		return $path;
 	}
 	static function nphp_folder(){
 		//base nphp folder
@@ -71,22 +72,46 @@ class Nphp extends Nphp_static{
 		}
 		return self::fireHooks('nphp_folder', $nphp_folder);
 	}
-	static function lib_path($lib){
+	static function add_folder($folder){
+		static::$extraFolders[]=$folder;
+	}
+	static function lib_path($folder, $lib){
 		//folders system (for namespaces)
 		$lib=str_replace("\\", "/", $lib);
 		
 		//builds path
-		return self::fireHooks('lib_path', self::nphp_folder().'libs/'.$lib.'.php');
+		return self::fireHooks('lib_path', $folder.$lib.'.php');
+	}
+	static function match_lib_path($lib){
+		//check for possible paths
+		$path=self::lib_path(self::nphp_folder().'libs/', $lib);
+		$verified=false;
+		$i=0;
+		do{
+			if(file_exists($path)) break;
+			if(isset(static::$extraFolders[$i])){
+				$path=self::lib_path(static::$extraFolders[$i], $lib);
+			} else return false;
+			$i++;
+		} while(!$verified);
+		return $path;
 	}
 	static function load_lib($lib, $complete_path=false){
+		
 		//get path
-		if(!$complete_path) $path=self::lib_path($lib);
-			else $path=$lib;
+		if(!$complete_path) {
+			//all done
+			if(self::lib_is_loaded($lib)) return;
+			
+			$path = self::match_lib_path($lib);
+		} else $path = self::lib_exists($lib, true) ? $path : false;
+
 		//try loading library
-		if (!self::lib_exists($path, true)){
+		if ($path===false){
+
 			//if possible use Log::kill()
 			if(self::lib_exists('Log')) {	
-				if(!self::lib_is_loaded('Log')) require_once(self::lib_path('Log'));
+				if(!self::lib_is_loaded('Log')) require_once(self::match_lib_path('Log'));
 				Log::kill('File "'.$path.'" not found for class "'.$lib.'".');
 			} else die('File "'.$path.'" not found for class "'.$lib.'".');
 		} else require_once($path);
