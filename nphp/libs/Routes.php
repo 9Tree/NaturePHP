@@ -28,6 +28,12 @@ class Routes extends Nphp_static{
 		//get current location path
 		list($location,) = explode("?", $request_uri);
 		$location = Path::relative($location, $_SERVER['SCRIPT_NAME']);
+		
+		// !! WORKAROUND !!
+		//for domains like '9tree.net/', instead of 'localhost/~9tree/site'
+		if($location == './/') $location = '';
+		if(substr($location, 0, 2)=='./') $location = substr($location, 2, strlen($location));
+		
 		if(substr($location, -1, 1)=="/") $location = substr($location, 0, strlen($location)-1);
 		
 		//check within configured paths
