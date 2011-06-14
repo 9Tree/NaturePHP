@@ -23,7 +23,7 @@ class Check extends Nphp_static{
 	
 	//check for valid username (most sites...)
 	static function username($str){
-		return self::fireHooks('username', (bool)preg_match('/^[a-z\d_]{4,28}$/i', $str);
+		return self::fireHooks('username', (bool)preg_match('/^[a-z\d_]{4,28}$/i', $str));
 	}
 	
 	//check for valid ipv4 addresses
