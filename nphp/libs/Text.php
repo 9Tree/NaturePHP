@@ -151,8 +151,7 @@ class Text extends Nphp_static{
 		return self::fireHooks('url_alias', Disk::sanitize_file_name($string), $string);
 	}
 	static function sanitize($string){
-		$string = self::normalize($string);
-		return str_replace(' ', '-', $string);
+		return Disk::sanitize_file_name($string);
 	}
 }
 
