@@ -363,6 +363,108 @@ abstract class Database extends Nphp_hookable{
 			$this -> close();
 		}
 	}
+	
+	
+	//easy access functionality
+	protected static $call_cache=array();
+	protected static $call_use_cache=true;
+	
+	function call_cache($cache){
+		$this->$call_use_cache = $cache;
+	}
+	
+	function __call($name, $arguments){
+		//check
+		$args_num = count($arguments);
+		$pos_by = strpos($name, '_by_');
+		$has_by = $pos_by?true:false;
+		$has_all = strpos($name, 'all_')===0;
+		$has_fields = ($has_by && $args_num==2) || (!$has_by && $args_num==1);
+		$unique_field = false;
+		$all_fields = $args_num==0 || ($has_by && $args_num==1);
+		
+		if(	($has_by && $args_num==0 || $args_num>2) ||
+			(!$has_by && $args_num>1)
+			) {
+			trigger_error('<strong>Database</strong> :: Dynamic call error for '.$name, E_USER_WARNING);
+			return null;
+		}
+		
+		
+		//build query
+		//what
+		if($all_fields) $what = "*";
+		elseif($args_num==1) {
+			if(is_array($arguments[0])){
+				$tmp_first=true;
+				foreach($arguments[0] as $field){
+					if(!$tmp_first) $what .= ", ";
+					else $tmp_first=false;
+					$what .= $this->_escapeField($field);
+				}
+				if(count($arguments[0])==1) $unique_field = true;
+			} else {
+				$unique_field = true;
+				$what = $this->_escapeField($arguments[0]);
+			}
+			
+		} elseif($args_num==2) {
+			if(is_array($arguments[1])){
+				$tmp_first=true;
+				foreach($arguments[1] as $field){
+					if(!$tmp_first) $what .= ", ";
+					else $tmp_first=false;
+					$what .= $this->_escapeField($field);
+				}
+				if(count($arguments[1])==1) $unique_field = true;
+			} else {
+				$unique_field = true;
+				$what = $this->_escapeField($arguments[1]);
+			}
+			
+		}
+		
+		//table
+		if($has_all && $has_by){
+			$table = substr($name, 4, $pos_by-4);
+			$by_field = substr($name, $pos_by+4);
+		} elseif($has_by){
+			$table = substr($name, 0, $pos_by);
+			$by_field = substr($name, $pos_by+4);
+		} elseif($has_all){
+			$table = substr($name, 4);
+		} else {
+			$table = $name;
+		}
+		
+		//where
+		$params=array();
+		$where="";
+		if($has_by){
+			$params[]=$arguments[0];
+			$where = "where $by_field=?";
+		}
+		
+		$query = "SELECT $what from $table $where";
+		
+		if($has_all) {
+			return $this->fetch($query, $params);
+		} elseif($unique_field) {
+			if($has_by && static::$call_use_cache){
+				if(	!isset(static::$call_cache[$table]) ||
+					!isset(static::$call_cache[$table][$by_field]) ||
+					!isset(static::$call_cache[$table][$by_field][$params[0]]) ||
+					!isset(static::$call_cache[$table][$by_field][$params[0]][$what])
+				){
+					static::$call_cache[$table][$by_field][$params[0]][$what] = $this->fetchCell($query, $params);
+				}
+
+				return static::$call_cache[$table][$by_field][$params[0]][$what];
+			} else return $this->fetchCell($query, $params);
+		} else {
+			return $this->fetchRow($query, $params);
+		}
+	}
 }
 
 ?>
