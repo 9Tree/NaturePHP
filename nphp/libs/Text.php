@@ -150,6 +150,10 @@ class Text extends Nphp_static{
 	static function url_alias($string){
 		return self::fireHooks('url_alias', Disk::sanitize_file_name($string), $string);
 	}
+	static function sanitize($string){
+		$string = self::normalize($string);
+		return str_replace(' ', '-', $string);
+	}
 }
 
 ?>
