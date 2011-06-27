@@ -37,8 +37,8 @@ class Mail extends Nphp_static{
 		
 		# from
 		if($args['from']) 		$headers .= "From: ".$args['from']."\r\n";
-		# to
-		$headers .= "To: ".$to."\r\n";
+		# to (smtp only)
+		if($args['use_smtp']) 	$headers .= "To: ".$to."\r\n";
 		# reply-to
 		if($args['reply-to']) 	$headers .= "Reply-To: ".$args['reply-to']."\r\n";
 		# cc
@@ -144,10 +144,10 @@ class Mail extends Nphp_static{
 		
 		
 		if(!$check){
-			trigger_error("<strong>Mail</strong> :: Unable to send email to $notice_info", E_USER_WARNING);
+			trigger_error("<strong>Mail</strong> :: Unable to send email to $to", E_USER_WARNING);
 			return false;
 		} else {
-			trigger_error("<strong>Mail</strong> :: Email sent to $notice_info", E_USER_NOTICE);
+			trigger_error("<strong>Mail</strong> :: Email sent to $to", E_USER_NOTICE);
 			return true;
 		}
 		
