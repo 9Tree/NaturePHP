@@ -232,7 +232,8 @@ class Log extends Nphp_singleton{
 	public static function addInfo(){
 		self::add(count($_GET)." item(s)<br />".Text::to_html(Utils::s_var_dump($_GET)), "\$_GET Data");
 		self::add(count($_POST)." item(s)<br />".Text::to_html(Utils::s_var_dump($_POST)), "\$_POST Data");
-		self::add(count($_SESSION)." item(s)<br />".Text::to_html(Utils::s_var_dump($_SESSION)), "\$_SESSION Data");
+		if(isset($_SESSION)) self::add(count($_SESSION)." item(s)<br />".Text::to_html(Utils::s_var_dump($_SESSION)), "\$_SESSION Data");
+		else self::add("No active session found.", "\$_SESSION Data");
 		self::add(count($_COOKIE)." item(s)<br />".Text::to_html(Utils::s_var_dump($_COOKIE)), "\$_COOKIE Data");
 	}
 	

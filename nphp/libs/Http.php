@@ -6,9 +6,6 @@
 
 class Http extends Nphp_static{
 	
-	protected static $has_curl=null;
-	protected static $curl_opts=array();
-	
 	//post contents to a file
 	public static function file_post_contents($url, $post_data='', $conn_to=30, $stream_to=30) {
 	    if(!$url = parse_url($url)){
@@ -66,24 +63,46 @@ class Http extends Nphp_static{
 		}
 	}
 	
-	
-	//curl manager stuff
-	public static function check_curl(){
-		if(static::$has_curl===null) static::$has_curl=function_exists('curl_init');
-		return static::$has_curl;
-	}
-	public static function option($opts, $val=null){
-		if(is_array($opts)){
-			array_merge($curl_opts, $opts);
-		} else {
-			$curl_opts[$opts]=$val;
+	public static function multi_getcontents($files, $callback=null){
+
+		$master = curl_multi_init();
+		$total = count($files);
+		
+		//initialize all
+		foreach($files as $file)
+		{
+			$handle = curl_init($file);
+			curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
+			curl_multi_add_handle($master, $handle);
 		}
-	}
-	public static function check_options(){
 		
-	}
-	public static function curl_call(){
+		//start all the fetching in the background
+		do {
+		    $mrc = curl_multi_exec($master, $active);
+		} while ($mrc == CURLM_CALL_MULTI_PERFORM);
 		
+		//take the parallel processing time to create the tables
+		$done=0;
+		while ($done<$total) {
+			
+			
+			curl_multi_select($master);	//let's wait for activity or timeout
+			curl_multi_exec($master, $active);
+			
+			$i=0;
+			$dels=array();
+			//process the ones done
+			while($info=curl_multi_info_read($master)){
+				$url = curl_getinfo($info['handle'], CURLINFO_EFFECTIVE_URL);
+				if($callback!=null) $callback($url, ($info['result']==CURLE_OK?curl_multi_getcontent($info['handle']):false) );
+				curl_close($info['handle']);
+				curl_multi_remove_handle($master, $info['handle']); 
+				$dels[] = $i;
+				$done++;
+			}
+			
+		}
+		curl_multi_close($master);
 	}
 }
 ?>

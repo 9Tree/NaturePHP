@@ -11,7 +11,7 @@ class Headers extends Nphp_static{
 
 		if($from && !preg_match("#(ht|f)tps?://#", $link)) {
 			$redirect=Path::url_to($link, $from);
-		}
+		} else $redirect=$link;
 			
 		header ("Location: ".self::fireHooks('redirect', $redirect, array($link, $from)));
 		exit(0);

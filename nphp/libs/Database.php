@@ -14,43 +14,34 @@ but have to be implemented on the extended classes (eg. Database_mysql );
 abstract class Database extends Nphp_hookable{
 	protected $connection; 				// Database connection resource
 	protected $name; 					// connection name
+	public $is_opened = false;	//connection status
 	public $is_connected = false;	//connection status
-	
-	private static $types = array('mysql', 'odbc', 'sqlite', 'mssql');
+	protected $args = array();
 	
 	protected $result;					//used to store results
-	
-	public static $instance; 			// last created instance
-	protected $instance_id;				//used to store $this instance number
-	public static $last_instance_id;	//used to store $this instance number
-	public static $instances = array();	// for holding more than 1 instance
 	
 	//general construct
 	function __construct() {
 		
 		//get options
-		$args=Utils::combine_args(func_get_args(), 0, array('name' => null, 'resource' => null));
+		$args=Utils::combine_args(func_get_args(), 0, array('resource' => null));
 		
 		$this->connection = $args['resource'];
 		$this->result = null;
-		$this->parameters = array();
-
-		Database::$instance = &$this;						//set's this instance as the last added one
+		$this->args = $args;
 		
-		Database::$instances[] = &$this;					//add's the instance on top of the the instance stack
-		$this->instance_id = ++Database::$last_instance_id;	//set's $this instance_id
 		
-		if($args['name']) Database::$instances[$args['name']] = &$this;		//add's the instance to the instance stack with the provided name
+		
 		self::fireHooks('__construct', null, $args);
 	}
 	
-	//general open
-	public static function open() {
+	//general setup
+	public static function setup() {
 		
 		//get options
 		$args=Utils::combine_args(func_get_args(), 0, array('type' => 'mysql'));
 		
-		if(!in_array($args['type'], Database::$types)){
+		if(!Nphp::lib_exists("Database_".$args['type'])){
 			trigger_error('<strong>Database</strong> :: Unrecognized database type "'.$type.'"', E_USER_ERROR);
 			return null;
 		}
@@ -58,6 +49,26 @@ abstract class Database extends Nphp_hookable{
 		//creates the instance
 		$class='Database_'.$args['type'];
 		$o = new $class($args);
+		
+		return self::fireHooks('open', $o, $args, $o);
+	}
+	
+	function check_init(){
+		if(!$this->is_opened){
+			$this->is_opened=true;
+			$this->_open($this->args);
+		}
+	}
+	
+	//general open
+	public static function open() {
+		
+		//get options
+		$args=Utils::combine_args(func_get_args(), 0);
+		
+		$o=self::setup($args);
+		
+		$o->is_opened=true;
 		$o->_open($args);
 		
 		return self::fireHooks('open', $o, $args, $o);
@@ -150,6 +161,8 @@ abstract class Database extends Nphp_hookable{
 	 * */
 	function execute($sql, $parameters = array()) {
 		
+		$this->check_init();
+		
 		//benchmarking is important
 		$time_start = microtime(true);
 		 
@@ -170,6 +183,8 @@ abstract class Database extends Nphp_hookable{
 	
 	//insert
 	function insert($data, $table=array()){
+		
+		$this->check_init();
 		
 		if(is_string($table)&&is_array($data)){
 			//data mode
@@ -209,6 +224,8 @@ abstract class Database extends Nphp_hookable{
 	
 	//update
 	function update($data, $table=array()){
+		
+		$this->check_init();
 		
 		if(is_string($table)&&is_array($data)){
 			//data mode
@@ -250,6 +267,8 @@ abstract class Database extends Nphp_hookable{
 	//delete
 	function delete($table) {
 		
+		$this->check_init();
+		
 		//get options
 		$args=Utils::combine_args(func_get_args(), 1, array('where'=>null, 'group'=>null, 'order'=>null, 'limit'=>null));
 		
@@ -276,6 +295,7 @@ abstract class Database extends Nphp_hookable{
 	 * Most other retrieval functions build off this
 	 * */
 	function fetchAll($sql, $parameters = array()) {
+		$this->check_init();
 		//$sql = $this->transformPlaceholders(func_get_args());
 		$this->execute($sql, $parameters);
 		if($this->_numberRows()) {
@@ -291,6 +311,7 @@ abstract class Database extends Nphp_hookable{
 	 * It is intended to return an iterator, and act upon buffered data.
 	 * */
 	function fetch($sql = null, $parameters = array()) {
+		$this->check_init();
 		if($sql != null)
 			$this->execute($sql, $parameters);
 		return $this->_fetch();
@@ -301,6 +322,7 @@ abstract class Database extends Nphp_hookable{
 	 * The first argument is an sprintf-ready query stringTypes
 	 * */
 	function fetchRow($sql = null, $parameters = array()) {
+		$this->check_init();
 		if($sql != null)
 			$this->execute($sql, $parameters);
 		if($this->result)
@@ -312,6 +334,7 @@ abstract class Database extends Nphp_hookable{
 	 * Fetches the first call from the first row returned by the query
 	 * */
 	function fetchCell($sql, $parameters = array()) {
+		$this->check_init();
 		if($this->execute($sql, $parameters)) {
 			if($this->result && is_array($data=$this->_fetchRow())) 	//verification added by 9Tree  (20/12/2008)
 				return array_shift($data); // shift first field off first row
@@ -324,6 +347,7 @@ abstract class Database extends Nphp_hookable{
 	 * It fetches one cell from each row and places all the values in 1 array
 	 * */
 	function fetchColumn($sql, $parameters = array()) {
+		$this->check_init();
 		if($this->execute($sql, $parameters)) {
 			$cells = array();
 			foreach($this->_fetchAll() as $row) {
@@ -341,6 +365,7 @@ abstract class Database extends Nphp_hookable{
 	 * The second the key's value
 	 */
 	function fetchKeyValue($sql, $parameters = array()) {
+		$this->check_init();
 		if($this->execute($sql, $parameters)) {
 			$data = array();
 			foreach($this->_fetchAll() as $row) {
@@ -369,7 +394,7 @@ abstract class Database extends Nphp_hookable{
 	protected static $call_cache=array();
 	protected static $call_use_cache=true;
 	
-	function call_cache($cache){
+	function use_call_cache($cache){
 		$this->$call_use_cache = $cache;
 	}
 	

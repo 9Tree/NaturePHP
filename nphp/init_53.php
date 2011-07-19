@@ -53,7 +53,7 @@ class Nphp extends Nphp_static{
 	static public $routing=false;
 	static private $extraFolders=array();
 	static public function lib_is_loaded($lib){
-		if(class_exists($lib)) return true;
+		if(class_exists($lib, false)) return true;
 		return false;
 	}
 	static function lib_exists($lib, $complete_path=false){

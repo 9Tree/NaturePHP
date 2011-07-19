@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<databases>
+	
+	<!--General settings-->
+	<database id="DB">
+		
+		<rename table="usersss" to="users" />
+		<alter table="users">
+			<rename column="name" to="first_name" />
+			<alter column="first_name" type="varchar(20)" allow_null="0" />
+			<alter column="active" type="tinyint(1)" default="1" />
+			<add column="last_name" type="varchar(20)" allow_null="1" />
+			<remove column="is_jesus" />
+		</alter>
+		<remove table="test" />
+		
+	</database>
+	
+</databases>

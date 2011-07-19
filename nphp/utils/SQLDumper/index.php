@@ -8,10 +8,10 @@
 //Migrations system?
 
 
-//uncomment the following line to make it work
-//die();	//This file should be protected by default for security reasons
+//comment the following line to make it work
+die();	//This file should be protected by default for security reasons
 
-include('../init.php');
+include('../../init.php');
 
 Log::init(true);
 
