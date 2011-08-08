@@ -85,6 +85,7 @@ class Path extends Nphp_static{
 	
 	//get relative path from $pathFrom to $pathTo
 	static function relative($pathTo, $pathFrom, $case_sensitive=true){	//to review - unecessarily too complex
+		
 		if(empty($pathFrom) || $pathFrom=="/") return $pathTo;
 		
 		//case sensitivity
@@ -233,7 +234,7 @@ class Path extends Nphp_static{
 			if ( strpos($return, ':') === false && substr( $return, 0, 1 ) != '/' && !preg_match('/^[a-z0-9-]+?\.php/i', $return) )
 				$return = 'http://' . $return;
 		}
-		return self::fireHooks('sanitize_url', $return, array($url));	
+		return $return;	
 	}
 }
 ?>

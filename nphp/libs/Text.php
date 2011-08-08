@@ -40,12 +40,12 @@ class Text extends Nphp_static{
 	
 	//convert a string to a safe javascript string
 	static function to_javascript($str, $separator='"'){
-		return self::fireHooks('to_javascript', str_replace(array("\r\n", "\n", $separator), array("\\r\\n", "\\n", "\\".$separator), $str), array($str, $separator));
+		return str_replace(array("\r\n", "\n", $separator), array("\\r\\n", "\\n", "\\".$separator), $str);
 	}
 	
 	//convert an html string to plain text
 	static function to_plain($str){
-		return self::fireHooks('to_plain', html_entity_decode(
+		return html_entity_decode(
 			str_replace(
 				"&nbsp;",
 				" ",
@@ -60,17 +60,17 @@ class Text extends Nphp_static{
 				)
 			),
 		ENT_COMPAT,
-		"UTF-8"), array($str));
+		"UTF-8");
 	}
 	
 	//convert a plain text string to html
 	static function to_html($str){
-		return self::fireHooks('to_html', str_replace(array("\t", "  ", "\r\n", "\n"), array("    ", " &nbsp;", "\n", "<br />"), $str), array($str));
+		return str_replace(array("\t", "  ", "\r\n", "\n"), array("    ", " &nbsp;", "\n", "<br />"), $str);
 	}
 	
 	//remove extras spaces, tabs, etc.
 	static function simple_spaces($str){
-		return self::fireHooks('simple_spaces', str_replace("\n ", "\n", preg_replace("/ +/mi", " ", str_replace("\t", " ", $str))), array($str));
+		return str_replace("\n ", "\n", preg_replace("/ +/mi", " ", str_replace("\t", " ", $str)));
 	}
 	
 	//plain simple - to_plain followed by simple_spaces
@@ -145,10 +145,10 @@ class Text extends Nphp_static{
 				        'ÿ'=>'y','Ŕ'=>'R','ŕ'=>'r'
 					);
 
-	    return self::fireHooks('normalize', strtr($string, $table), $string);
+	    return strtr($string, $table);
 	}
 	static function url_alias($string){
-		return self::fireHooks('url_alias', Disk::sanitize_file_name($string), $string);
+		return Disk::sanitize_file_name($string);
 	}
 	static function sanitize($string){
 		return Disk::sanitize_file_name($string);

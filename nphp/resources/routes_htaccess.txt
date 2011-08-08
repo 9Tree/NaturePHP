@@ -2,10 +2,11 @@
 <IfModule mod_rewrite.c>
 Options FollowSymLinks
 RewriteEngine On
-RewriteBase /~trutas/NaturePHP/examples/routes/
+
+RewriteBase [rewrite-base]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . index.php [L]
+RewriteRule . [auto-init-path] [L]
 </IfModule>
 
 # END Nphp

@@ -218,7 +218,7 @@ class Utils extends Nphp_static{
 		endwhile;
 
 		# done!
-		return self::fireHooks('generate_password', $password, $args);
+		return $password;
 	}
 	
 	static function is_assoc($array) {

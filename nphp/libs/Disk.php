@@ -68,7 +68,7 @@ class Disk extends Nphp_static{
 			}
 		}
 
-		return self::fireHooks('unique_filename', $filename, array($dir, $filename, $unique_filename_callback));
+		return $filename;
 	}
 	
 	//make sure new filename is simple and has standard characters
@@ -81,7 +81,7 @@ class Disk extends Nphp_static{
 		$return = preg_replace('/\s+/', '-', $return);
 		$return = preg_replace('|-+|', '-', $return);
 		$return = trim($return, '-');
-		return self::fireHooks('sanitize_file_name', $return, array($name));
+		return $return;
 	}
 }
 ?>

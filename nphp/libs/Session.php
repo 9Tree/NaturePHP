@@ -31,7 +31,6 @@ class Session extends Nphp_static{
 			//load php session data
 			if(!session_id()) session_start();
 			self::$session_started = true;
-			self::fireHooks('check_session');
 		}
 	}
 	public static function clear(){
@@ -40,7 +39,6 @@ class Session extends Nphp_static{
 		unset($_SESSION);
 		$_SESSION = array();
 		self::$session_started = false;
-		self::fireHooks('clear');
 	}
 }
 ?>

@@ -48,7 +48,7 @@ class Encrypt extends Nphp_static{
 		self::check_mcrypt_settings();
 		$key=self::check_key($key);
 		$iv = mcrypt_create_iv(mcrypt_get_iv_size(self::$mcrypt_cipher, self::$mcrypt_mode), MCRYPT_RAND);
-		return self::fireHooks('mcrypt_encode', $this->b64encode(mcrypt_encrypt(self::$mcrypt_cipher, $key, $string, self::$mcrypt_mode, $iv)), array($string, $key));
+		return $this->b64encode(mcrypt_encrypt(self::$mcrypt_cipher, $key, $string, self::$mcrypt_mode, $iv));
 	}
 	public static function mcrypt_decode($string, $key=null){
 		self::check_mcrypt_settings();
@@ -56,12 +56,12 @@ class Encrypt extends Nphp_static{
 		$iv_size = mcrypt_get_iv_size(self::$mcrypt_cipher, self::$mcrypt_mode);
 		$iv = substr($string, 0, $iv_size);
 		$string = substr($string, $iv_size);
-		return self::fireHooks('mcrypt_decode', rtrim(mcrypt_decrypt(self::$mcrypt_cipher, $key, $this->b64decode($string), self::$mcrypt_mode, self::get_mcrypt_iv()), "\0"), array($string, $key));
+		return  rtrim(mcrypt_decrypt(self::$mcrypt_cipher, $key, $this->b64decode($string), self::$mcrypt_mode, self::get_mcrypt_iv()), "\0");
 	}
 	protected static function check_key($key){
 		if($key!=null) return $key;
 		if(self::$key==null) self::$key=self::$salt.self::$pepper;
-		return self::fireHooks('check_key', self::$key, array($key));
+		return self::$key;
 	}
 	public static function simple_encode($string, $key=null) {
 		$key=self::check_key($key);
@@ -72,7 +72,7 @@ class Encrypt extends Nphp_static{
 			$char = chr(ord($char)+ord($keychar));
 			$result.=$char;
 		}
-		return self::fireHooks('simple_encode', self::b64encode($result), array($string, $key));
+		return self::b64encode($result);
 	}
 	public static function simple_decode($string, $key=null) {
 		$key=self::check_key($key);
@@ -84,12 +84,12 @@ class Encrypt extends Nphp_static{
 			$char = chr(ord($char)-ord($keychar));
 			$result.=$char;
 		}
-		return self::fireHooks('simple_decode', $result, array($string, $key));
+		return $result;
 	}
 	public static function b64encode($string) {
 		$data = base64_encode($string);
 		$data = str_replace(array('+','/','='),array('-','_',''),$data);
-		return self::fireHooks('b64encode', $data, array($string));
+		return $data;
 	}
 	public static function b64decode($string) {
 		$data = str_replace(array('-','_'),array('+','/'),$string);
@@ -97,7 +97,7 @@ class Encrypt extends Nphp_static{
 		if ($mod4) {
 			$data .= substr('====', $mod4);
 		}
-		return self::fireHooks('b64decode', base64_decode($data), array($string));
+		return base64_decode($data);
 	}
 }
 ?>

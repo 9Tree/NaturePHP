@@ -7,13 +7,14 @@
 date_default_timezone_set('Europe/Lisbon');
 
 // load NaturePhp
-require(dirname(__FILE__)."/../../nphp/init.php");	// this require will always work as long as relative path is correct
+require(dirname(__FILE__)."/../../nphp/nphp-init.php");	// this require will always work as long as relative path is correct
 													// even if this file is an included file somewhere else which is included
 													// somewhere else and so on...
 														// equivalent to Path::to("../../nphp/init.php", __FILE__)
 
 //start logging errors / notices
-Log::init($debug=true);
+Log::init(true);
+Log::debug(true);
 
 //This variable serves just to toggle this example working with mysql
 Mem::set('use_db', false, 'example');	//change to true to use the Database connection

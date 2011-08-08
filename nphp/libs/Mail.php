@@ -20,10 +20,6 @@ class Mail extends Nphp_static{
 						'use_smtp' => false
 						));
 		
-		
-		if(!self::fireHooks('send_check', true, array($to, $subject, $body, $args))) return;
-		$to=self::fireHooks('send_to', $to, array($to, $subject, $body, $args));
-		
 		//debug notice information
 		$notice_info = $to.' (text'.($args['html']?'/html':'').($args['attachments']?'/attachments':'').')';
 		

@@ -11,7 +11,7 @@ functions declared starting with _ like _func() indicate functions that are not 
 but have to be implemented on the extended classes (eg. Database_mysql );
 */
 
-abstract class Database extends Nphp_hookable{
+abstract class Database extends Nphp_basic{
 	protected $connection; 				// Database connection resource
 	protected $name; 					// connection name
 	public $is_opened = false;	//connection status
@@ -29,10 +29,6 @@ abstract class Database extends Nphp_hookable{
 		$this->connection = $args['resource'];
 		$this->result = null;
 		$this->args = $args;
-		
-		
-		
-		self::fireHooks('__construct', null, $args);
 	}
 	
 	//general setup
@@ -41,7 +37,7 @@ abstract class Database extends Nphp_hookable{
 		//get options
 		$args=Utils::combine_args(func_get_args(), 0, array('type' => 'mysql'));
 		
-		if(!Nphp::lib_exists("Database_".$args['type'])){
+		if(!Nphp::check_lib("Database_".$args['type'])){
 			trigger_error('<strong>Database</strong> :: Unrecognized database type "'.$type.'"', E_USER_ERROR);
 			return null;
 		}
@@ -50,7 +46,7 @@ abstract class Database extends Nphp_hookable{
 		$class='Database_'.$args['type'];
 		$o = new $class($args);
 		
-		return self::fireHooks('open', $o, $args, $o);
+		return $o;
 	}
 	
 	function check_init(){
@@ -71,13 +67,12 @@ abstract class Database extends Nphp_hookable{
 		$o->is_opened=true;
 		$o->_open($args);
 		
-		return self::fireHooks('open', $o, $args, $o);
+		return $o;
 	}
 	
 	//close connection and remove references to instance
 	function close() {
 		$this -> _close();
-		self::fireHooks('close', null, array(), $this);
 	}
 	
 	//secure string
@@ -85,7 +80,7 @@ abstract class Database extends Nphp_hookable{
 		if(!empty($parameters)){
 			$return=vsprintf(str_replace("?", "%s", str_replace("%", "%%", $sql)), $this->escapeValues($parameters));
 		} else $return=$sql;
-		return self::fireHooks('secure', $return, array($sql, $parameters), $this);
+		return $return;
 	}
 	
 	//builds query conditions from $args into $sql 
@@ -178,7 +173,7 @@ abstract class Database extends Nphp_hookable{
 		if(!$this->result && (error_reporting() & 1))
 			trigger_error('<strong>Database</strong> :: Error in query: ' . $this->_error(), E_USER_WARNING);
 		
-		return self::fireHooks('execute', ($this->result?true:false), array($sql, $parameters), $this);
+		return ($this->result?true:false);
 	}
 	
 	//insert
@@ -216,9 +211,9 @@ abstract class Database extends Nphp_hookable{
 		//execute	
 		if($this->execute($sql, $parameters)) {
 			//return inserted id
-			return self::fireHooks('insert', $this->_lastID($table), array($data, $table), $this);
+			return $this->_lastID($table);
 		} else {
-			return self::fireHooks('insert', false, array($data, $table), $this);
+			return false;
 		}
 	}
 	
@@ -261,7 +256,7 @@ abstract class Database extends Nphp_hookable{
 		$this->execute($sql, $parameters);
 		
 		//return affected rows
-		return self::fireHooks('update', $this->_affectedRows(), $args, $this);
+		return $this->_affectedRows();
 	}
 	
 	//delete
@@ -282,7 +277,7 @@ abstract class Database extends Nphp_hookable{
 		$this->execute($sql);
 		
 		//return affected rows
-		return self::fireHooks('delete', $this->_affectedRows(), $args, $this);
+		return $this->_affectedRows();
 	}
 	
 	//number of available rows in $this->result

@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<environments>
+	
+	<!--General settings-->
+	<routes controllers="../../application/">
+		<error to="404.php" type="static" />
+		<route path=":lang/" id="home" to="home.php" type="static" first_null="true" />
+		<route path="/:lang/contacts" id="contacts" to="contacts.php" type="static" first_null="true" />
+		<route path=":lang/Posts/:alias/" id="view-post" to="Posts/view/$2" type="dynamic" first_null="true" />
+	</routes>
+	
+	<struct>
+		<member>
+			<name>SMTP_OPTIONS</name>
+			<value>
+				<struct>
+					<member>
+						<name>use_smtp</name>
+						<value><boolean>1</boolean></value>
+					</member>
+					<member>
+						<name>use_ssl</name>
+						<value><boolean>1</boolean></value>
+					</member>
+					<member>
+						<name>server</name>
+						<value><string>smtp.gmail.com</string></value>
+					</member>
+				</struct>
+			</value>
+		</member>
+	</struct>
+	
+	<!--local environment example-->
+	<environment id="trutas" host="localhost" virtualpath="/~trutas/NaturePHP/" filepath="/Users/trutas/Sites/NaturePHP/" debug="true">
+		<database id="TestDb" host="localhost" type="mysql" user="trutas" password="trutas" database="test" />
+		<struct>
+			<member>
+				<name>test</name>
+				<value>
+					<string>yay!</string>
+				</value>
+			</member>
+		</struct>
+	</environment>
+	
+	<!--productive environment example-->
+	<environment host="9tree.co" virtualpath="/~trutas/" filepath="/Users/telmo/Sites/" debug="false">
+	</environment>
+	
+</environments>

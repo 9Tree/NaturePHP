@@ -34,7 +34,7 @@ class Cookies extends Nphp_static{
 		$func_args=func_get_args();
 		$args=Utils::combine_args($func_args, 1, self::$empty_opts);
 		if(!isset(self::$cookies[$cookie]) || self::$cookies[$cookie]['options'] != $args)
-			self::$cookies[$cookie]['options'] = self::fireHooks('setup', $args, $func_args);
+			self::$cookies[$cookie]['options'] = $args;
 	}
 	//setup cookie options with advanced security defaults
 	public static function setup_secure($cookie){
@@ -47,26 +47,23 @@ class Cookies extends Nphp_static{
 		if(!isset(self::$cookies[$cookie])) self::setup_secure($cookie);	//security as a default
 		self::$cookies[$cookie]['data'][$holder] = $data;
 		self::make_cookie($cookie);
-		self::fireHooks('set', null, array($cookie, $holder, $data));
 	}
 	public static function get($cookie, $holder){
 		self::check_init();
 		if(!isset(self::$cookies[$cookie]) || !isset(self::$cookies[$cookie]['data'][$holder])) return;
-		return self::fireHooks('get', self::$cookies[$cookie]['data'][$holder], array($cookie, $holder));
+		return self::$cookies[$cookie]['data'][$holder];
 	}
 	public static function remove($cookie, $holder){
 		self::check_init();
 		if(!isset(self::$cookies[$cookie]) || !isset(self::$cookies[$cookie]['data'][$holder])) return;
 		unset(self::$cookies[$cookie]['data'][$holder]);
 		self::make_cookie($cookie);
-		self::fireHooks('remove', null, array($cookie, $holder));
 	}
 	public static function clear($cookie){
 		self::check_init();
 		if(!isset(self::$cookies[$cookie])) return;
 		self::$cookies[$cookie]['data']=array();
 		self::make_cookie($cookie);
-		self::fireHooks('clear', null, array($cookie));
 	}
 	public static function clear_all(){
 		self::check_init();
@@ -75,7 +72,6 @@ class Cookies extends Nphp_static{
 			self::$cookies[$cookie]['data']=array();
 			self::make_cookie($cookie);
 		}
-		self::fireHooks('clear_all');
 	}
 	static function check_init(){
 		if(!self::$initiated){
@@ -95,7 +91,6 @@ class Cookies extends Nphp_static{
 			}
 			self::$initiated = true;
 		}
-		self::fireHooks('check_init');
 	}
 	static function make_cookie($cookie){
 		// Serialize the userdata for the cookie
@@ -123,7 +118,7 @@ class Cookies extends Nphp_static{
 				);
 		if(!$check)
 			trigger_error('<strong>Cookies</strong> :: Unable to create cookie "'.$cookie.'"', E_USER_WARNING);
-		self::fireHooks('make_cookie', $check, array($cookie));
+		return $check;
 	}
 }
 ?>

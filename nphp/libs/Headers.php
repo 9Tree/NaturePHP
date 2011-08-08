@@ -13,7 +13,7 @@ class Headers extends Nphp_static{
 			$redirect=Path::url_to($link, $from);
 		} else $redirect=$link;
 			
-		header ("Location: ".self::fireHooks('redirect', $redirect, array($link, $from)));
+		header ("Location: ".$redirect);
 		exit(0);
 	}
 	
@@ -23,12 +23,10 @@ class Headers extends Nphp_static{
 		@ header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 		@ header('Cache-Control: no-cache, must-revalidate, max-age=0');
 		@ header('Pragma: no-cache');
-		self::fireHooks('nocache');
 	}
 	
 	//http status (403, 500, 404, etc)
 	static function http_status( $header ) {
-		$header=self::fireHooks('http_status', $header);
 		$text = self::get_http_status_desc( $header );
 
 		if ( empty( $text ) )
@@ -56,8 +54,7 @@ class Headers extends Nphp_static{
 			else self::cache();
 		} else self::nocache();
 		// Handle proxies
-		header("Vary: Accept-Encoding");
-		self::fireHooks('json', null, $args);	
+		header("Vary: Accept-Encoding");	
 	}
 	
 	//cache headers
@@ -66,7 +63,6 @@ class Headers extends Nphp_static{
 		@ header("Expires: " . gmdate("D, d M Y H:i:s", $expires) . " GMT");
 		@ header('Cache-Control: must-revalidate, max-age='.$expires);
 		@ header('Pragma: ');
-		self::fireHooks('cache', null, array($offset));
 	}
 	
 	//javascript headers
@@ -80,13 +76,11 @@ class Headers extends Nphp_static{
 		} else self::nocache();
 		// Handle proxies
 		header("Vary: Accept-Encoding");
-		self::fireHooks('javascript', null, array($cache));
 	}
 	
 	//gzip headers
 	static function gzip(){
 		header('Content-Encoding: gzip');
-		self::fireHooks('gzip');
 	}
 	
 	//get http status code description
@@ -162,7 +156,7 @@ class Headers extends Nphp_static{
 			}
 			
 		} else $headers=getallheaders();	
-		return self::fireHooks('get_all', $headers);
+		return $headers;
 	}
 }
 ?>

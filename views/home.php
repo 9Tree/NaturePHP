@@ -1,0 +1,1 @@
+<a href="<?php Routes::put('view-post', array('lang'=>null, 'alias'=>1)); ?>">View post 1</a> | <a href="<?php Routes::put('contacts', array('lang'=>null)); ?>">Contacts</a>

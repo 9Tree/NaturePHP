@@ -20,14 +20,13 @@ class Log extends Nphp_singleton{
 		self::getInstance();
 		static::$log_info=$log;
 		static::$initiated=true;
-		self::fireHooks('init');
 	}
 	
 	//set debug mode on/off
 	public static function debug($debug=true){
 		if(!static::$initiated) self::init(true);
 		if($debug && !static::$log_info) static::$log_info=true;
-		self::$debug=self::fireHooks('debug', $debug);
+		self::$debug=$debug;
 	}
 	
 	//handle errors
@@ -124,20 +123,12 @@ class Log extends Nphp_singleton{
 	}
 	
 	//pretty die()
-	public static function kill($FATAL_ERROR){
-		self::fireHooks('kill', null, array($FATAL_ERROR));
-		
+	public static function kill($FATAL_ERROR){		
 		self::addInfo();
 		
-		if(Nphp::lib_exists('Info')){	//checks request mode
-			$json_mode=Info::is_json_requested();
-			$xml_mode=Info::is_xml_requested();
-			$ajax_mode=Info::request_is_ajax();
-		} else {	//defaults to html mode
-			$json_mode=false;
-			$xml_mode=false;
-			$ajax_mode=false;
-		}
+		$json_mode=Nphp::call('Info', 'is_json_requested', array(), false);
+		$xml_mode=Nphp::call('Info', 'is_xml_requested', array(), false);
+		$ajax_mode=Nphp::call('Info', 'request_is_ajax', array(), false);
 		
 		//http status 500 headers
 		if(!headers_sent()){
@@ -198,30 +189,38 @@ class Log extends Nphp_singleton{
 	}
 	
 	//Notices management
-	public static function add($desc, $type='Info'){
+	public static function add($desc, $type='Info', $hidden=false){
 		if(!static::$log_info) return;
 		$count=count(self::$events);
 		self::$events[$count]['type']=$type;
 		self::$events[$count]['desc']=$desc;
-		self::fireHooks('add', null, array($desc, $type));
+		self::$events[$count]['hidden']=$hidden;
 	}
 	
 	//Sets notification email
 	public static function notify($email){
-		if(Nphp::lib_exists('Check') && Check::email($email)){
+		if( Nphp::call('Check', 'email', array($email), false) ){
 			self::$notification_email=$email;
 		} else {
 			//invalid email...
-			self::add("Invalid notification email.", "Log");
+			self::add("Invalid notification email \"$email\".", "Log");
 		}
 	}
 	
-	public static function list_events($html_list=true){
+	public static function list_events(){
 		$dump=array();
 		$imax=count(self::$events);
 		for ($i=0; $i<$imax; $i++){
 			if(self::$events[$i]['type']!=""){
-				$dump[$i]='<strong>'.self::$events[$i]['type'].'</strong> :: '.self::$events[$i]['desc'];
+				$dump[$i]=
+					( self::$events[$i]['hidden'] ? 
+						"<span onclick=\"javascript:(function(){document.getElementById('nphp_ev_$i').style.display=='none'?document.getElementById('nphp_ev_$i').style.display='inline':document.getElementById('nphp_ev_$i').style.display='none'})()\" style=\"cursor:pointer;cursor:hand;\">":''
+					).
+					'<strong>'.(self::$events[$i]['type']).'</strong> :: '.self::$events[$i]['desc'].
+					( (self::$events[$i]['hidden']) ? 
+						'</span><span id="nphp_ev_'.$i.'" style="display:none;"><br />'.
+						(self::$events[$i]['hidden']).'</span>' : ''
+					);
 			} else {
 				$dump[$i]=self::$events[$i]['desc'];
 			}
@@ -230,28 +229,21 @@ class Log extends Nphp_singleton{
 	}
 	
 	public static function addInfo(){
-		self::add(count($_GET)." item(s)<br />".Text::to_html(Utils::s_var_dump($_GET)), "\$_GET Data");
-		self::add(count($_POST)." item(s)<br />".Text::to_html(Utils::s_var_dump($_POST)), "\$_POST Data");
-		if(isset($_SESSION)) self::add(count($_SESSION)." item(s)<br />".Text::to_html(Utils::s_var_dump($_SESSION)), "\$_SESSION Data");
+		self::add(count($_GET)." item(s)<br />", "\$_GET Data", Text::to_html(Utils::s_var_dump($_GET)));
+		self::add(count($_POST)." item(s)<br />", "\$_POST Data", Text::to_html(Utils::s_var_dump($_POST)));
+		if(isset($_SESSION)) self::add(count($_SESSION)." item(s)<br />", "\$_SESSION Data", Text::to_html(Utils::s_var_dump($_SESSION)));
 		else self::add("No active session found.", "\$_SESSION Data");
-		self::add(count($_COOKIE)." item(s)<br />".Text::to_html(Utils::s_var_dump($_COOKIE)), "\$_COOKIE Data");
+		self::add(count($_COOKIE)." item(s)<br />", "\$_COOKIE Data", Text::to_html(Utils::s_var_dump($_COOKIE)));
 	}
 	
 	public function __destruct() {
-		self::fireHooks('__destruct');
 		if(self::$debug && !self::$killed){ 
 			
 			self::addInfo();
 			
-			if(Nphp::lib_exists('Info')){	//checks request mode
-				$json_mode=Info::is_json_requested();
-				$xml_mode=Info::is_xml_requested();
-				$ajax_mode=Info::request_is_ajax();
-			} else {	//defaults to html mode
-				$json_mode=false;
-				$xml_mode=false;
-				$ajax_mode=false;
-			}
+			$json_mode=Nphp::call('Info', 'is_json_requested', array(), false);
+			$xml_mode=Nphp::call('Info', 'is_xml_requested', array(), false);
+			$ajax_mode=Nphp::call('Info', 'request_is_ajax', array(), false);
 			
 			if($json_mode){
 				//debug in json's comments
