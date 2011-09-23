@@ -4,8 +4,8 @@
 	<!--General settings-->
 	<routes controllers="../../application/">
 		<error to="404.php" type="static" />
-		<route path=":lang/" id="home" to="home.php" type="static" first_null="true" />
-		<route path="/:lang/contacts" id="contacts" to="contacts.php" type="static" first_null="true" />
+		<route path=":lang/" id="home" to="views/home.php" type="static" first_null="true" />
+		<route path="/:lang/contacts" id="contacts" to="views/contacts.php" type="static" first_null="true" />
 		<route path=":lang/Posts/:alias/" id="view-post" to="Posts/view/$2" type="dynamic" first_null="true" />
 	</routes>
 	
@@ -45,7 +45,8 @@
 	</environment>
 	
 	<!--productive environment example-->
-	<environment host="9tree.co" virtualpath="/~trutas/" filepath="/Users/telmo/Sites/" debug="false">
+	<environment host="9tree.co" virtualpath="/" filepath="/home/ninetree/public_html/" debug="false">
+		
 	</environment>
 	
 </environments>

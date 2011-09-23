@@ -7,5 +7,7 @@ print "<br /><br />";
 
 $res=TestDb::fetchRow("SELECT * from test where id=?", array(1));
 
+Path::put('images/img.png', __FILE__);
+
 var_dump($res);
 ?>

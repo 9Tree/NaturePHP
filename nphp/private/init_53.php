@@ -125,8 +125,6 @@ class Nphp extends Nphp_static{
 }
 
 //autoloader system
-function __autoload($class) {
-	Nphp::load_lib($class);
-}
+spl_autoload_register("Nphp::load_lib");
 
 ?>
