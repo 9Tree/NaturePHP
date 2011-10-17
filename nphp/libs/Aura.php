@@ -227,13 +227,22 @@ class Aura extends Nphp_static{
 	}
 	
 	public static function instance_database($DB, $args){
-		if(Nphp::check_lib($DB)){
-			trigger_error('<strong>Environments</strong> :: Cannot instance database "'.$DB.'", another library already exists with this name.', E_USER_ERROR);
-			return;
-		}
-		eval("class $DB extends DatabaseStaticWrapper {};");
-		$DB::setup($args);
-	}
+        if(Nphp::check_lib($DB)){
+            trigger_error('<strong>Environments</strong> :: Cannot instance database "'.$DB.'", another library already exists with this name.', E_USER_ERROR);
+            return;
+        }
+        eval("class $DB extends Nphp_static { 
+            static protected \$instance;
+            static function setup(){
+                \$args=Utils::combine_args(func_get_args(), 0);
+                static::\$instance=Database::setup(\$args);
+            }
+            static function __callStatic(\$func, \$args){
+                return call_user_func_array(array(static::\$instance, \$func), \$args);
+            }
+            };");
+        $DB::setup($args);
+    }
 	
 	public static function get($param){
 		if(isset(self::$params[$param])) return self::$params[$param];
