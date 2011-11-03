@@ -19,6 +19,16 @@
 
 class Image{		
 	//image info
+	private $xmp=array(
+		'title'=>null,
+		'desc'=>null,
+		'keywords'=>null);
+
+	private $iptc = array(
+		'title'=>null,
+		'desc'=>null,
+		'keywords'=>null);
+
 	private $info=array(
 		'width'=>null, 
 		'height'=>null, 
@@ -514,6 +524,103 @@ class Image{
 			return $args['basename'];
 		}
 		return false;	//something went wrong!
+	}
+
+	function getXMPElement($elemStart,$elemEnd){
+
+		$fp = fopen($this->options['path'],"r");
+		$buffer = fread($fp, filesize($this->options['path']));
+		fclose($fp);
+
+		$xmpdata_start = strpos($buffer, $elemStart);
+		$xmpdata_end = strpos($buffer, $elemEnd);
+		$xmplenght = $xmpdata_end - $xmpdata_start;
+		$xmpdata = substr($buffer, $xmpdata_start, $xmplenght);
+
+		return $this->xmlParse($xmpdata);
+
+	}
+
+	function xmlParse($data){
+
+		$xml = xml_parser_create();
+		xml_parse_into_struct($xml, $data, $vals, $index);
+		xml_parser_free($xml);
+
+		$flag = 0;
+		$value = '';
+
+		for($i=0 ; $i < count($vals) ; $i++){
+			if($vals[$i]['tag'] == "RDF:LI"){
+				$value .= $vals[$i]['value'] . ",";
+			}
+		}
+
+		$value = str_replace(";", ",", $value);
+		$value = str_replace(";", ",", $value);	
+
+		while(substr_count($value, ",,"))	
+			$value = str_replace(",,", ",", $value);
+
+		$value = substr($value, 0, strlen($value) - 1);
+
+		return $value;
+
+	}
+
+	function get_EXIF(){
+
+		$exif = exif_read_data($this->options['path'], 0, true);
+		foreach ($exif as $key => $section) {
+			foreach ($section as $name => $val) {
+				$exif["$key.$name"] = $val;
+			}
+		}
+
+		return $exif;
+
+	}
+
+	function get_IPTC(){
+
+		getimagesize($this->options['path'], $imginfo);
+
+		if(!isset($imginfo["APP13"]))
+			return null;
+
+		$arr = iptcparse($imginfo["APP13"]);
+
+		$iptc["title"] = @$arr["2#005"] ? $arr["2#005"][0] : false;
+		$iptc["desc"] = @$arr["2#120"] ? $arr["2#120"][0] : false;
+		$iptc["keywords"] = is_array($arr["2#025"]) ? implode(",", $arr["2#025"]) : false;
+
+		return $iptc;
+
+	}
+
+	function get_XMP(){
+
+		$xmp["title"] = $this->getXMPElement("<dc:title>", "</dc:title>");
+		$xmp["desc"] = $this->getXMPElement("<dc:description>", "</dc:description>");
+		$xmp["keywords"] = $this->getXMPElement("<dc:subject>", "</dc:subject>");
+
+		return $xmp;
+
+	}
+
+	function get_all_info(){
+
+		$iptc = $this->get_IPTC();
+		$xmp = $this->get_XMP();
+
+		$data["title"] = $xmp["title"] ? $xmp["title"] : ($iptc["title"] ? $iptc["title"] : '');
+		$data["desc"] = $xmp["desc"] ? $xmp["desc"] : ($iptc["desc"] ? $iptc["desc"] : '');
+		$data["keywords"] = $xmp["keywords"] ? $xmp["keywords"] : ($iptc["keywords"] ? $iptc["keywords"] : '');
+
+		$data['EXIF'] = $this->get_EXIF();
+
+		return $data;
+
 	}
 
 }
