@@ -7,30 +7,42 @@
 class Utils extends Nphp_static{
 	
 	//transforms mixed variables (querystring, object or array) into array
-	protected static function ref_mixed_to_array(&$mixed, &$args, &$i){
-
-		if(is_array($mixed) || is_object($mixed)){
+	protected static function ref_mixed_to_array(&$mixed, &$args, &$i, $convert_objects, $use_i){
+		if(is_object($mixed)){
+			$mixed = get_object_vars($mixed);
+		}
+		
+		if(is_array($mixed)){
 			foreach($mixed as $item=>$value){
-				$args['i'][$i] = $value;
-				if(is_string($item)) $args[$item]=&$args['i'][$i];
+				if($convert_objects && is_array($value) || is_object($value)){
+					$val = self::mixed_to_array($value, true, $use_i);
+				} else $val = $value;
+				
+				if($use_i){
+					$args['i'][$i] = $val;
+					if(is_string($item)) $args[$item]=&$args['i'][$i];
+				} else $args[$item] = $val;
+				
 				$i++;
 			}	
 		} elseif(is_string($mixed)){
 			$arr=explode('&', $mixed);
 			foreach($arr as $str){
 				list($item, $value)=explode('=', $str);
-				$args['i'][$i] = $value;
-				if(is_string($item)) $args[$item]=&$args['i'][$i];
+				if($use_i){
+					$args['i'][$i] = $value;
+					if(is_string($item)) $args[$item]=&$args['i'][$i];
+				} else $args[$item]=$value;
 				$i++;
 			}
 		}
 	}
 	
 	//ref_mixed_to_array simple port
-	static function mixed_to_array($mixed){
+	static function mixed_to_array($mixed, $convert_objects=false, $use_i=false){
 		$args=array(array());
 		$i=0;
-		self::ref_mixed_to_array($mixed, $args, $i);
+		self::ref_mixed_to_array($mixed, $args, $i, $convert_objects, $use_i);
 		return $args;
 	}
 	
@@ -60,7 +72,7 @@ class Utils extends Nphp_static{
 		$args = array();
 		$i = 0;
 		for ( $a = $start_index; $a < $a_lim; $a++ ){
-			self::ref_mixed_to_array($func_args[$a], $args, $i);
+			self::ref_mixed_to_array($func_args[$a], $args, $i, false, true);
 		}
 		
 		return array_merge($defaults, $args);

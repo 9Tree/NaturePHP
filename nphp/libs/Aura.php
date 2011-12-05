@@ -175,7 +175,7 @@ class Aura extends Nphp_static{
 	protected static function parseParams($xml){
 		if(isset($xml->struct)){
 			if(!is_array($xml->struct)){
-				return Utils::mixed_to_array(Xml_params::parseValue($xml));
+				return Utils::mixed_to_array(Xml_params::parseValue($xml), true);
 			} else {
 				//trigger warning
 				trigger_error("<strong>Aura</strong> :: Multiple struct elements detected. ", E_USER_WARNING);	
@@ -227,20 +227,20 @@ class Aura extends Nphp_static{
 	}
 	
 	public static function instance_database($DB, $args){
-        if(Nphp::check_lib($DB)){
-            trigger_error('<strong>Environments</strong> :: Cannot instance database "'.$DB.'", another library already exists with this name.', E_USER_ERROR);
-            return;
-        }
-        eval("class $DB extends Nphp_static { 
-            static protected \$instance;
-            static function setup(){
-                \$args=Utils::combine_args(func_get_args(), 0);
-                static::\$instance=Database::setup(\$args);
-            }
-            static function __callStatic(\$func, \$args){
-                return call_user_func_array(array(static::\$instance, \$func), \$args);
-            }
-            };");
+		if(Nphp::check_lib($DB)){
+			trigger_error('<strong>Environments</strong> :: Cannot instance database "'.$DB.'", another library already exists with this name.', E_USER_ERROR);
+			return;
+		}
+		eval("class $DB extends Nphp_static { 
+			static public \$instance;
+			static function setup(){
+				\$args=Utils::combine_args(func_get_args(), 0);
+				static::\$instance=Database::setup(\$args);
+			}
+			static function __callStatic(\$func, \$args){
+				return call_user_func_array(array(static::\$instance, \$func), \$args);
+			}
+			};");
         $DB::setup($args);
     }
 	

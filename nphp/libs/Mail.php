@@ -178,14 +178,39 @@ class Mail extends Nphp_static{
 		
 		
 		if($args['smtp_ssl'] && !preg_match("/:\/\//", $args['smtp_server'])) $args['smtp_server'] = "ssl://".$args['smtp_server'];
-		else if($args['smtp_tls'] && !preg_match("/:\/\//", $args['smtp_server'])) $args['smtp_server'] = "tls://".$args['smtp_server'];
+		else if($args['smtp_tls'] && !preg_match("/:\/\//", $args['smtp_server'])) $args['smtp_server'] = "tcp://".$args['smtp_server'];
+		
+		
+		$smtpConnect = fsockopen($args['smtp_server'], $args['smtp_port'], $errno, $errstr, $args['smtp_timeout']);
 		
 		//Connect to the host on the specified port
-		$smtpConnect = fsockopen($args['smtp_server'], $args['smtp_port'], $errno, $errstr, $args['smtp_timeout']);
+		
 		$smtpResponse = fgets($smtpConnect, 515);
 		if(empty($smtpConnect) || substr($smtpResponse, 0, 3)>=400) {
 			trigger_error("<strong>Mail</strong> :: Unable to connect to SMTP $smtpResponse", E_USER_WARNING);
 			return false;
+		}
+		
+		if($args['smtp_tls']) {
+			
+			//Say Hello to SMTP
+			fputs($smtpConnect, "HELO " .$args['smtp_localhost']. "\r\n");
+			$smtpResponse = fgets($smtpConnect, 515);
+			if(empty($smtpConnect) || substr($smtpResponse, 0, 3)>=400) {
+				trigger_error("<strong>Mail</strong> :: SMTP: HELO failed. $smtpResponse", E_USER_WARNING);
+				return false;
+			}
+			 
+			//Start tls connection
+			fputs($smtpConnect, "STARTTLS\r\n");
+			$smtpResponse = fgets($smtpConnect, 515);
+			if(empty($smtpConnect) || substr($smtpResponse, 0, 3)>=400) {
+				trigger_error("<strong>Mail</strong> :: SMTP: STARTTLS failed. $smtpResponse", E_USER_WARNING);
+				return false;
+			}
+
+			stream_socket_enable_crypto( $smtpConnect, true, STREAM_CRYPTO_METHOD_TLS_CLIENT );
+			
 		}
 		
 		//Say Hello to SMTP
