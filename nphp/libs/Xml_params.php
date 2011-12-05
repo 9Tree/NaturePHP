@@ -130,7 +130,7 @@ class Xml_params {
             case count($valueStruct->int) > 0:
                 return (int)$valueStruct->int;
             case count($valueStruct->boolean) > 0:
-                return (boolean) $valueStruct->boolean;
+                return !!((string)$valueStruct->boolean);
             case count($valueStruct->string) > 0:
                 return (string)$valueStruct->string;
             case count($valueStruct->double) > 0:
