@@ -241,8 +241,8 @@ class Aura extends Nphp_static{
 				return call_user_func_array(array(static::\$instance, \$func), \$args);
 			}
 			};");
-        $DB::setup($args);
-    }
+			$DB::setup($args);
+	}
 	
 	public static function get($param){
 		if(isset(self::$params[$param])) return self::$params[$param];
