@@ -145,13 +145,13 @@ class Log extends Nphp_singleton{
 			
 			//ouput
 			if($json_mode){
-				include(dirname(__FILE__).'/../resources/Log-tpls/json-error-debug.php');
+				include(dirname(__FILE__).'/../includes/Log-tpls/json-error-debug.php');
 			} elseif($xml_mode){		
-				include(dirname(__FILE__).'/../resources/Log-tpls/xml-error-debug.php');
+				include(dirname(__FILE__).'/../includes/Log-tpls/xml-error-debug.php');
 			} elseif($ajax_mode) {
-				include(dirname(__FILE__).'/../resources/Log-tpls/xml-error-debug.php');
+				include(dirname(__FILE__).'/../includes/Log-tpls/xml-error-debug.php');
 			} else {
-				include(dirname(__FILE__).'/../resources/Log-tpls/html-error-debug.php');
+				include(dirname(__FILE__).'/../includes/Log-tpls/html-error-debug.php');
 			}
 			
 		} else {	//non-debug mode
@@ -172,13 +172,13 @@ class Log extends Nphp_singleton{
 
 			//non-debug output
 			if($json_mode){
-				include(dirname(__FILE__).'/../resources/Log-tpls/json-error.php');
+				include(dirname(__FILE__).'/../includes/Log-tpls/json-error.php');
 			} elseif($xml_mode){
-				include(dirname(__FILE__).'/../resources/Log-tpls/xml-error.php');
+				include(dirname(__FILE__).'/../includes/Log-tpls/xml-error.php');
 			} elseif($ajax_mode) {
-				include(dirname(__FILE__).'/../resources/Log-tpls/xml-error.php');
+				include(dirname(__FILE__).'/../includes/Log-tpls/xml-error.php');
 			} else {
-				include(dirname(__FILE__).'/../resources/Log-tpls/html-error.php');
+				include(dirname(__FILE__).'/../includes/Log-tpls/html-error.php');
 			}
 		}
 		
@@ -247,15 +247,15 @@ class Log extends Nphp_singleton{
 			
 			if($json_mode){
 				//debug in json's comments
-				include(dirname(__FILE__).'/../resources/Log-tpls/json-debug.php');
+				include(dirname(__FILE__).'/../includes/Log-tpls/json-debug.php');
 			} elseif($xml_mode){
 				//debug in xml's comments
-				include(dirname(__FILE__).'/../resources/Log-tpls/xml-debug.php');
+				include(dirname(__FILE__).'/../includes/Log-tpls/xml-debug.php');
 			} elseif($ajax_mode){
 				//no debug for now - raises many issues
 			} else {
 				//debug in html
-				include(dirname(__FILE__).'/../resources/Log-tpls/html-debug.php');
+				include(dirname(__FILE__).'/../includes/Log-tpls/html-debug.php');
 			}
 		}
 	}

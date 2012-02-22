@@ -14,7 +14,7 @@
 		padding:8px 10px;
 		cursor:pointer;
 		cursor:hand;
-		background:url(<?php Path::put('nphp_title_bg.png', __FILE__) ?>) 0 0 no-repeat;
+		background:url(<?php Path::put('../../../resources/images/nphp_title_bg.png', __FILE__) ?>) 0 0 no-repeat;
 	}
 	#nphp-debug-title span{
 		margin:0;
@@ -144,11 +144,11 @@
 	<?php
 	if(Log::has_warnings()):
 	?>
-	<img class="warning_img" src="<?php Path::put('warning_icon.png', __FILE__) ?>" />
+	<img class="warning_img" src="<?php Path::put('../../../resources/images/warning_icon.png', __FILE__) ?>" />
 	<?php
 	endif;
 	?>
-	<img class="max_arrow" src="<?php Path::put('max_arrow.png', __FILE__) ?>" />
+	<img class="max_arrow" src="<?php Path::put('../../../resources/images/max_arrow.png', __FILE__) ?>" />
 	
 </div>
 <div id="nphp-debug-report"> 

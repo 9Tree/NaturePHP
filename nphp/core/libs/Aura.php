@@ -13,13 +13,17 @@ class Aura extends Nphp_static{
 	
 	static $environments=array();
 	
-	static function init($routing=false, $filepath=null){
-		if($filepath==null){
-			$filepath = Path::to('../private/aura.xml', __FILE__);
-		}
+	static function init(){
+		
+		//get options
+		$args=Utils::combine_args(func_get_args(), 0, array(
+								'config' => null, 
+								'route' => false));
+		
+		
 		//load file
 		libxml_use_internal_errors(true);
-		$xml=simplexml_load_file($filepath);
+		$xml=simplexml_load_file($args['config']);
 		
 		//parse xml
 		$response = array();
@@ -31,6 +35,7 @@ class Aura extends Nphp_static{
 		    foreach($errors as $error) {
 				trigger_error("<strong>Aura</strong> :: ".$error->message, E_USER_WARNING);
 		    }
+			trigger_error("<strong>Aura</strong> :: Unable to proceeed.", E_USER_ERROR);
 		} else {
 			//check faults
 			if (count($xml->fault) > 0) {
@@ -144,21 +149,21 @@ class Aura extends Nphp_static{
 			}
 			
 			//setup databases
-			foreach(self::$databases as $id=>$args){
-				self::instance_database($id, $args);
+			foreach(self::$databases as $id=>$db_args){
+				self::instance_database($id, $db_args);
 			}
 			
 			if(!empty(self::$routes)){
 				
 				//to-do: add routed classes folder
-				Nphp::add_folder(Path::combine($classesFolder, $filepath));
+				Nphp::add_folder(Path::combine($classesFolder, $args['config']));
 				//setup routes
-				foreach(self::$routes as $id=>$args){
-					$fargs = array_merge(array("path"=>"/", "to"=>"home.php", "type"=>"static", "first_null"=>"false"), $args);
+				foreach(self::$routes as $id=>$route_args){
+					$fargs = array_merge(array("path"=>"/", "to"=>"home.php", "type"=>"static", "first_null"=>"false"), $route_args);
 					Routes::add($id, $fargs["path"], $fargs["to"], $fargs["type"], ($fargs["first_null"]=="true"));
 				}
 				//boot Routes class with Aura mode on
-				if($routing) Routes::init(true);
+				if($args['route']) Routes::init(true);
 			}
 			
 		}
@@ -241,8 +246,8 @@ class Aura extends Nphp_static{
 				return call_user_func_array(array(static::\$instance, \$func), \$args);
 			}
 			};");
-        $DB::setup($args);
-    }
+		$DB::setup($args);
+	}
 	
 	public static function get($param){
 		if(isset(self::$params[$param])) return self::$params[$param];

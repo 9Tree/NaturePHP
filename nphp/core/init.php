@@ -9,5 +9,5 @@
 if(!version_compare(PHP_VERSION, '5.3.0', '>=')){
 	trigger_error('NaturePhp 0.5 requires at least PHP 5.3', E_USER_ERROR);
 	die('NaturePhp 0.5 requires at least php 5.3');
-} else include(dirname(__FILE__).'/private/init_53.php');
+} else include(dirname(__FILE__).'/includes/init_53.php');
 ?>

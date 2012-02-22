@@ -2,11 +2,11 @@
 <environments>
 	
 	<!--General settings-->
-	<routes controllers="../../application/">
-		<error to="404.php" type="static" />
-		<route path=":lang/" id="home" to="views/home.php" type="static" first_null="true" />
+	<routes controllers="">
+		<error path="/404" to="views/404.php" type="static" />
+		<route path="/:lang/" id="home" to="views/home.php" type="static" first_null="true" />
 		<route path="/:lang/contacts" id="contacts" to="views/contacts.php" type="static" first_null="true" />
-		<route path=":lang/Posts/:alias/" id="view-post" to="Posts/view/$2" type="dynamic" first_null="true" />
+		<route path="/:lang/Posts/:alias/" id="view-post" to="Posts/view/$1" type="dynamic" first_null="true" />
 	</routes>
 	
 	<struct>
@@ -32,21 +32,29 @@
 	</struct>
 	
 	<!--local environment example-->
-	<environment id="trutas" host="localhost" virtualpath="/~trutas/NaturePHP/" filepath="/Users/trutas/Sites/NaturePHP/" debug="true">
+	<environment id="trutas" host="localhost" virtualpath="/~trutas/NaturePHP/examples/framework_mode/" filepath="/Users/trutas/Sites/NaturePHP/examples/framework_mode/" debug="true">
 		<database id="TestDb" host="localhost" type="mysql" user="trutas" password="trutas" database="test" />
 		<struct>
 			<member>
 				<name>test</name>
 				<value>
-					<string>yay!</string>
+					<string>yay! development!</string>
 				</value>
 			</member>
 		</struct>
 	</environment>
 	
 	<!--productive environment example-->
-	<environment host="9tree.co" virtualpath="/" filepath="/home/ninetree/public_html/" debug="false">
-		
+	<environment host="9tree.co" virtualpath="/" filepath="/home/user/public_html/" debug="false">
+		<database id="TestDb" host="localhost" type="mysql" user="test" password="test" database="test" />
+		<struct>
+			<member>
+				<name>test</name>
+				<value>
+					<string>yay! production!</string>
+				</value>
+			</member>
+		</struct>
 	</environment>
 	
 </environments>

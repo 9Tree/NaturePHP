@@ -4,13 +4,13 @@
  */
 
 //required for php 5.3 +
-date_default_timezone_set('Europe/Lisbon');
+date_default_timezone_set('Europe/London');
 
-// load NaturePhp
-require(dirname(__FILE__)."/../../nphp/nphp-init.php");	// this require will always work as long as relative path is correct
+// load NaturePhp Library
+require(dirname(__FILE__)."/../../../nphp/core/init.php");	// this require will always work as long as relative path is correct
 													// even if this file is an included file somewhere else which is included
 													// somewhere else and so on...
-														// equivalent to Path::to("../../nphp/init.php", __FILE__)
+														// equivalent to Path::to("/../../../nphp/init.php", __FILE__)
 
 //start logging errors / notices
 Log::init(true);

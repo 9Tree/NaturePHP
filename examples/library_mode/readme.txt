@@ -18,4 +18,4 @@
 
 To get uploads working:
 
-1. set read/write permissions on exmples/uploads/ (recursively)
+1. set read/write permissions on examples/library_mode/uploads/ (recursively)

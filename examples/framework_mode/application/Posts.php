@@ -1,5 +1,5 @@
 <?php
-class Posts extends Mvc
+class Posts
 {
 	
 	function __construct()
