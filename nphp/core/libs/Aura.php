@@ -245,7 +245,7 @@ class Aura extends Nphp_static{
 			static function __callStatic(\$func, \$args){
 				return call_user_func_array(array(static::\$instance, \$func), \$args);
 			}
-			};");
+		};");
 		$DB::setup($args);
 	}
 	
