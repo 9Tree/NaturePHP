@@ -14,7 +14,7 @@ class Database_mysql extends Database {
 							'host' 			=> 'localhost',
 							'port' 			=> null,
 							'charset'		=> 'utf8',
-							'collation'		=> 'utf8_general_ci'
+							'collation'		=> 'utf8_unicode_ci'
 							));
 					
 		//tries connection
