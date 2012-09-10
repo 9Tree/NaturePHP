@@ -114,7 +114,8 @@ class Cookies extends Nphp_static{
 					$expire,
 					$opts['path'],
 					$opts['domain'],
-					$opts['ssl']
+					$opts['ssl'],
+					true // Sets HttpOnly to avoid XSS attacks.
 				);
 		if(!$check)
 			trigger_error('<strong>Cookies</strong> :: Unable to create cookie "'.$cookie.'"', E_USER_WARNING);
